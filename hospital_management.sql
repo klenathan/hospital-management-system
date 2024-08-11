@@ -120,6 +120,7 @@ add index idx_appointment_date (Date_Time);
 
 -- 4. Stored procedures & transaction management
 
+-- Patient
 -- Add new patient
 DELIMITER //
 create procedure SP_RegisterNewPatient (
@@ -172,6 +173,7 @@ begin
 end //
 DELIMITER ;
 
+-- Staff
 -- Add staff
 DELIMITER //
 create procedure SP_AddStaff (
@@ -196,6 +198,32 @@ begin
 end //
 DELIMITER ;
 
+-- List the staff by department
+DELIMITER //
+create procedure SP_ListSatffByDepartment (
+	in DepartmentId int
+)
+begin 
+    select * from Staffs where Department_Id = DepartmentId;
+end //
+DELIMITER ;
+
+-- List staff by name
+DELIMITER //
+create procedure SP_ListStaffByName (
+	in p_order varchar(4)
+)
+begin 
+	if p_order = 'ASC' then
+		select * from Staffs 
+        order by Full_Name, Last_Name asc;
+	else
+		select * from Staffs
+        order by Full_Name, Last_Name desc;
+	end if;
+end // 
+DELIMITER ;
+    
 -- Update staff info
 DELIMITER //
 create procedure SP_UpdateStaffInfo (
@@ -261,6 +289,7 @@ begin
 end //
 DELIMITER ;
 
+-- Appointment
 -- Schedule an appointment
 DELIMITER //
 create procedure SP_BookAppointment(
@@ -289,6 +318,15 @@ begin
 end //
 DELIMITER ;
 
+-- Cancel Appointment
+DELIMITER //
+create procedure SP_CancelAppoinment (
+	in AppointmentId int
+)
+begin 
+	delete from Appointments where Appointment_Id = AppointmentId;
+end //
+DELIMITER ;
 
 
     
