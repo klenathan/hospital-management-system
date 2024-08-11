@@ -272,7 +272,7 @@ begin
 
     start transaction;
 
-    select count(*) into Appointment_count
+    select count(*) into Appointment_Count
     from Appointments
     where Staff_Id = StaffId
     and Date_Time = NewDate_Time
