@@ -4,6 +4,7 @@ const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
 appointmentRouter.get("/", async (_: Request, res: Response) => {
+  // #swagger.summary = "Get all appointments"
   try {
     const appoinemtns = await appointmentService.getAllAppointments();
     return res.send(appoinemtns);

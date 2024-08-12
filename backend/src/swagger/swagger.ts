@@ -7,6 +7,10 @@ const doc = {
   },
   host: "localhost:3000",
   definitions: {
+    requiredAuth: {
+      $username: "username",
+      $password: "password",
+    },
     serverErrSchema: {
       $message: "Internal server error",
     },

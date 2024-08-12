@@ -30,12 +30,7 @@
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
+        }
       },
       "post": {
         "tags": [
@@ -43,6 +38,50 @@
         ],
         "summary": "Create new patients",
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new user.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "Van A"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Nguyen"
+                },
+                "date_of_birth": {
+                  "type": "string",
+                  "example": "01-01-2000"
+                },
+                "contact_info": {
+                  "type": "string",
+                  "example": "0912789JQK"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "Nguyen Van Linh"
+                },
+                "allergies": {
+                  "type": "string",
+                  "example": "peanut"
+                }
+              },
+              "required": [
+                "first_name",
+                "last_name",
+                "date_of_birth",
+                "contact_info",
+                "address",
+                "allergies"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -59,12 +98,7 @@
             },
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
+        }
       }
     },
     "/api/patient/{id}": {
@@ -79,7 +113,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Patient ID"
           }
         ],
         "responses": {
@@ -98,12 +133,7 @@
             },
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
+        }
       },
       "delete": {
         "tags": [
@@ -116,7 +146,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Patient ID"
           }
         ],
         "responses": {
@@ -135,16 +166,14 @@
             },
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
+        }
       }
     },
     "/api/staff/": {
       "get": {
+        "tags": [
+          "Staff"
+        ],
         "summary": "Get staffs info",
         "description": "",
         "responses": {
@@ -156,6 +185,10 @@
     },
     "/api/appointment/": {
       "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Get all appointments",
         "description": "",
         "responses": {
           "200": {
@@ -166,6 +199,10 @@
     },
     "/api/report/": {
       "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "Get reports",
         "description": "",
         "responses": {
           "200": {
@@ -176,6 +213,23 @@
     }
   },
   "definitions": {
+    "requiredAuth": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "username"
+        },
+        "password": {
+          "type": "string",
+          "example": "password"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ]
+    },
     "serverErrSchema": {
       "type": "object",
       "properties": {
