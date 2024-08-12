@@ -16,7 +16,6 @@
         "tags": [
           "Patients"
         ],
-        "summary": "Get patiends info",
         "description": "",
         "responses": {
           "200": {
@@ -29,9 +28,6 @@
             "description": "Bad Request"
           },
           "500": {
-            "schema": {
-              "$ref": "#/definitions/serverErrSchema"
-            },
             "description": "Internal Server Error"
           }
         },
