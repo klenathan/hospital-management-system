@@ -127,7 +127,6 @@ begin
 end;
 
 -- Update staff's schedule
-Delimiter / /
 
 create procedure SP_UpdateStaffSchedule (
     in StaffId int,
