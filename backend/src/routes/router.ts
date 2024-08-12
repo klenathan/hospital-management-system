@@ -12,24 +12,35 @@ router.use(
   /* 
     #swagger.tags = ['Patients']
 
-    #swagger.security = [{
-        "apiKeyAuth": []
-    }] 
-
     #swagger.responses[500] = {
         schema: { $ref: '#/definitions/serverErrSchema' }
     }  
 
     #swagger.responses[400] = {
         schema: { $ref: '#/definitions/errSchema' }
-    } 
+    }
     */
 );
 
-router.use("/staff", staffRouter);
+router.use(
+  "/staff",
+  staffRouter /**
+    #swagger.tags = ['Staff']
+    */
+);
 
-router.use("/appointment", appointmentRouter);
+router.use(
+  "/appointment",
+  appointmentRouter /**
+    #swagger.tags = ['Appointments']
+    */
+);
 
-router.use("/report", reportRouter);
+router.use(
+  "/report",
+  reportRouter /**
+    #swagger.tags = ['Report']
+    */
+);
 
 export default router;

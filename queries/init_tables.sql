@@ -1,5 +1,3 @@
--- Active: 1723438824473@@127.0.0.1@3306@hospital_management
-
 -- DROP DATABASE IF EXISTS `hospital_management`;
 
 CREATE DATABASE IF NOT EXISTS `hospital_management`;

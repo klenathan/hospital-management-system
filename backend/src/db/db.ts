@@ -17,17 +17,8 @@ const configBuilder = (username: string, password: string) => {
   };
 };
 
-console.log(configBuilder("test", "test"));
+console.log("[CREDENTIAL]", configBuilder("test", "test"));
 
 const connection = mysql.createConnection(access);
-//   .then((conn) => {
-//     console.log("Connected");
-
-//     return conn;
-//   })
-//   .catch((e) => {
-//     console.log(e);
-//     throw new Error("Failed to connect to database");
-//   });
 
 export default connection;
