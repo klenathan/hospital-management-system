@@ -28,7 +28,7 @@ CREATE TABLE patients (
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE staff (
+CREATE TABLE staffs (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -51,7 +51,7 @@ CREATE TABLE staff_job_history (
     deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (staff_id) REFERENCES staff (`id`),
+    FOREIGN KEY (staff_id) REFERENCES staffs (`id`),
     FOREIGN KEY (department_id) REFERENCES departments (`id`)
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE appointments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_id) REFERENCES patients (`id`),
-    FOREIGN KEY (staff_id) REFERENCES staff (`id`)
+    FOREIGN KEY (staff_id) REFERENCES staffs (`id`)
 );
 
 CREATE TABLE treatments (
@@ -79,5 +79,5 @@ CREATE TABLE treatments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_id) REFERENCES patients (`id`),
-    FOREIGN KEY (staff_id) REFERENCES staff (`id`)
+    FOREIGN KEY (staff_id) REFERENCES staffs (`id`)
 );
