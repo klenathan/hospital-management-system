@@ -1,0 +1,208 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Hospital management system API",
+    "description": "A RMIT Database application assignment",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api/patient/": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Get patiends info",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Create new patients",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/patient/{id}": {
+      "put": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Update Patient info",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "(Soft) Delete patient info",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/staff/": {
+      "get": {
+        "summary": "Get staffs info",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/appointment/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "serverErrSchema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Internal server error"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "errSchema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Your error, not mine"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    }
+  }
+}

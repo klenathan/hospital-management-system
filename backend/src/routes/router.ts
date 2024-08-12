@@ -6,7 +6,25 @@ import staffRouter from "./staffs.route";
 
 const router = Router();
 
-router.use("/patient", patientRouter);
+router.use(
+  "/patient",
+  patientRouter
+  /* 
+    #swagger.tags = ['Patients']
+
+    #swagger.security = [{
+        "apiKeyAuth": []
+    }] 
+
+    #swagger.responses[500] = {
+        schema: { $ref: '#/definitions/serverErrSchema' }
+    }  
+
+    #swagger.responses[400] = {
+        schema: { $ref: '#/definitions/errSchema' }
+    } 
+    */
+);
 
 router.use("/staff", staffRouter);
 
