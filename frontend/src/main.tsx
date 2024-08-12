@@ -10,7 +10,17 @@ const queryClient = new QueryClient()
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingPage />,
+
+    children: [
+      {
+        path: '/djtmecuocdoi',
+        element: <div className='bg-red-300 w-screen h-screen'>Hello</div>
+      },
+      {
+        path: '',
+        element: <LandingPage />
+      }
+    ],
     errorElement: <ErrorPage />
   }
 ])
