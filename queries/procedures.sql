@@ -2,7 +2,6 @@
 
 -- Patient
 -- Add new patient
-DELIMITER / /
 
 create procedure SP_RegisterNewPatient (
 	in First_Name varchar(50),
@@ -18,30 +17,24 @@ begin
     insert into Patients (First_Name, Last_Name, DOB, Contact_Info, Address, Allergies)
     values (First_Name, Last_Name, DOB, Contact_Info, Address, Allergies);
     commit;
-end //
+end;
 
-DELIMITER;
-
--- Find patient by name or ID
-DELIMITER / /
+-- Find patient by name or ID -> split into 2 procedures
 
 create procedure SP_SearchPatientByNameOrId (
-   in PatientId int,
+   in patient_id int,
    in Patient_Name varchar(50)
 ) 
 begin 
-	if PatientId is not null then
-		select * from Patients where Patient_Id = PatientId;
+	if patient_id is not null then
+		select * from Patients where `id` = patient_id;
 	else
 		select * from Patients where First_Name like ('%', Patient_Name, '%')
         or Last_Name like ('%', Patient_Name, '%');
 	end if;
-end //
+end;
 
-DELIMITER;
-
--- Add treatment
-DELIMITER / /
+-- Add treatment -> ok
 
 create procedure SP_AddTreatment (
 	in PatientId int,
@@ -55,13 +48,10 @@ begin
     insert into Treatment_Records (Patient_Id, Staff_id, Treatment_Date, Treatment_Details)
     values (PatientId, StaffId, TreatmentDate, TreatmentDetails);
     commit;
-end //
-
-DELIMITER;
+end;
 
 -- Staff
 -- Add staff
-DELIMITER / /
 
 create procedure SP_AddStaff (
     in Full_Name varchar(50),
@@ -82,24 +72,12 @@ begin
 	insert into Staff_Job_History (Staff_Id, Job_Type, Salary, Department_Id, Start_Date)
     values (InsertId(), Job_Type, Salary, Department_Id, current_date());
     commit;
-end //
-
-DELIMITER;
+end;
 
 -- List the staff by department
-DELIMITER / /
-
-create procedure SP_ListSatffByDepartment (
-	in DepartmentId int
-)
-begin 
-    select * from Staffs where Department_Id = DepartmentId;
-end //
-
-DELIMITER;
+select * from Staffs where department_id = DepartmentId;
 
 -- List staff by name
-DELIMITER / /
 
 create procedure SP_ListStaffByName (
 	in p_order varchar(4)
@@ -112,11 +90,9 @@ begin
 		select * from Staffs
         order by Full_Name, Last_Name desc;
 	end if;
-end //
+end;
 
-DELIMITER;
 -- Update staff info
-DELIMITER / /
 
 create procedure SP_UpdateStaffInfo (
 	in StaffId int,
@@ -137,12 +113,9 @@ begin
     insert into Staff_Job_History (Staff_Id, Job_Type, Salary, Department_Id, Start_Date)
     values (StaffId, JobType, salary, DepartmentId, current_date());
     commit;
-end //
-
-DELIMITER;
+end;
 
 -- View staff's schedule
-DELIMITER / /
 
 create procedure SP_ViewStaffSchedule (
 	in StaffId int
@@ -151,11 +124,9 @@ begin
 	select * from Appointments
     where Staff_Id = StaffId
     order by Date_Time;
-end //
+end;
 
-DELIMITER;
 -- Update staff's schedule
-Delimiter / /
 
 create procedure SP_UpdateStaffSchedule (
     in StaffId int,
@@ -181,14 +152,10 @@ begin
     else
         rollback;
     end if;
-end //
-
-DELIMITER;
+end;
 
 -- Appointment
 -- Schedule an appointment
-DELIMITER / /
-
 create procedure SP_BookAppointment(
     in PatientId int,
     in StaffId int,
@@ -212,18 +179,13 @@ begin
     else
 		rollback;
 	end if;
-end //
-
-DELIMITER;
+end;
 
 -- Cancel Appointment
-DELIMITER / /
 
 create procedure SP_CancelAppoinment (
 	in AppointmentId int
 )
 begin 
 	delete from Appointments where Appointment_Id = AppointmentId;
-end //
-
-DELIMITER;
+end;
