@@ -21,8 +21,8 @@ insert into
     )
 values
     (
-		First_Name,
-		Last_Name,
+	First_Name,
+	Last_Name,
         DOB,
         Contact_Info,
         Address,
@@ -236,7 +236,7 @@ update
 set
     appointments.start_time = NewDate_Time
 where
-    appointments.id = AppointmentId;
+    appointments.id = Appointment_Id;
 
 commit;
 
@@ -402,3 +402,4 @@ where
 end;
 	
     
+
