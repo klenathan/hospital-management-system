@@ -36,7 +36,7 @@ create procedure SP_SearchPatientByName (in Patient_Name varchar(50)) begin
 select
     *
 from
-    Patients
+    patients
 where
     first_name like ('%', Patient_Name, '%')
     or last_name like ('%', Patient_Name, '%');
