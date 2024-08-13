@@ -1,35 +1,40 @@
 -- List the staff by department
-create PROCEDURE S_ListStaffByDepartmentID () begin
-select
+CREATE PROCEDURE S_ListStaffByDepartmentID () BEGIN
+SELECT
     *
-from
+FROM
     staffs s
-    JOIN departments d ON d.id = s.department_id;
+    JOIN departments d ON d.id = s.department_id
+    AND s.deleted = 0;
 
-end;
+END;
 
 -- List the staff by name (in ASC and DESC order)
-create procedure S_ListStaffByName (in listOrder ENUM ('asc', 'desc')) begin if listOrder = 'asc' then
-select
+CREATE PROCEDURE S_ListStaffByName (in listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
+SELECT
     *
-from
+FROM
     Staffs s
-order by
+WHERE
+    s.deleted = 0
+ORDER BY
     s.first_name,
-    s.last_name asc;
+    s.last_name ASC;
 
-else
-select
+ELSE
+SELECT
     *
-from
+FROM
     Staffs s
-order by
+WHERE
+    s.deleted = 0
+ORDER BY
     s.first_name,
-    s.last_name desc;
+    s.last_name DESC;
 
-end if;
+END IF;
 
-end;
+END;
 
 -- View staff schedule by ID
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
@@ -41,8 +46,10 @@ SELECT
 FROM
     appointments a
     LEFT JOIN staffs s on s.id = a.id
+    AND a.deleted = 0
 WHERE
-    s.id = staff_id;
+    s.id = staff_id
+    AND a.deleted = 0;
 
 END;
 

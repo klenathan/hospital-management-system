@@ -1,4 +1,5 @@
 -- View working schedule of all doctors for a given duration (with busy or available status)
+CREATE PROCEDURE A_ViewDoctorScheduleByDuration (in fromDate DATETIME, in toDate DATETIME) BEGIN
 SELECT
     s.first_name,
     s.last_name,
@@ -7,14 +8,20 @@ SELECT
     a.*,
     IF (
         (
-            a.start_time <= '2024-08-12 14:31:00'
-            AND a.end_time >= '2024-08-11 13:00:00'
+            a.start_time <= toDate
+            AND a.end_time >= fromDate
         ),
         TRUE,
         FALSE
     ) as busy
 FROM
     appointments a
-    LEFT JOIN staffs s on s.id = a.staff_id
+    LEFT JOIN staffs s ON s.id = a.staff_id
+    AND s.deleted = 0
 WHERE
-    s.job_type = 'Doctor';
+    s.job_type = 'Doctor'
+    AND a.deleted = 0;
+
+END;
+
+CALL `A_ViewDoctorScheduleByDuration` ('2024-08-11 23:25:00', '2024-08-12 14:31:00');

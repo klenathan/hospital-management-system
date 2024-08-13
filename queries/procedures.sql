@@ -182,7 +182,7 @@ set
     Salary = salary,
     Department_Id = DepartmentId
 where
-    Staff_Id = StaffId;
+    `Staffs`.id = StaffId;
 
 -- Also save information to Staff_Job_History
 insert into
