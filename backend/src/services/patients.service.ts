@@ -1,4 +1,4 @@
-import connection from "../db/db";
+import connection from "../db/mysql";
 
 export default class PatientService {
   public constructor() {}

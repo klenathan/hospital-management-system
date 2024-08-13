@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon --exec npx ts-node src/index.ts",
-    "swagger": "npx ts-node src/swagger/swagger.ts"
+    "swagger": "npx ts-node src/swagger/swagger.ts",
+    "seed": "npx ts-node src/utils/seedDatabase.ts"
   },
   "_moduleAliases": {
     "@root": "."
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "module-alias": "^2.2.3",
+    "mongodb": "^6.8.0",
     "mysql2": "^3.11.0",
     "swagger-ui-express": "^5.0.1"
   },

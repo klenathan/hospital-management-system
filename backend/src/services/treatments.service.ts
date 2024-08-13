@@ -1,12 +1,12 @@
 import connection from "../db/mysql";
 
-export default class AppointmentService {
+export default class TreatmentService {
   public constructor() {}
 
-  public async getAllAppointments() {
+  public async getAllTreatments() {
     const conn = await connection;
     const patients = conn.execute(
-      "SELECT * FROM `appointments` order by `id` ASC"
+      "SELECT * FROM `treatments` order by `id` ASC"
     );
     return patients.then((result) => result[0]);
   }
