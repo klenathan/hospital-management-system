@@ -23,5 +23,3 @@ WHERE
     AND a.deleted = 0;
 
 END;
-
-CALL `A_ViewDoctorScheduleByDuration` ('2024-08-11 23:25:00', '2024-08-12 14:31:00');

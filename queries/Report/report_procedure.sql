@@ -24,10 +24,6 @@ BEGIN
         AND t.deleted = 0;
 END;
 
-
-DROP PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration;
-
-
 -- View job change history of a staff
 CREATE PROCEDURE R_ViewOneJobChangeHistoryByID(in staffID int) Begin
 SELECT * FROM staff_job_history sj WHERE staff_id = staffID AND sj.deleted = 0;

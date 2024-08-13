@@ -52,5 +52,3 @@ WHERE
     AND a.deleted = 0;
 
 END;
-
-CALL `S_ViewStaffScheduleByID` (1);
