@@ -15,10 +15,6 @@ const port = CONFIG.port;
 const app: Express = express();
 
 app.disable("x-powered-by");
-// connectMongoDb().then((r) => {
-//   console.log(r);
-// });
-// .finally(() => client.close());
 
 // logger middleware
 app.use((_req: Request, res: Response, next: NextFunction) => {
@@ -30,7 +26,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.on("finish", () => {
     const time = new Date(Date.now()).toISOString();
     const timeDelta = Date.now() - res.locals.startTime;
-    const codeStr = res.statusCode == 200 ? 32 : 31;
+    const codeStr = res.statusCode >= 400 ? 31 : 32;
     const log = `${time}: [${req.method}] ${(req.hostname, req.path)} `;
 
     var output =
