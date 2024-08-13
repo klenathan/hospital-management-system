@@ -21,8 +21,8 @@ insert into
     )
 values
     (
-		First_Name,
-		Last_Name,
+	First_Name,
+	Last_Name,
         DOB,
         Contact_Info,
         Address,
