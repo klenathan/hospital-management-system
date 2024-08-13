@@ -293,15 +293,15 @@ end;
 -- View working schedule of all doctors for a given duration (with busy or available status)
 create procedure SP_ViewDoctorsSchedule (in Start_Date datetime, in End_Date datetime) begin
 select
-	staffs.id,
-	staffs.first_name,
+    staffs.id,
+    staffs.first_name,
     staffs.last_name,
     appointments.start_time,
     appointments.end_time,
 case 
-	when 
-		appointments.start_time is null then 'available'
-	else 'busy'
+    when 
+	appointments.start_time is null then 'available'
+    else 'busy'
     end as status
 from staffs
 left join appointments on staffs.id = appointments.staff_id
@@ -322,7 +322,7 @@ from
 	treatments
 where
 	treatments.patient_id = Patient_Id
-    and treatments.treatment_date between Start_Date and End_Date
+    and treatments.treatment_date between Start_Date and End_Date;
 end;
 
 -- View all patient treatment in a given duration\
@@ -332,7 +332,7 @@ select
 from 
 	treatments
 where
-	treatments.treatment_date between Start_Date and End_Date
+	treatments.treatment_date between Start_Date and End_Date;
 end;
 
 -- View job change history of a staff
@@ -350,7 +350,7 @@ end;
 -- View the work of a doctor in a given duration
 create procedure SP_ViewDoctorWorkInDuration (in Doctor_Id int, in Start_Date date, in End_Date date) begin
 select
-	'Appointments' as work,
+    'Appointments' as work,
     appointments.start_time,
     appointments.end_time,
     appointments.purpose
@@ -368,7 +368,7 @@ from
 	treatments
 where
 	treatments.staff_id = Doctor_Id
-    and treatments.treatment_date between Start_Dare and End_Date
+    and treatments.treatment_date between Start_Dare and End_Date;
 end;
 
 -- View the work of all doctors in a given duration
@@ -398,7 +398,7 @@ from
 join staffs on treatments.staff_id = staffs.id
 where
 	staffs.job_type = 'Doctor'
-    and treatments.treatment_date between Start_Date and End_Date
+    and treatments.treatment_date between Start_Date and End_Date;
 end;
 	
     
