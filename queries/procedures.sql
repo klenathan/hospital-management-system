@@ -136,10 +136,9 @@ select
 	* 
 from
 	staffs 
-WHERE 
+where
 	department_id = Department_Id;
-END //
-DELIMITER ;
+end;
 
 -- List staff by name
 create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
