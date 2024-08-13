@@ -24,7 +24,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Get all auths",
+        "summary": "Get auth public key",
         "description": "",
         "responses": {
           "200": {
@@ -220,6 +220,20 @@
           "Appointments"
         ],
         "summary": "Get all appointments",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/treatment/": {
+      "get": {
+        "tags": [
+          "Treatments"
+        ],
+        "summary": "Get all treatments",
         "description": "",
         "responses": {
           "200": {

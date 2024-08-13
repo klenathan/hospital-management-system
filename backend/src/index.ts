@@ -13,13 +13,19 @@ import protectedRouteMiddleware from "./middlewares/protectedRoutes";
 
 const port = CONFIG.port;
 const app: Express = express();
+
 app.disable("x-powered-by");
+// connectMongoDb().then((r) => {
+//   console.log(r);
+// });
+// .finally(() => client.close());
 
 // logger middleware
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.locals.startTime = Date.now();
   next();
 });
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.on("finish", () => {
     const time = new Date(Date.now()).toISOString();
