@@ -3,9 +3,25 @@ import appointmentRouter from "./appointments.route";
 import patientRouter from "./patients.route";
 import reportRouter from "./reports.route";
 import staffRouter from "./staffs.route";
+import authRouter from "./auth.route";
 
 const router = Router();
 
+router.use(
+  "/auth",
+  authRouter
+  /* 
+    #swagger.tags = ['Auth']
+
+    #swagger.responses[500] = {
+        schema: { $ref: '#/definitions/serverErrSchema' }
+    }  
+
+    #swagger.responses[400] = {
+        schema: { $ref: '#/definitions/errSchema' }
+    }
+    */
+);
 router.use(
   "/patient",
   patientRouter

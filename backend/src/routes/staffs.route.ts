@@ -6,7 +6,6 @@ const staffService = new StaffService();
 
 staffRouter.get("/", async (_: Request, res: Response) => {
   // #swagger.summary = 'Get staffs info'
-
   const staffs = await staffService.getAllStaffs();
   return res.send(staffs);
 });

@@ -4,7 +4,7 @@ import CONFIG from "../config";
 const access: PoolOptions = {
   host: CONFIG.dbHost,
   user: CONFIG.dbUser,
-  password: CONFIG.dbPwd,
+  password: "user_password", //CONFIG.dbPwd,
   database: CONFIG.dbDatabase,
 };
 
