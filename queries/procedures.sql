@@ -38,8 +38,8 @@ select
 from
     patients
 where
-    first_name like ('%', Patient_Name, '%')
-    or last_name like ('%', Patient_Name, '%');
+    patients.first_name like ('%', Patient_Name, '%')
+    or patients.last_name like ('%', Patient_Name, '%');
 
 end;
 
@@ -49,7 +49,7 @@ select
 from
 	patients
 where
-	id = Patient_Id;	
+	patients.id = Patient_Id;	
 
 end;
 
@@ -136,29 +136,28 @@ select
 	* 
 from
 	staffs 
-WHERE 
-	department_id = Department_Id;
-END //
-DELIMITER ;
+where 
+	staffs.department_id = Department_Id;
+end;
 
 -- List staff by name
 create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
 select
     *
 from
-    Staffs
+    staffs
 order by
-    Full_Name,
-    Last_Name asc;
+    staffs.first_name,
+    staffs.last_name asc;
 
 else
 select
     *
 from
-    Staffs
+    staffs
 order by
-    Full_Name,
-    Last_Name desc;
+    staffs.first_name,
+    staffs.last_name desc;
 
 end if;
 
@@ -174,11 +173,11 @@ create procedure SP_UpdateStaffInfo (
 
 update staffs
 set
-    job_type = Job_Type,
-    salary = Salary,
-    department_id = Department_Id
+    staffs.job_type = Job_Type,
+    staffs.salary = Salary,
+    staffs.department_id = Department_Id
 where
-    `Staffs`.id = Staff_Id;
+    staffs.id = Staff_Id;
 
 -- Also save information to Staff_Job_History
 insert into
@@ -207,9 +206,9 @@ select
 from
     appointments
 where
-    staff_id = Staff_Id
+    appointments.staff_id = Staff_Id
 order by
-    start_time;
+    appointments.start_time;
 
 end;
 
@@ -227,17 +226,17 @@ select
 from
     appointments
 where
-    staff_id = Staff_Id
-    and start_time = NewDate_Time
-    and `Appointment`.id != Appointment_Id;
+    appointments.staff_id = Staff_Id
+    and appointments.start_time = NewDate_Time
+    and appointments.id != Appointment_Id;
 
 if Appointment_Count = 0 then
 update 
-	Appointment
+	appointments
 set
-    start_time = NewDate_Time
+    appointments.start_time = NewDate_Time
 where
-    `Appointment`.id = AppointmentId;
+    appointments.id = AppointmentId;
 
 commit;
 
@@ -263,8 +262,8 @@ select
 from
     appointments
 where
-    staff_id = Staff_Id
-    and start_time = DateTime;
+    appointments.staff_id = Staff_Id
+    and appointments.start_time = DateTime;
 
 if Appointment_Count = 0 then
 insert into
@@ -281,9 +280,125 @@ end if;
 end;
 
 -- Cancel Appointment
-create procedure SP_CancelAppoinment (in AppointmentId int) begin
-delete from Appointments
+create procedure SP_CancelAppoinment (in Appointment_Id int) begin
+delete from appointments
 where
-    Appointment_Id = AppointmentId;
+    appointments.id = Appointment_Id;
 
 end;
+
+
+-- MỚI ADD
+
+-- View working schedule of all doctors for a given duration (with busy or available status)
+create procedure SP_ViewDoctorsSchedule (in Start_Date datetime, in End_Date datetime) begin
+select
+	staffs.id,
+	staffs.first_name,
+    staffs.last_name,
+    appointments.start_time,
+    appointments.end_time,
+case 
+	when 
+		appointments.start_time is null then 'available'
+	else 'busy'
+    end as status
+from staffs
+left join appointments on staffs.id = appointments.staff_id
+where 
+	staffs.job_type = 'Doctor'
+	and appointments.start_time between Start_Date and End_Date
+order by 3, 2, 4;
+end;
+		
+
+-- Report
+
+-- View a patient treatment history for a given duration
+create procedure SP_ViewPatientTreatmentHistoryInDuration (in Patient_Id int, in Start_Date date, in End_Date date) begin
+select
+	*
+from 
+	treatments
+where
+	treatments.patient_id = Patient_Id
+    and treatments.treatment_date between Start_Date and End_Date
+end;
+
+-- View all patient treatment in a given duration\
+create procedure SP_ViewAllPatientTreatments (in Start_Date date, in End_Date date) begin
+select
+	*
+from 
+	treatments
+where
+	treatments.treatment_date between Start_Date and End_Date
+end;
+
+-- View job change history of a staff
+create procedure SP_ViewStaffJobChangeHistory (in Staff_Id int) begin
+select 
+	*
+from 
+	staff_job_history
+where
+	staff_job_history.staff_id = Staff_Id
+order by
+	staff_job_history.created_at desc;
+end;
+
+-- View the work of a doctor in a given duration
+create procedure SP_ViewDoctorWorkInDuration (in Doctor_Id int, in Start_Date date, in End_Date date) begin
+select
+	'Appointments' as work,
+    appointments.start_time,
+    appointments.end_time,
+    appointments.purpose
+from 
+	appointments
+where
+	appointments.staff_id = Doctor_Id
+    and appointments.start_time between Start_Date and End_Date
+union all
+select 
+	'Treatments' as work,
+	treatments.treatment_date,
+    treatmennts.treatment_details
+from 
+	treatments
+where
+	treatments.staff_id = Doctor_Id
+    and treatments.treatment_date between Start_Dare and End_Date
+end;
+
+-- View the work of all doctors in a given duration
+create procedure SP_ViewAllDoctorsWorkInDuration (in Start_Date date, in End_Date date) begin
+select
+	'Appointments' as work,
+    staffs.first_name,
+    staffs.last_name,
+    appointments.start_time,
+    appointments.end_time,
+    appointments.purpose
+from
+	appointments
+join staffs on appointments.staff_id = staffs.id
+where
+	staffs.job_type = 'Doctor'
+    and appointments.start_time between Start_Date and End_Date
+union all
+select 
+	'Treatments' as work,
+    staffs.first_name,
+    staffs.last_name,
+    treatments.treatment_date,
+    treatments.treatment_details
+from
+	treatments
+join staffs on treatments.staff_id = staffs.id
+where
+	staffs.job_type = 'Doctor'
+    and treatments.treatment_date between Start_Date and End_Date
+end;
+	
+    
