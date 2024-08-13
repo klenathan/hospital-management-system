@@ -8,101 +8,95 @@ create procedure SP_RegisterNewPatient (
     in Contact_Info varchar(255),
     in Address varchar(255),
     in Allergies text
-) begin start transaction;
+) begin
 
 insert into
-    Patients (
-        First_Name,
-        Last_Name,
-        DOB,
-        Contact_Info,
-        Address,
-        Allergies
+    patients (
+        first_name,
+        last_name,
+        date_of_birth,
+        contact_info,
+        address,
+        allergies
     )
 values
     (
-        First_Name,
-        Last_Name,
+		First_Name,
+		Last_Name,
         DOB,
         Contact_Info,
         Address,
         Allergies
     );
 
-commit;
-
 end;
 
 -- Find patient by name or ID -> split into 2 procedures
-create procedure SP_SearchPatientByNameOrId (in patient_id int, in Patient_Name varchar(50)) begin if patient_id is not null then
+create procedure SP_SearchPatientByName (in Patient_Name varchar(50)) begin
 select
     *
 from
     Patients
 where
-    `id` = patient_id;
+    first_name like ('%', Patient_Name, '%')
+    or last_name like ('%', Patient_Name, '%');
 
-else
+end;
+
+create procedure SP_SearchPatientById (in Patient_Id int) begin
 select
-    *
+	*
 from
-    Patients
+	patients
 where
-    First_Name like ('%', Patient_Name, '%')
-    or Last_Name like ('%', Patient_Name, '%');
-
-end if;
+	id = Patient_Id;	
 
 end;
 
 -- Add treatment -> ok
 create procedure SP_AddTreatment (
-    in PatientId int,
-    in StaffId int,
-    in TreatmentDate date,
-    in TreatmentDetails text
-) begin start transaction;
+    in Patient_Id int,
+    in Staff_Id int,
+    in Treatment_Date date,
+    in Treatment_Details text
+) begin
 
 insert into
-    Treatment_Records (
-        Patient_Id,
-        Staff_id,
-        Treatment_Date,
-        Treatment_Details
+    treatments (
+        patient_id,
+        staff_id,
+        treatment_date,
+        treatment_details
     )
 values
     (
-        PatientId,
-        StaffId,
-        TreatmentDate,
-        TreatmentDetails
+        Patient_Id,
+        Staff_Id,
+        Treatment_Date,
+        Treatment_Details
     );
-
-commit;
 
 end;
 
 -- Staff
 -- Add staff
 create procedure SP_AddStaff (
-    in Full_Name varchar(50),
+    in First_Name varchar(50),
     in Last_Name varchar(50),
-    in Job_Type varchar(50),
+    in Job_Type ENUM('Doctor', 'Nurse', 'Admin'),
     in Qualification text,
-    in Salary decimal(10, 2),
     in Department_Id int,
-    in Schedule text
+    in Salary decimal(10, 2)
 ) begin start transaction;
 
 insert into
-    Staffs (
-        First_Name,
-        Last_Name,
-        Job_Type,
-        Qualification,
-        Salary,
-        Department_Id,
-        Schedule
+    staffs (
+        first_name,
+        last_name,
+        job_type,
+        qualification,
+        deparment_id,
+        salary
     )
 values
     (
@@ -110,27 +104,24 @@ values
         Last_Name,
         Job_Type,
         Qualification,
-        Salary,
         Department_Id,
-        Schedule
+        Salary
     );
 
 -- Also save information to Staff_Job_History 
 insert into
-    Staff_Job_History (
-        Staff_Id,
-        Job_Type,
-        Salary,
-        Department_Id,
-        Start_Date
+    staff_job_history (
+        staff_id,
+        job_type,
+        salary,
+        department_id
     )
 values
     (
         InsertId (),
         Job_Type,
         Salary,
-        Department_Id,
-        current_date()
+        Department_Id
     );
 
 commit;
@@ -138,12 +129,17 @@ commit;
 end;
 
 -- List the staff by department
+create procedure SP_ListStaffByDepartment (
+    in Department_Id int
+) begin
 select
-    *
+	* 
 from
-    Staffs
-where
-    department_id = DepartmentId;
+	staffs 
+WHERE 
+	department_id = Department_Id;
+END //
+DELIMITER ;
 
 -- List staff by name
 create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
@@ -170,36 +166,34 @@ end;
 
 -- Update staff info
 create procedure SP_UpdateStaffInfo (
-    in StaffId int,
-    in JobType varchar(50),
-    in salary decimal(10, 2),
-    in DepartmentId int
+    in Staff_Id int,
+    in Job_Type enum('Doctor', 'Nurse', 'Admin'),
+    in Salary decimal(10, 2),
+    in Department_Id int
 ) begin start transaction;
 
-update Staffs
+update staffs
 set
-    Job_Type = JobType,
-    Salary = salary,
-    Department_Id = DepartmentId
+    job_type = Job_Type,
+    salary = Salary,
+    department_id = Department_Id
 where
-    `Staffs`.id = StaffId;
+    `Staffs`.id = Staff_Id;
 
 -- Also save information to Staff_Job_History
 insert into
     Staff_Job_History (
-        Staff_Id,
-        Job_Type,
-        Salary,
-        Department_Id,
-        Start_Date
+        staff_id,
+        job_type,
+        salary,
+        department_id
     )
 values
     (
-        StaffId,
-        JobType,
-        salary,
-        DepartmentId,
-        current_date()
+        Staff_Id,
+        Job_Type,
+        Salary,
+        Department_Id
     );
 
 commit;
@@ -207,22 +201,22 @@ commit;
 end;
 
 -- View staff's schedule
-create procedure SP_ViewStaffSchedule (in StaffId int) begin
+create procedure SP_ViewStaffSchedule (in Staff_Id int) begin
 select
     *
 from
-    Appointments
+    appointments
 where
-    Staff_Id = StaffId
+    staff_id = Staff_Id
 order by
-    Date_Time;
+    start_time;
 
 end;
 
 -- Update staff's schedule
 create procedure SP_UpdateStaffSchedule (
-    in StaffId int,
-    in AppointmentId int,
+    in Staff_Id int,
+    in Appointment_Id int,
     in NewDate_Time datetime
 ) begin declare Appointment_Count int;
 
@@ -231,18 +225,19 @@ start transaction;
 select
     count(*) into Appointment_Count
 from
-    Appointments
+    appointments
 where
-    Staff_Id = StaffId
-    and Date_Time = NewDate_Time
-    and Appointment_Id != AppointmentId;
+    staff_id = Staff_Id
+    and start_time = NewDate_Time
+    and `Appointment`.id != Appointment_Id;
 
 if Appointment_Count = 0 then
-update Appointments
+update 
+	Appointment
 set
-    Date_Time = NewDate_Time
+    start_time = NewDate_Time
 where
-    Appointment_Id = AppointmentId;
+    `Appointment`.id = AppointmentId;
 
 commit;
 
@@ -255,8 +250,8 @@ end;
 -- Appointment
 -- Schedule an appointment
 create procedure SP_BookAppointment (
-    in PatientId int,
-    in StaffId int,
+    in Patient_Id int,
+    in Staff_Id int,
     in DateTime datetime,
     in purpose text
 ) begin declare Apointment_Count int;
@@ -266,16 +261,16 @@ start transaction;
 select
     count(*) into Appointment_Count
 from
-    Appointments
+    appointments
 where
-    Staff_Id = StaffId
-    and Date_Time = DateTime;
+    staff_id = Staff_Id
+    and start_time = DateTime;
 
 if Appointment_Count = 0 then
 insert into
-    Appointments (Patient_Id, Staff_Id, Date_Time, Purpose)
+    appointments (patient_id, staff_id, start_time, purpose)
 values
-    (PatientId, StaffId, DateTime, purpose);
+    (Patient_Id, Staff_Id, DateTime, Purpose);
 
 commit;
 
