@@ -5,6 +5,26 @@ values ('Cardiology'),
     ('Pediatrics'),
     ('Emergency');
 
+insert ignore into
+    Patients (
+        id,
+        first_name,
+        last_name,
+        date_of_birth,
+        contact_info,
+        address,
+        allergies
+    )
+values (
+        2,
+        'Duong',
+        'Nguyen',
+        '2000-08-18',
+        'duongnguyen@gmail.com',
+        '199 bach dang',
+        'None'
+    );
+
 insert into
     Patients (
         first_name,
