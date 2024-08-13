@@ -5,7 +5,9 @@ SELECT
 FROM
     staffs s
     JOIN departments d ON d.id = s.department_id
-    AND s.deleted = 0;
+    AND d.deleted = 0
+WHERE
+    s.deleted = 0;
 
 END;
 
@@ -46,7 +48,7 @@ SELECT
 FROM
     appointments a
     LEFT JOIN staffs s on s.id = a.id
-    AND a.deleted = 0
+    AND s.deleted = 0
 WHERE
     s.id = staff_id
     AND a.deleted = 0;
