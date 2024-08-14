@@ -17,12 +17,9 @@ const app: Express = express();
 app.disable("x-powered-by");
 
 // logger middleware
-app.use((_req: Request, res: Response, next: NextFunction) => {
-  res.locals.startTime = Date.now();
-  next();
-});
-
 app.use((req: Request, res: Response, next: NextFunction) => {
+  res.locals.startTime = Date.now();
+
   res.on("finish", () => {
     const time = new Date(Date.now()).toISOString();
     const timeDelta = Date.now() - res.locals.startTime;
@@ -59,5 +56,5 @@ app.get("*", (_: Request, res: Response) => {
 //// START SERVER
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Server is running at http://localhost:${port}/docs`);
 });

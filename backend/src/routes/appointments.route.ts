@@ -3,15 +3,27 @@ import AppointmentService from "../services/appointments.service";
 const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
-appointmentRouter.get("/", async (_: Request, res: Response) => {
-  // #swagger.summary = "Get all appointments"
+appointmentRouter.get("/", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = "Get all appointments"
+  
+  #swagger.parameters['staffId'] = {
+            in: 'query',
+            description: 'Query Staff ID (INT)',
+    } */
   try {
-    const appoinemtns = await appointmentService.getAllAppointments();
-    return res.send(appoinemtns);
-  } catch (error) {
-    console.log(error);
+    let staffId;
 
-    return res.send(500);
+    if (req.query["staffId"]) {
+      staffId = parseInt(req.query["staffId"] as string);
+      if (isNaN(staffId)) {
+        throw new Error("Invalid Query: staffId");
+      }
+    }
+    const appointments = await appointmentService.getAllAppointments(staffId);
+    res.send(appointments);
+  } catch (e) {
+    res.json({ error: (e as Error).message }).status(400);
   }
 });
 
