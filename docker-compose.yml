@@ -1,5 +1,9 @@
 version: "3.8"
 
+# networks:
+#   app-network:
+#     mo
+
 services:
   mongodb:
     image: mongo:latest
@@ -15,6 +19,7 @@ services:
   mysql:
     image: mysql:8.4.2
     container_name: mysql
+    network_mode: host
     command:
       - --mysql-native-password=ON
     environment:
@@ -26,3 +31,13 @@ services:
       - "3306:3306"
     volumes:
       - ./database/sql-data:/var/lib/mysql
+  app:
+    network_mode: host
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    restart: always

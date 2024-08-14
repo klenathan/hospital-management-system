@@ -1,5 +1,5 @@
 -- List the staff by department
-CREATE PROCEDURE S_ListStaffByDepartmentID () BEGIN
+CREATE PROCEDURE S_ListStaffByDepartmentID (in departmentID int) BEGIN
 SELECT
     *
 FROM
@@ -7,7 +7,8 @@ FROM
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
 WHERE
-    s.deleted = 0;
+    s.department_id = departmentID
+    AND s.deleted = 0;
 
 END;
 
@@ -20,7 +21,7 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name ASC,
     s.last_name ASC;
 
 ELSE
@@ -31,23 +32,22 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name DESC,
     s.last_name DESC;
 
 END IF;
 
 END;
 
--- View staff schedule by ID
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
 SELECT
-    s.first_name,
-    s.last_name,
+    s.*,
+    a.purpose,
     a.start_time,
     a.end_time
 FROM
     appointments a
-    LEFT JOIN staffs s on s.id = a.id
+    LEFT JOIN staffs s on s.id = a.staff_id
     AND s.deleted = 0
 WHERE
     s.id = staff_id
