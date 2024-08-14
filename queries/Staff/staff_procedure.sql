@@ -1,5 +1,5 @@
 -- List the staff by department
-CREATE PROCEDURE S_ListStaffByDepartmentID () BEGIN
+CREATE PROCEDURE S_ListStaffByDepartmentID (in departmentID int) BEGIN
 SELECT
     *
 FROM
@@ -7,9 +7,20 @@ FROM
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
 WHERE
-    s.deleted = 0;
+    s.department_id = departmentID
+    AND s.deleted = 0;
 
 END;
+
+SELECT
+    *
+FROM
+    staffs s
+    JOIN departments d ON d.id = s.department_id
+    AND d.deleted = 0
+WHERE
+    s.department_id = 1
+    AND s.deleted = 0;
 
 -- List the staff by name (in ASC and DESC order)
 CREATE PROCEDURE S_ListStaffByName (in listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
