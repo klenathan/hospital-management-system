@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "npx ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon --exec npx ts-node src/index.ts",
     "swagger": "npx ts-node src/swagger/swagger.ts",

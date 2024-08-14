@@ -137,14 +137,6 @@ commit;
 
 end;
 
--- List the staff by department
-select
-    *
-from
-    Staffs
-where
-    department_id = DepartmentId;
-
 -- List staff by name
 create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
 select
