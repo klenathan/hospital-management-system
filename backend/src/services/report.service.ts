@@ -19,8 +19,6 @@ export default class ReportService {
       }, "${startTime}", "${endTime}")`
     );
 
-    console.log(startTime, endTime);
-
     return {
       queryResult: {
         count: rows[0].length,
@@ -57,8 +55,6 @@ export default class ReportService {
         staffId ?? "null"
       }, "${startTime}", "${endTime}")`
     );
-
-    console.log(startTime, endTime);
 
     return {
       queryResult: {
