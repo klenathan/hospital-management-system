@@ -34,28 +34,35 @@ end;
 
 -- Add treatment -> (Only doctor can add, change to function using transaction)
 create procedure SP_AddTreatment (
-    in PatientId int,
-    in StaffId int,
-    in TreatmentDate date,
-    in TreatmentDetails text
-) begin start transaction;
-
-insert into
-    Treatment_Records (
-        Patient_Id,
-        Staff_id,
-        Treatment_Date,
-        Treatment_Details
-    )
-values
-    (
-        PatientId,
-        StaffId,
-        TreatmentDate,
-        TreatmentDetails
-    );
-
-commit;
+    in Patient_Id int,
+    in Staff_Id int,
+    in Treatment_Date date,
+    in Treatment_Details text
+) begin 
+declare Staff_Job_Type enum('Doctor', 'Nurse', 'Admin');
+select
+	job_type into Staff_Job_Type
+from
+	staffs
+where
+	staffs.id = Staff_Id;
+if Staff_Job_Type = 'Doctor' then
+	start transaction;
+    insert into treatments (
+            patient_id,
+            staff_id,
+            treatment_date,
+            treatment_details
+        ) values (
+            Patient_Id,
+            Staff_Id,
+            Treatment_Date,
+            Treatment_Details
+        );
+	commit;
+else
+	rollback;
+end if;
 
 end;
 
@@ -86,9 +93,24 @@ commit;
 end;
 
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
-create procedure SP_CancelAppoinment (in AppointmentId int) begin
-delete from Appointments
+create procedure SP_CancelAppoinment (in Appointment_Id int) begin
+declare Staff_Job_Type enum ('Doctor', 'Nurse', 'Admin');
+select
+	staffs.job_type into Staff_Job_Type
+from 
+	appointments
+join staffs on appointments.staff_id = staffs.id
 where
-    appointments.id = Appointment_Id;
-
+	appointments.id = Appointment_Id;
+if Staff_Job_Type = 'Doctor' then
+update
+	appointments
+set
+	appointments.deleted = 1
+where
+	appointments.id = Appointment_Id;
+select 'success' as status;
+else
+	select 'fail' as status;
+end if;
 end;
