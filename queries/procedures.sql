@@ -1,6 +1,6 @@
 -- 4. Stored procedures & transaction management
 -- Patient
--- Add new patient 
+-- Add new patient
 -- TODO: Should use function
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
@@ -115,31 +115,6 @@ commit;
 
 end;
 
-<<<<<<< HEAD
--- List staff by name
-create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
-select
-    *
-from
-    Staffs
-order by
-    Full_Name,
-    Last_Name asc;
-
-else
-select
-    *
-from
-    Staffs
-order by
-    Full_Name,
-    Last_Name desc;
-
-end if;
-
-end;
-
-=======
 -- List the staff by department (DONE)
 -- create procedure SP_ListStaffByDepartment (in Department_Id int) begin
 -- select
@@ -168,14 +143,15 @@ end;
 --     staffs.last_name desc;
 -- end if;
 -- end;
->>>>>>> origin/dev-DongPham
+>> >> >> >> > Temporary merge branch 2
 -- Update staff info
 create procedure SP_UpdateStaffInfo (
     in Staff_Id int,
-    in Job_Type enum ('Doctor', 'Nurse', 'Admin'),
+    in Job_Type enum('Doctor', 'Nurse', 'Admin'),
     in Salary decimal(10, 2),
     in Department_Id int
-) begin start transaction;
+) begin
+start transaction;
 
 update staffs
 set
@@ -187,9 +163,18 @@ where
 
 -- Also save information to Staff_Job_History
 insert into
-    Staff_Job_History (staff_id, job_type, salary, department_id)
-values
-    (Staff_Id, Job_Type, Salary, Department_Id);
+    Staff_Job_History (
+        staff_id,
+        job_type,
+        salary,
+        department_id
+    )
+values (
+        Staff_Id,
+        Job_Type,
+        Salary,
+        Department_Id
+    );
 
 commit;
 
@@ -249,10 +234,7 @@ call SP_UpdateStaffSchedule (
     "2024-08-18 10:01:00"
 );
 
-select
-    *
-from
-    appointments;
+select * from appointments;
 
 -- Appointment
 -- DONG
