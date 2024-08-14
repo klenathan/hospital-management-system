@@ -51,8 +51,8 @@ END;
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
 SELECT
-    s.first_name,
-    s.last_name,
+    s.*,
+    a.purpose,
     a.start_time,
     a.end_time
 FROM

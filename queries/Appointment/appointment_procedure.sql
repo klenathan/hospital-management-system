@@ -19,7 +19,7 @@ SELECT
     ) as busy
 FROM
     appointments a
-    LEFT JOIN staffs s ON s.id = a.staff_id
+    JOIN staffs s ON s.id = a.staff_id
     AND s.deleted = 0
 WHERE
     s.job_type = 'Doctor'
