@@ -9,18 +9,39 @@ import router from "./routes/router";
 
 import * as swaggerUi from "swagger-ui-express";
 import * as swaggerDocs from "./swagger/swagger.json";
+import protectedRouteMiddleware from "./middlewares/protectedRoutes";
 
 const port = CONFIG.port;
 const app: Express = express();
 
+app.disable("x-powered-by");
+
 // logger middleware
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  const time = new Date(Date.now()).toISOString();
-  console.log(`${time}: [${req.method}] ${(req.hostname, req.path)}`);
+app.use((_req: Request, res: Response, next: NextFunction) => {
+  res.locals.startTime = Date.now();
   next();
 });
 
-app.use("/api", router);
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.on("finish", () => {
+    const time = new Date(Date.now()).toISOString();
+    const timeDelta = Date.now() - res.locals.startTime;
+    const codeStr = res.statusCode >= 400 ? 31 : 32;
+    const log = `${time}: [${req.method}] ${(req.hostname, req.path)} `;
+
+    var output =
+      log + `\x1b[${codeStr}m${res.statusCode} \x1b[0m` + ` ${timeDelta}ms`;
+    console.log(output);
+  });
+
+  next();
+});
+
+//// Auth Header
+
+//// SERVICE API
+
+app.use("/api", protectedRouteMiddleware, router);
 
 //// SWAGGER
 

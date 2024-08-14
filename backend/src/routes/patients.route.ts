@@ -8,6 +8,7 @@ const patientService = new PatientService();
 patientRouter.get("/", async (_: Request, res: Response) => {
   try {
     const patients = await patientService.getAllPatients();
+
     return res.json(patients);
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
@@ -27,19 +28,19 @@ patientRouter.post("/", (_: Request, res: Response) => {
                 $allergies: 'peanut'
             }
     } */
-  return res.send({ message: "GET patients" });
+  return res.json({ message: "GET patients" }).status(200);
 });
 
 patientRouter.put("/:id", (_: Request, res: Response) => {
   // #swagger.summary = 'Update Patient info'
   // #swagger.parameters['id'] = { description: 'Patient ID' }
-  return res.send({ message: "GET patients" });
+  return res.json({ message: "GET patients" }).status(200);
 });
 
 patientRouter.delete("/:id", (_: Request, res: Response) => {
   // #swagger.summary = '(Soft) Delete patient info'
   // #swagger.parameters['id'] = { description: 'Patient ID' }
-  return res.send({ message: "GET patients" });
+  return res.json({ message: "GET patients" }).status(200);
 });
 
 export default patientRouter;

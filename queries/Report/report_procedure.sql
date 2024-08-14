@@ -16,8 +16,8 @@ BEGIN
         t.treatment_details
     FROM
         treatments t
-        LEFT JOIN `Patients` p ON p.id = t.patient_id AND p.deleted = 0
-        LEFT JOIN staffs s ON s.id = t.staff_id AND s.deleted = 0
+        JOIN `Patients` p ON p.id = t.patient_id AND p.deleted = 0
+        JOIN staffs s ON s.id = t.staff_id AND s.deleted = 0
     WHERE
         t.treatment_date BETWEEN fromDate AND toDate
         AND (patientID IS NULL OR t.patient_id = patientID)
@@ -35,8 +35,7 @@ CREATE PROCEDURE R_ViewOneOrManyDoctorWorkByDuration(in staffID int, in fromDate
 SELECT s.first_name, s.last_name, s.job_type, COUNT(a.id) as appointment_nums, COUNT(t.id) as treatment_nums
 FROM staffs s
 LEFT JOIN appointments a ON a.staff_id = s.id AND a.start_time <= toDate AND a.end_time >= fromDate AND a.deleted = 0
-LEFT JOIN treatments t on t.staff_id = s.id AND t.treatment_date BETWEEN fromDate AND toDate AND t.deleted = 0
+JOIN treatments t on t.staff_id = s.id AND t.treatment_date BETWEEN fromDate AND toDate AND t.deleted = 0
 WHERE s.job_type = 'Doctor' AND (staffID IS NULL OR s.id = staffID) AND s.deleted = 0
 GROUP BY s.id;
 END;
-

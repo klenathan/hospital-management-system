@@ -1,4 +1,7 @@
 -- View working schedule of all doctors for a given duration (with busy or available status)
+---- Index for this procedure
+CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
+
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (in fromDate DATETIME, in toDate DATETIME) BEGIN
 SELECT
     s.first_name,
