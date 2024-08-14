@@ -20,7 +20,7 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name ASC,
     s.last_name ASC;
 
 ELSE
@@ -31,14 +31,13 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name DESC,
     s.last_name DESC;
 
 END IF;
 
 END;
 
--- View staff schedule by ID
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
 SELECT
     s.first_name,
