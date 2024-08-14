@@ -1,6 +1,7 @@
 -- 4. Stored procedures & transaction management
 -- Patient
--- Add new patient
+-- Add new patient 
+-- TODO: Should use function
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
     in Last_Name varchar(50),
@@ -33,76 +34,66 @@ commit;
 
 end;
 
--- Find patient by name or ID -> split into 2 procedures
-create procedure SP_SearchPatientByNameOrId (in patient_id int, in Patient_Name varchar(50)) begin if patient_id is not null then
-select
-    *
-from
-    Patients
-where
-    `id` = patient_id;
-
-else
-select
-    *
-from
-    Patients
-where
-    First_Name like ('%', Patient_Name, '%')
-    or Last_Name like ('%', Patient_Name, '%');
-
-end if;
-
-end;
-
--- Add treatment -> ok
+-- Find patient by name or ID -> split into 2 procedures (Done)
+-- create procedure SP_SearchPatientByName (in Patient_Name varchar(50)) begin
+-- select
+--     *
+-- from
+--     Patients
+-- where
+--     `id` = patient_id;
+-- else
+-- select
+--     *
+-- from
+--     patients
+-- where
+--     patients.id = Patient_Id;
+-- end;
+-- Add treatment -> (Only doctor can add, change to function using transaction)
 create procedure SP_AddTreatment (
-    in PatientId int,
-    in StaffId int,
-    in TreatmentDate date,
-    in TreatmentDetails text
-) begin start transaction;
-
+    in Patient_Id int,
+    in Staff_Id int,
+    in Treatment_Date date,
+    in Treatment_Details text
+) begin
 insert into
-    Treatment_Records (
-        Patient_Id,
-        Staff_id,
-        Treatment_Date,
-        Treatment_Details
+    treatments (
+        patient_id,
+        staff_id,
+        treatment_date,
+        treatment_details
     )
 values
     (
-        PatientId,
-        StaffId,
-        TreatmentDate,
-        TreatmentDetails
+        Patient_Id,
+        Staff_Id,
+        Treatment_Date,
+        Treatment_Details
     );
-
-commit;
 
 end;
 
 -- Staff
 -- Add staff
+-- ASSIGN: Dong Thai imporve for login
 create procedure SP_AddStaff (
-    in Full_Name varchar(50),
+    in First_Name varchar(50),
     in Last_Name varchar(50),
-    in Job_Type varchar(50),
+    in Job_Type ENUM ('Doctor', 'Nurse', 'Admin'),
     in Qualification text,
-    in Salary decimal(10, 2),
     in Department_Id int,
-    in Schedule text
+    in Salary decimal(10, 2)
 ) begin start transaction;
 
 insert into
-    Staffs (
-        First_Name,
-        Last_Name,
-        Job_Type,
-        Qualification,
-        Salary,
-        Department_Id,
-        Schedule
+    staffs (
+        first_name,
+        last_name,
+        job_type,
+        qualification,
+        deparment_id,
+        salary
     )
 values
     (
@@ -110,120 +101,91 @@ values
         Last_Name,
         Job_Type,
         Qualification,
-        Salary,
         Department_Id,
-        Schedule
+        Salary
     );
 
 -- Also save information to Staff_Job_History 
 insert into
-    Staff_Job_History (
-        Staff_Id,
-        Job_Type,
-        Salary,
-        Department_Id,
-        Start_Date
-    )
+    staff_job_history (staff_id, job_type, salary, department_id)
 values
-    (
-        InsertId (),
-        Job_Type,
-        Salary,
-        Department_Id,
-        current_date()
-    );
+    (InsertId (), Job_Type, Salary, Department_Id);
 
 commit;
 
 end;
 
--- List the staff by department
-select
-    *
-from
-    Staffs
-where
-    department_id = DepartmentId;
-
--- List staff by name
-create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
-select
-    *
-from
-    Staffs
-order by
-    Full_Name,
-    Last_Name asc;
-
-else
-select
-    *
-from
-    Staffs
-order by
-    Full_Name,
-    Last_Name desc;
-
-end if;
-
-end;
-
+-- List the staff by department (DONE)
+-- create procedure SP_ListStaffByDepartment (in Department_Id int) begin
+-- select
+--     *
+-- from
+--     staffs
+-- where
+--     staffs.department_id = Department_Id;
+-- end;
+-- -- List staff by name
+-- create procedure SP_ListStaffByName (in p_order varchar(4)) begin if p_order = 'ASC' then
+-- select
+--     *
+-- from
+--     staffs
+-- order by
+--     staffs.first_name,
+--     staffs.last_name asc;
+-- else
+-- select
+--     *
+-- from
+--     staffs
+-- order by
+--     staffs.first_name,
+--     staffs.last_name desc;
+-- end if;
+-- end;
 -- Update staff info
 create procedure SP_UpdateStaffInfo (
-    in StaffId int,
-    in JobType varchar(50),
-    in salary decimal(10, 2),
-    in DepartmentId int
+    in Staff_Id int,
+    in Job_Type enum ('Doctor', 'Nurse', 'Admin'),
+    in Salary decimal(10, 2),
+    in Department_Id int
 ) begin start transaction;
 
-update Staffs
+update staffs
 set
-    Job_Type = JobType,
-    Salary = salary,
-    Department_Id = DepartmentId
+    staffs.job_type = Job_Type,
+    staffs.salary = Salary,
+    staffs.department_id = Department_Id
 where
-    `Staffs`.id = StaffId;
+    staffs.id = Staff_Id;
 
 -- Also save information to Staff_Job_History
 insert into
-    Staff_Job_History (
-        Staff_Id,
-        Job_Type,
-        Salary,
-        Department_Id,
-        Start_Date
-    )
+    Staff_Job_History (staff_id, job_type, salary, department_id)
 values
-    (
-        StaffId,
-        JobType,
-        salary,
-        DepartmentId,
-        current_date()
-    );
+    (Staff_Id, Job_Type, Salary, Department_Id);
 
 commit;
 
 end;
 
--- View staff's schedule
-create procedure SP_ViewStaffSchedule (in StaffId int) begin
-select
-    *
-from
-    Appointments
-where
-    Staff_Id = StaffId
-order by
-    Date_Time;
-
-end;
-
--- Update staff's schedule
+-- View staff's schedule (DONE)
+-- create procedure SP_ViewStaffSchedule (in Staff_Id int) begin
+-- select
+--     *
+-- from
+--     appointments
+-- where
+--     appointments.staff_id = Staff_Id
+-- order by
+--     appointments.start_time;
+-- end;
+-- Update staff's schedule (DONG)
 create procedure SP_UpdateStaffSchedule (
-    in StaffId int,
-    in AppointmentId int,
-    in NewDate_Time datetime
+    in Staff_Id int,
+    in Appointment_Id int,
+    in newStartTime datetime,
+    in newEndTime datetime
 ) begin declare Appointment_Count int;
 
 start transaction;
@@ -233,14 +195,16 @@ select
 from
     Appointments
 where
-    Staff_Id = StaffId
-    and Date_Time = NewDate_Time
-    and Appointment_Id != AppointmentId;
+    appointments.staff_id = Staff_Id
+    and appointments.start_time < newEndTime
+    and appointments.end_time > newStartTime
+    and appointments.id != Appointment_Id;
 
 if Appointment_Count = 0 then
-update Appointments
+update appointments
 set
-    Date_Time = NewDate_Time
+    appointments.start_time = newStartTime,
+    appointments.end_time = newEndTime
 where
     Appointment_Id = AppointmentId;
 
@@ -252,8 +216,21 @@ end if;
 
 end;
 
+call SP_UpdateStaffSchedule (
+    2,
+    2,
+    "2024-08-12 13:30:00",
+    "2024-08-18 10:01:00"
+);
+
+select
+    *
+from
+    appointments;
+
 -- Appointment
--- Schedule an appointment
+-- DONG
+-- Book an appointment with a doctor (for a given time, no more than one appointment for a doctor)
 create procedure SP_BookAppointment (
     in PatientId int,
     in StaffId int,
@@ -285,10 +262,146 @@ end if;
 
 end;
 
--- Cancel Appointment
+-- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
 create procedure SP_CancelAppoinment (in AppointmentId int) begin
 delete from Appointments
 where
-    Appointment_Id = AppointmentId;
+    appointments.id = Appointment_Id;
 
 end;
+
+-- MỚI ADD
+-- View working schedule of all doctors for a given duration (with busy or available status)
+-- create procedure SP_ViewDoctorsSchedule (in Start_Date datetime, in End_Date datetime) begin
+-- select
+--     staffs.id,
+--     staffs.first_name,
+--     staffs.last_name,
+--     appointments.start_time,
+--     appointments.end_time,
+--     case
+--         when appointments.start_time is null then 'available'
+--         else 'busy'
+--     end as status
+-- from
+--     staffs
+--     left join appointments on staffs.id = appointments.staff_id
+-- where
+--     staffs.job_type = 'Doctor'
+--     and appointments.start_time between Start_Date and End_Date
+-- order by
+--     3,
+--     2,
+--     4;
+-- end;
+-- -- Report
+-- -- View a patient treatment history for a given duration
+-- create procedure SP_ViewPatientTreatmentHistoryInDuration (
+--     in Patient_Id int,
+--     in Start_Date date,
+--     in End_Date date
+-- ) begin
+-- select
+--     *
+-- from
+--     treatments
+-- where
+--     treatments.patient_id = Patient_Id
+--     and treatments.treatment_date between Start_Date and End_Date;
+-- end;
+-- -- View all patient treatment in a given duration\
+-- create procedure SP_ViewAllPatientTreatments (in Start_Date date, in End_Date date) begin
+-- select
+--     *
+-- from
+--     treatments
+-- where
+--     treatments.treatment_date between Start_Date and End_Date;
+-- end;
+-- -- View job change history of a staff
+-- create procedure SP_ViewStaffJobChangeHistory (in Staff_Id int) begin
+-- select
+--     *
+-- from
+--     staff_job_history
+-- where
+--     staff_job_history.staff_id = Staff_Id
+-- order by
+--     staff_job_history.created_at desc;
+-- end;
+-- -- View the work of a doctor in a given duration
+-- create procedure SP_ViewDoctorWorkInDuration (
+--     in Doctor_Id int,
+--     in Start_Date date,
+--     in End_Date date
+-- ) begin
+-- select
+--     'Appointments' as work,
+--     appointments.start_time,
+--     appointments.end_time,
+--     appointments.purpose
+-- from
+--     appointments
+-- where
+--     appointments.staff_id = Doctor_Id
+--     and appointments.start_time between Start_Date and End_Date
+-- union all
+-- select
+--     'Treatments' as work,
+--     treatments.treatment_date,
+--     treatmennts.treatment_details
+-- from
+--     treatments
+-- where
+--     treatments.staff_id = Doctor_Id
+--     and treatments.treatment_date between Start_Dare and End_Date;
+-- end;
+-- -- View the work of all doctors in a given duration
+-- create procedure SP_ViewAllDoctorsWorkInDuration (in Start_Date date, in End_Date date) begin
+-- select
+--     'Appointments' as work,
+--     staffs.first_name,
+--     staffs.last_name,
+--     appointments.start_time,
+--     appointments.end_time,
+--     appointments.purpose
+-- from
+--     appointments
+--     join staffs on appointments.staff_id = staffs.id
+-- where
+--     staffs.job_type = 'Doctor'
+--     and appointments.start_time between Start_Date and End_Date
+-- union all
+-- select
+--     'Treatments' as work,
+--     staffs.first_name,
+--     staffs.last_name,
+--     treatments.treatment_date,
+--     treatments.treatment_details
+-- from
+--     treatments
+--     join staffs on treatments.staff_id = staffs.id
+-- where
+--     staffs.job_type = 'Doctor'
+--     and treatments.treatment_date between Start_Date and End_Date;
+-- end;
+-- select
+--     'Appointments' as work,
+--     appointments.start_time,
+--     appointments.end_time,
+--     appointments.purpose
+-- from
+--     appointments
+-- where
+--     appointments.staff_id = Doctor_Id
+--     and appointments.start_time between '2024-08-11' and End_Date
+-- union all
+-- select
+--     'Treatments' as work,
+--     treatments.treatment_date,
+--     treatmennts.treatment_details
+-- from
+--     treatments
+-- where
+--     treatments.staff_id = 1
+--     and treatments.treatment_date between Start_Dare and End_Date;
