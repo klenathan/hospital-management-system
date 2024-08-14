@@ -340,7 +340,7 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "Department ID"
+            "description": "Staff ID"
           }
         ],
         "responses": {
@@ -372,6 +372,36 @@
         }
       }
     },
+    "/api/appointment/schedule": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11 12:00:00",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12 12:30:00",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/treatment/": {
       "get": {
         "tags": [
@@ -386,13 +416,94 @@
         }
       }
     },
-    "/api/report/": {
+    "/api/report/patientTreatmentHistory": {
       "get": {
         "tags": [
           "Report"
         ],
-        "summary": "Get reports",
+        "summary": "View a patient treatment history for a given duration & View all patient treatment in a given duration",
         "description": "",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/jobHistory/{staffId}": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View job change history of a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/doctorWorkHistory": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View the work of a doctor in a given duration & View the work of all doctors in a given duratio",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

@@ -3,6 +3,7 @@ import AppointmentService from "../services/appointments.service";
 const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
+
 appointmentRouter.get("/", async (req: Request, res: Response) => {
   /*  
   #swagger.summary = "Get all appointments"
@@ -21,6 +22,34 @@ appointmentRouter.get("/", async (req: Request, res: Response) => {
       }
     }
     const appointments = await appointmentService.getAllAppointments(staffId);
+    res.send(appointments);
+  } catch (e) {
+    res.json({ error: (e as Error).message }).status(400);
+  }
+});
+
+appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = "View working schedule of all doctors for a given duration (with busy or available status)"
+  
+  #swagger.parameters['startTime'] = {
+            in: 'query',
+            description: 'Query start time',
+            default: '2024-08-11 12:00:00'
+    } 
+            
+  #swagger.parameters['endTime'] = {
+        in: 'query',
+        description: 'Query end time',
+        default: '2024-08-12 12:30:00'
+    } */
+  try {
+    const startTime = req.query["startTime"] as string;
+    const endTime = req.query["endTime"] as string;
+    const appointments = await appointmentService.getAllDoctorSchedule(
+      startTime,
+      endTime
+    );
     res.send(appointments);
   } catch (e) {
     res.json({ error: (e as Error).message }).status(400);

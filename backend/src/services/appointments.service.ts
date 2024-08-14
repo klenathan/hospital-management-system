@@ -24,4 +24,21 @@ export default class AppointmentService {
       data: rows[0],
     };
   }
+
+  public async getAllDoctorSchedule(
+    startTime: string,
+    endTime: string
+  ): Promise<GetRequestResult> {
+    const conn = await connection;
+    const [rows, _fields] = await conn.query<
+      ProcedureCallPacket<RowDataPacket[]>
+    >(`call A_ViewDoctorScheduleByDuration("${startTime}", "${endTime}")`);
+
+    return {
+      queryResult: {
+        count: rows[0].length,
+      },
+      data: rows[0],
+    };
+  }
 }
