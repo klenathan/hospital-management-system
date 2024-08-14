@@ -149,7 +149,7 @@
         "tags": [
           "Patients"
         ],
-        "summary": "Get patient by ID",
+        "summary": "Search patient by ID",
         "description": "",
         "parameters": [
           {
@@ -184,7 +184,7 @@
         "tags": [
           "Patients"
         ],
-        "summary": "Get all patients",
+        "summary": "Search patients by name",
         "description": "",
         "parameters": [
           {
@@ -295,6 +295,52 @@
             "in": "query",
             "description": "Query order",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/staff/department/{depId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Get all staffs by department ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "depId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Department ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/staff/schedule/{staffId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Get a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Department ID"
           }
         ],
         "responses": {

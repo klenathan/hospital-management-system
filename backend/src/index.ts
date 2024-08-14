@@ -1,7 +1,7 @@
 // import dotenv from "dotenv";
 
-import CONFIG from "./config";
 import "module-alias/register";
+import CONFIG from "./config";
 
 import express, { Express, NextFunction, Request, Response } from "express";
 import path from "path";
@@ -9,7 +9,6 @@ import router from "./routes/router";
 
 import * as swaggerUi from "swagger-ui-express";
 import * as swaggerDocs from "./swagger/swagger.json";
-import protectedRouteMiddleware from "./middlewares/protectedRoutes";
 
 const port = CONFIG.port;
 const app: Express = express();
@@ -38,7 +37,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 //// SERVICE API
 
-app.use("/api", protectedRouteMiddleware, router);
+// protectedRouteMiddleware
+app.use("/api", router);
 
 //// SWAGGER
 

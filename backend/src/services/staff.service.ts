@@ -23,4 +23,34 @@ export default class StaffService {
       data: rows[0],
     };
   }
+
+  public async listStaffByDep(props: {
+    depId: number;
+  }): Promise<GetRequestResult> {
+    const conn = await connection;
+    const [rows, _fields] = await conn.query<
+      ProcedureCallPacket<RowDataPacket[]>
+    >(`CALL S_ListStaffByDepartmentID("${props.depId}")`);
+    return {
+      queryResult: {
+        count: rows[0].length,
+      },
+      data: rows[0],
+    };
+  }
+
+  public async getStaffSchedule(props: {
+    staffId: number;
+  }): Promise<GetRequestResult> {
+    const conn = await connection;
+    const [rows, _fields] = await conn.query<
+      ProcedureCallPacket<RowDataPacket[]>
+    >(`CALL S_ViewStaffScheduleByID("${props.staffId}")`);
+    return {
+      queryResult: {
+        count: rows[0].length,
+      },
+      data: rows[0],
+    };
+  }
 }

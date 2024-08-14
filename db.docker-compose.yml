@@ -22,18 +22,8 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db
       MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      MYSQL_PASSWORD:
     ports:
       - "3306:3306"
     volumes:
       - ./database/sql-data:/var/lib/mysql
-  app:
-    network_mode: host
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mysql
-    restart: always
