@@ -23,9 +23,10 @@ staffRouter.get("/", async (req: Request, res: Response) => {
     const staffs = await staffService.getAllStaffs({
       order: order as "asc" | "desc",
     });
-    res.send(staffs);
+    return res.send(staffs);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    console.log(e);
+    return res.status(400).json({ error: (e as Error).message });
   }
 });
 
@@ -42,9 +43,9 @@ staffRouter.get("/department/:depId", async (req: Request, res: Response) => {
     const staffs = await staffService.listStaffByDep({
       depId,
     });
-    res.send(staffs);
+    return res.send(staffs);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    return res.status(400).json({ error: (e as Error).message });
   }
 });
 
@@ -61,9 +62,9 @@ staffRouter.get("/schedule/:staffId", async (req: Request, res: Response) => {
     const staffs = await staffService.getStaffSchedule({
       staffId,
     });
-    res.send(staffs);
+    return res.send(staffs);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    return res.status(400).json({ error: (e as Error).message });
   }
 });
 

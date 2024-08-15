@@ -17,7 +17,7 @@ const app: Express = express();
 
 app.disable("x-powered-by");
 
-app.use(cors());
+app.use(cors({}));
 
 // logger middleware
 app.use((req: Request, res: Response, next: NextFunction) => {

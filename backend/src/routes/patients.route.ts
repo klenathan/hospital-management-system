@@ -26,7 +26,7 @@ patientRouter.get("/", async (req: Request, res: Response) => {
     });
     return res.send(patients);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(500);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 
@@ -46,7 +46,7 @@ patientRouter.get("/id/:id", async (req: Request, res: Response) => {
     });
     return res.send(patients);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(500);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 
@@ -67,7 +67,7 @@ patientRouter.get("/name/:name", async (req: Request, res: Response) => {
     });
     return res.send(patients);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(500);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 

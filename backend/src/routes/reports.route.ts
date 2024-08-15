@@ -47,7 +47,7 @@ reportRouter.get(
       );
       res.send(appointments);
     } catch (e) {
-      res.json({ error: (e as Error).message }).status(400);
+      res.status(400).json({ error: (e as Error).message });
     }
   }
 );
@@ -69,7 +69,7 @@ reportRouter.get(
       });
       res.send(staffs);
     } catch (e) {
-      res.json({ error: (e as Error).message }).status(400);
+      res.status(400).json({ error: (e as Error).message });
     }
   }
 );
@@ -114,7 +114,7 @@ reportRouter.get("/doctorWorkHistory", async (req: Request, res: Response) => {
     );
     res.send(appointments);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 

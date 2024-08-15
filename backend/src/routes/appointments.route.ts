@@ -24,7 +24,7 @@ appointmentRouter.get("/", async (req: Request, res: Response) => {
     const appointments = await appointmentService.getAllAppointments(staffId);
     res.send(appointments);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 
@@ -52,7 +52,7 @@ appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
     );
     res.send(appointments);
   } catch (e) {
-    res.json({ error: (e as Error).message }).status(400);
+    res.status(400).json({ error: (e as Error).message });
   }
 });
 
