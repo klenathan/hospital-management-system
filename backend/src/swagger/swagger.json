@@ -2,20 +2,29 @@
   "swagger": "2.0",
   "info": {
     "title": "Hospital management system API",
-    "description": "A RMIT Database application assignment",
-    "version": "1.0.0"
+    "version": "v0.0.1",
+    "description": "A RMIT Database application assignment"
   },
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "authStr": {
+      "type": "apiKey",
+      "name": "x-auth-string",
+      "scheme": "bearer",
+      "in": "header"
+    }
+  },
   "paths": {
-    "/api/patient/": {
+    "/api/auth/publicToken": {
       "get": {
         "tags": [
-          "Patients"
+          "Auth"
         ],
+        "summary": "Get auth public key",
         "description": "",
         "responses": {
           "200": {
@@ -31,6 +40,40 @@
             "description": "Internal Server Error"
           }
         }
+      }
+    },
+    "/api/patient/": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Get all patients",
+        "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
       },
       "post": {
         "tags": [
@@ -42,7 +85,7 @@
           {
             "name": "body",
             "in": "body",
-            "description": "Add new user.",
+            "description": "Add new patients.",
             "schema": {
               "type": "object",
               "properties": {
@@ -80,6 +123,76 @@
                 "allergies"
               ]
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/patient/id/{id}": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Search patient by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/patient/name/{name}": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Search patients by name",
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient name (will search lastname and firstname)"
           }
         ],
         "responses": {
@@ -174,8 +287,62 @@
         "tags": [
           "Staff"
         ],
-        "summary": "Get staffs info",
+        "summary": "Get all staffs",
         "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/staff/department/{depId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Get all staffs by department ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "depId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Department ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/staff/schedule/{staffId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Get a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -190,6 +357,14 @@
         ],
         "summary": "Get all appointments",
         "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -197,13 +372,138 @@
         }
       }
     },
-    "/api/report/": {
+    "/api/appointment/schedule": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11 12:00:00",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12 12:30:00",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/treatment/": {
+      "get": {
+        "tags": [
+          "Treatments"
+        ],
+        "summary": "Get all treatments",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/patientTreatmentHistory": {
       "get": {
         "tags": [
           "Report"
         ],
-        "summary": "Get reports",
+        "summary": "View a patient treatment history for a given duration & View all patient treatment in a given duration",
         "description": "",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/jobHistory/{staffId}": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View job change history of a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/report/doctorWorkHistory": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View the work of a doctor in a given duration & View the work of all doctors in a given duratio",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -254,5 +554,10 @@
         "message"
       ]
     }
-  }
+  },
+  "security": [
+    {
+      "authStr": []
+    }
+  ]
 }

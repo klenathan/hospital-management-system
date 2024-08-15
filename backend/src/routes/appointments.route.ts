@@ -3,15 +3,56 @@ import AppointmentService from "../services/appointments.service";
 const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
-appointmentRouter.get("/", async (_: Request, res: Response) => {
-  // #swagger.summary = "Get all appointments"
-  try {
-    const appoinemtns = await appointmentService.getAllAppointments();
-    return res.send(appoinemtns);
-  } catch (error) {
-    console.log(error);
 
-    return res.send(500);
+appointmentRouter.get("/", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = "Get all appointments"
+  
+  #swagger.parameters['staffId'] = {
+            in: 'query',
+            description: 'Query Staff ID (INT)',
+    } */
+  try {
+    let staffId;
+
+    if (req.query["staffId"]) {
+      staffId = parseInt(req.query["staffId"] as string);
+      if (isNaN(staffId)) {
+        throw new Error("Invalid Query: staffId");
+      }
+    }
+    const appointments = await appointmentService.getAllAppointments(staffId);
+    res.send(appointments);
+  } catch (e) {
+    res.json({ error: (e as Error).message }).status(400);
+  }
+});
+
+appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = "View working schedule of all doctors for a given duration (with busy or available status)"
+  
+  #swagger.parameters['startTime'] = {
+            in: 'query',
+            description: 'Query start time',
+            default: '2024-08-11 12:00:00'
+    } 
+            
+  #swagger.parameters['endTime'] = {
+        in: 'query',
+        description: 'Query end time',
+        default: '2024-08-12 12:30:00'
+    } */
+  try {
+    const startTime = req.query["startTime"] as string;
+    const endTime = req.query["endTime"] as string;
+    const appointments = await appointmentService.getAllDoctorSchedule(
+      startTime,
+      endTime
+    );
+    res.send(appointments);
+  } catch (e) {
+    res.json({ error: (e as Error).message }).status(400);
   }
 });
 

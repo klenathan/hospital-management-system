@@ -1,10 +1,13 @@
 -- List the staff by department
-CREATE PROCEDURE S_ListStaffByDepartmentID () BEGIN
+CREATE PROCEDURE S_ListStaffByDepartmentID (in departmentID int) BEGIN
 SELECT
     *
 FROM
     staffs s
     JOIN departments d ON d.id = s.department_id
+    AND d.deleted = 0
+WHERE
+    s.department_id = departmentID
     AND s.deleted = 0;
 
 END;
@@ -18,7 +21,7 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name ASC,
     s.last_name ASC;
 
 ELSE
@@ -29,26 +32,61 @@ FROM
 WHERE
     s.deleted = 0
 ORDER BY
-    s.first_name,
+    s.first_name DESC,
     s.last_name DESC;
 
 END IF;
 
 END;
 
--- View staff schedule by ID
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
 SELECT
-    s.first_name,
-    s.last_name,
+    s.*,
+    a.purpose,
     a.start_time,
     a.end_time
 FROM
     appointments a
-    LEFT JOIN staffs s on s.id = a.id
-    AND a.deleted = 0
+    LEFT JOIN staffs s on s.id = a.staff_id
+    AND s.deleted = 0
 WHERE
     s.id = staff_id
     AND a.deleted = 0;
 
 END;
+
+create procedure SP_UpdateStaffSchedule (
+    in Staff_Id int,
+    in Appointment_Id int,
+    in newStartTime datetime,
+    in newEndTime datetime
+) begin 
+
+start transaction;
+
+select
+    count(*) into @Appointment_Count
+from
+    Appointments
+where
+    appointments.staff_id = Staff_Id
+    and appointments.start_time < newEndTime
+    and appointments.end_time > newStartTime
+    and appointments.id != Appointment_Id;
+
+if @Appointment_Count = 0 then
+update appointments
+set
+    appointments.start_time = newStartTime,
+    appointments.end_time = newEndTime
+where
+    Appointment_Id = AppointmentId;
+
+commit;
+
+else rollback;
+
+end if;
+
+end;
+

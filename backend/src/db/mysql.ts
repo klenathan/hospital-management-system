@@ -8,16 +8,18 @@ const access: PoolOptions = {
   database: CONFIG.dbDatabase,
 };
 
-const configBuilder = (username: string, password: string) => {
-  return {
-    host: CONFIG.dbHost,
-    user: username,
-    password: password,
-    database: CONFIG.dbDatabase,
-  };
-};
+// const configBuilder = (username: string, password: string) => {
+//   return {
+//     host: CONFIG.dbHost,
+//     user: username,
+//     password: password,
+//     database: CONFIG.dbDatabase,
+//   };
+// };
 
-console.log("[CREDENTIAL]", configBuilder("test", "test"));
+// console.log("[CREDENTIAL]", configBuilder("test", "test"));
+
+console.log(access);
 
 const connection = mysql.createConnection(access);
 
