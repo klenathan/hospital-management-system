@@ -5,6 +5,7 @@ import reportRouter from "./reports.route";
 import staffRouter from "./staffs.route";
 import authRouter from "./auth.route";
 import treatmentRouter from "./treatments.route";
+import departmentRouter from "./departments.route";
 
 const router = Router();
 
@@ -43,6 +44,12 @@ router.use(
   "/staff",
   staffRouter /**
     #swagger.tags = ['Staff']
+    */
+);
+router.use(
+  "/department",
+  departmentRouter /**
+    #swagger.tags = ['Department']
     */
 );
 

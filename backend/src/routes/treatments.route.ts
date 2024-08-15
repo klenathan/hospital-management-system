@@ -7,11 +7,9 @@ treatmentRouter.get("/", async (_: Request, res: Response) => {
   // #swagger.summary = "Get all treatments"
   try {
     const appoinemtns = await treatmentService.getAllTreatments();
-    return res.send(appoinemtns);
+    return res.status(200).send(appoinemtns);
   } catch (error) {
-    console.log(error);
-
-    return res.send(500);
+    return res.status(400).json({ error: (error as Error).message });
   }
 });
 
