@@ -33,3 +33,58 @@ WHERE
     AND s.deleted = 0;
 
 END;
+
+create procedure A_BookAppointmentWithDoctor (
+    in PatientId int,
+    in Staff_Id int,
+    in newStartTime datetime,
+    in newEndTime datetime,
+    in purpose text
+) begin declare Appointment_Count int;
+
+start transaction;
+
+select
+    count(*) into Appointment_Count
+from
+    appointments ap
+    join staffs s on s.id = ap.staff_id
+where
+    ap.staff_id = Staff_Id
+    and ap.start_time < newEndTime
+    and ap.end_time > newStartTime
+    and s.job_type = 'Doctor';
+
+if Appointment_Count > 0 then SIGNAL SQLSTATE '2201R'
+SET
+    MESSAGE_TEXT = 'Trung lich',
+    MYSQL_ERRNO = 1001;
+
+ELSEIF newStartTime = newEndTime then SIGNAL SQLSTATE '2201R'
+SET
+    MESSAGE_TEXT = 'INVALID TIME FRAME',
+    MYSQL_ERRNO = 1001;
+
+else
+insert into
+    Appointments (
+        patient_id,
+        staff_id,
+        start_time,
+        end_time,
+        purpose
+    )
+values
+    (
+        PatientId,
+        Staff_Id,
+        newStartTime,
+        newEndTime,
+        purpose
+    );
+
+commit;
+
+end if;
+
+end;

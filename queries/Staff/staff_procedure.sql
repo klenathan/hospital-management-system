@@ -54,3 +54,39 @@ WHERE
     AND a.deleted = 0;
 
 END;
+
+create procedure SP_UpdateStaffSchedule (
+    in Staff_Id int,
+    in Appointment_Id int,
+    in newStartTime datetime,
+    in newEndTime datetime
+) begin 
+
+start transaction;
+
+select
+    count(*) into @Appointment_Count
+from
+    Appointments
+where
+    appointments.staff_id = Staff_Id
+    and appointments.start_time < newEndTime
+    and appointments.end_time > newStartTime
+    and appointments.id != Appointment_Id;
+
+if @Appointment_Count = 0 then
+update appointments
+set
+    appointments.start_time = newStartTime,
+    appointments.end_time = newEndTime
+where
+    Appointment_Id = AppointmentId;
+
+commit;
+
+else rollback;
+
+end if;
+
+end;
+

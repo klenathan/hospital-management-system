@@ -228,6 +228,13 @@ end if;
 end;
 
 call SP_UpdateStaffSchedule (
+    1,
+    1,
+    '2024-08-11 13:00:00',
+    '2024-08-11 13:01:00'
+);
+
+call SP_UpdateStaffSchedule (
     2,
     2,
     "2024-08-12 13:30:00",

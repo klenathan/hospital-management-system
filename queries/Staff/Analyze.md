@@ -29,3 +29,15 @@
 ```
 -> Rows fetched before execution  (cost=0..0 rows=1) (actual time=100e-6..200e-6 rows=1 loops=1)
 ```
+
+```
+-> Aggregate: count(0)  (cost=1.19 rows=1) (actual time=0.0694..0.0694 rows=1 loops=1)
+    -> Filter: ((ap.staff_id = 2) and (ap.start_time < TIMESTAMP'2024-08-18 10:01:00') and (ap.end_time > TIMESTAMP'2024-08-12 13:30:00') and (ap.id <> 2))  (cost=1.11 rows=0.75) (actual time=0.0366..0.0377 rows=1 loops=1)
+        -> Index range scan on ap using PRIMARY over (id < 2) OR (2 < id)  (cost=1.11 rows=3) (actual time=0.0123..0.0185 rows=3 loops=1)
+
+
+-> Aggregate: count(0)  (cost=1.19 rows=1) (actual time=0.0299..0.03 rows=1 loops=1)
+    -> Filter: ((ap.deleted = 0) and (ap.staff_id = 2) and (ap.start_time < TIMESTAMP'2024-08-18 10:01:00') and (ap.end_time > TIMESTAMP'2024-08-12 13:30:00') and (ap.id <> 2))  (cost=1.11 rows=0.75) (actual time=0.0253..0.0272 rows=1 loops=1)
+        -> Index range scan on ap using PRIMARY over (id < 2) OR (2 < id)  (cost=1.11 rows=3) (actual time=0.0146..0.0234 rows=3 loops=1)
+
+```
