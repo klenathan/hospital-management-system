@@ -1,9 +1,9 @@
 -- Use function for return the status of function (SUCCESS | FAIL)
--- Add new patient 
+-- Add new patient
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
     in Last_Name varchar(50),
-    in DOB date,
+    in date_of_birth date,
     in Contact_Info varchar(255),
     in Address varchar(255),
     in Allergies text
@@ -13,7 +13,7 @@ insert into
     Patients (
         First_Name,
         Last_Name,
-        DOB,
+        date_of_birth,
         Contact_Info,
         Address,
         Allergies
@@ -22,7 +22,7 @@ values
     (
         First_Name,
         Last_Name,
-        DOB,
+        date_of_birth,
         Contact_Info,
         Address,
         Allergies
