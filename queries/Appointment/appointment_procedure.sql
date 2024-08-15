@@ -5,8 +5,8 @@ CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (in fromDate DATETIME, in toDate DATETIME) BEGIN
-SELECT 
-DISTINCT (s.id),
+SELECT DISTINCT
+    (s.id),
     s.first_name,
     s.last_name,
     s.job_type,
@@ -16,7 +16,7 @@ DISTINCT (s.id),
     s.deleted,
     s.created_at,
     s.updated_at,
-    IF(
+    IF (
         (
             a.start_time <= toDate
             AND a.end_time >= fromDate
@@ -24,10 +24,12 @@ DISTINCT (s.id),
         TRUE,
         FALSE
     ) as busy
-FROM staffs s
+FROM
+    staffs s
     LEFT JOIN appointments a ON s.id = a.staff_id
     AND a.deleted = 0
 WHERE
     s.job_type = 'Doctor'
     AND s.deleted = 0;
+
 END;

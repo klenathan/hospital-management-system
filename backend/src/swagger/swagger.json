@@ -7,9 +7,7 @@
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "securityDefinitions": {
     "authStr": {
       "type": "apiKey",
@@ -21,9 +19,7 @@
   "paths": {
     "/api/auth/publicToken": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Get auth public key",
         "description": "",
         "responses": {
@@ -44,11 +40,17 @@
     },
     "/api/patient/": {
       "get": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "Get all patients",
         "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          }
+        ],
         "parameters": [
           {
             "name": "order",
@@ -71,20 +73,22 @@
             "schema": {
               "$ref": "#/definitions/serverErrSchema"
             },
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
             "description": "Internal Server Error"
           }
         }
       },
       "post": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "Create new patients",
         "description": "",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "description": "Add new patients.",
             "description": "Add new patients.",
             "schema": {
               "type": "object",
@@ -146,9 +150,7 @@
     },
     "/api/patient/id/{id}": {
       "get": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "Search patient by ID",
         "description": "",
         "parameters": [
@@ -181,9 +183,7 @@
     },
     "/api/patient/name/{name}": {
       "get": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "Search patients by name",
         "description": "",
         "parameters": [
@@ -216,9 +216,7 @@
     },
     "/api/patient/{id}": {
       "put": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "Update Patient info",
         "description": "",
         "parameters": [
@@ -249,9 +247,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Patients"
-        ],
+        "tags": ["Patients"],
         "summary": "(Soft) Delete patient info",
         "description": "",
         "parameters": [
@@ -284,55 +280,8 @@
     },
     "/api/staff/": {
       "get": {
-        "tags": [
-          "Staff"
-        ],
-        "summary": "Get all staffs",
-        "description": "",
-        "parameters": [
-          {
-            "name": "order",
-            "in": "query",
-            "description": "Query order",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/staff/department/{depId}": {
-      "get": {
-        "tags": [
-          "Staff"
-        ],
-        "summary": "Get all staffs by department ID",
-        "description": "",
-        "parameters": [
-          {
-            "name": "depId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "Department ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/staff/schedule/{staffId}": {
-      "get": {
-        "tags": [
-          "Staff"
-        ],
-        "summary": "Get a staff",
+        "tags": ["Staff"],
+        "summary": "Get staffs info",
         "description": "",
         "parameters": [
           {
@@ -352,9 +301,7 @@
     },
     "/api/appointment/": {
       "get": {
-        "tags": [
-          "Appointments"
-        ],
+        "tags": ["Appointments"],
         "summary": "Get all appointments",
         "description": "",
         "parameters": [
@@ -374,9 +321,7 @@
     },
     "/api/appointment/schedule": {
       "get": {
-        "tags": [
-          "Appointments"
-        ],
+        "tags": ["Appointments"],
         "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
         "description": "",
         "parameters": [
@@ -404,9 +349,7 @@
     },
     "/api/treatment/": {
       "get": {
-        "tags": [
-          "Treatments"
-        ],
+        "tags": ["Treatments"],
         "summary": "Get all treatments",
         "description": "",
         "responses": {
@@ -418,9 +361,7 @@
     },
     "/api/report/patientTreatmentHistory": {
       "get": {
-        "tags": [
-          "Report"
-        ],
+        "tags": ["Report"],
         "summary": "View a patient treatment history for a given duration & View all patient treatment in a given duration",
         "description": "",
         "parameters": [
@@ -454,9 +395,7 @@
     },
     "/api/report/jobHistory/{staffId}": {
       "get": {
-        "tags": [
-          "Report"
-        ],
+        "tags": ["Report"],
         "summary": "View job change history of a staff",
         "description": "",
         "parameters": [
@@ -477,9 +416,7 @@
     },
     "/api/report/doctorWorkHistory": {
       "get": {
-        "tags": [
-          "Report"
-        ],
+        "tags": ["Report"],
         "summary": "View the work of a doctor in a given duration & View the work of all doctors in a given duratio",
         "description": "",
         "parameters": [
@@ -525,10 +462,7 @@
           "example": "password"
         }
       },
-      "required": [
-        "username",
-        "password"
-      ]
+      "required": ["username", "password"]
     },
     "serverErrSchema": {
       "type": "object",
@@ -538,9 +472,7 @@
           "example": "Internal server error"
         }
       },
-      "required": [
-        "message"
-      ]
+      "required": ["message"]
     },
     "errSchema": {
       "type": "object",
@@ -550,9 +482,7 @@
           "example": "Your error, not mine"
         }
       },
-      "required": [
-        "message"
-      ]
+      "required": ["message"]
     }
   },
   "security": [

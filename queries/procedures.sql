@@ -1,6 +1,6 @@
 -- 4. Stored procedures & transaction management
 -- Patient
--- Add new patient
+-- Add new patient 
 -- TODO: Should use function
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
@@ -9,16 +9,15 @@ create procedure SP_RegisterNewPatient (
     in Contact_Info varchar(255),
     in Address varchar(255),
     in Allergies text
-) begin start transaction;
-
+) begin
 insert into
-    Patients (
-        First_Name,
-        Last_Name,
-        DOB,
-        Contact_Info,
-        Address,
-        Allergies
+    patients (
+        first_name,
+        last_name,
+        date_of_birth,
+        contact_info,
+        address,
+        allergies
     )
 values
     (
@@ -29,8 +28,6 @@ values
         Address,
         Allergies
     );
-
-commit;
 
 end;
 
@@ -68,8 +65,10 @@ values
     (
         Patient_Id,
         Staff_Id,
+        Staff_Id,
         Treatment_Date,
         Treatment_Details
+    );
     );
 
 end;
@@ -204,7 +203,7 @@ start transaction;
 select
     count(*) into Appointment_Count
 from
-    Appointments
+    appointments
 where
     appointments.staff_id = Staff_Id
     and appointments.start_time < newEndTime
@@ -213,11 +212,12 @@ where
 
 if Appointment_Count = 0 then
 update appointments
+update appointments
 set
     appointments.start_time = newStartTime,
     appointments.end_time = newEndTime
 where
-    Appointment_Id = AppointmentId;
+    appointments.id = Appointment_Id;
 
 commit;
 
@@ -236,12 +236,36 @@ call SP_UpdateStaffSchedule (
 
 select * from appointments;
 
+call SP_UpdateStaffSchedule (
+    2,
+    2,
+    "2024-08-12 13:30:00",
+    "2024-08-18 10:01:00"
+);
+
+select
+    *
+from
+    appointments;
+
+call SP_UpdateStaffSchedule (
+    2,
+    2,
+    "2024-08-12 13:30:00",
+    "2024-08-18 10:01:00"
+);
+
+select
+    *
+from
+    appointments;
+
 -- Appointment
 -- DONG
 -- Book an appointment with a doctor (for a given time, no more than one appointment for a doctor)
 create procedure SP_BookAppointment (
-    in PatientId int,
-    in StaffId int,
+    in Patient_Id int,
+    in Staff_Id int,
     in DateTime datetime,
     in purpose text
 ) begin declare Apointment_Count int;
@@ -251,16 +275,16 @@ start transaction;
 select
     count(*) into Appointment_Count
 from
-    Appointments
+    appointments
 where
-    Staff_Id = StaffId
-    and Date_Time = DateTime;
+    appointments.staff_id = Staff_Id
+    and appointments.start_time = DateTime;
 
 if Appointment_Count = 0 then
 insert into
-    Appointments (Patient_Id, Staff_Id, Date_Time, Purpose)
+    appointments (patient_id, staff_id, start_time, purpose)
 values
-    (PatientId, StaffId, DateTime, purpose);
+    (Patient_Id, Staff_Id, DateTime, Purpose);
 
 commit;
 
@@ -270,6 +294,133 @@ end if;
 
 end;
 
+-- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
+<<<<<<< HEAD
+-- Cancel Appointment
+create procedure SP_CancelAppoinment (in Appointment_Id int) begin
+delete from appointments
+where
+    appointments.id = Appointment_Id;
+
+end;
+
+
+-- MỚI ADD
+
+-- View working schedule of all doctors for a given duration (with busy or available status)
+create procedure SP_ViewDoctorsSchedule (in Start_Date datetime, in End_Date datetime) begin
+select
+    staffs.id,
+    staffs.first_name,
+    staffs.last_name,
+    appointments.start_time,
+    appointments.end_time,
+case 
+    when 
+	appointments.start_time is null then 'available'
+    else 'busy'
+    end as status
+from staffs
+left join appointments on staffs.id = appointments.staff_id
+where 
+	staffs.job_type = 'Doctor'
+	and appointments.start_time between Start_Date and End_Date
+order by 3, 2, 4;
+end;
+		
+
+-- Report
+
+-- View a patient treatment history for a given duration
+create procedure SP_ViewPatientTreatmentHistoryInDuration (in Patient_Id int, in Start_Date date, in End_Date date) begin
+select
+	*
+from 
+	treatments
+where
+	treatments.patient_id = Patient_Id
+    and treatments.treatment_date between Start_Date and End_Date;
+end;
+
+-- View all patient treatment in a given duration\
+create procedure SP_ViewAllPatientTreatments (in Start_Date date, in End_Date date) begin
+select
+	*
+from 
+	treatments
+where
+	treatments.treatment_date between Start_Date and End_Date;
+end;
+
+-- View job change history of a staff
+create procedure SP_ViewStaffJobChangeHistory (in Staff_Id int) begin
+select 
+	*
+from 
+	staff_job_history
+where
+	staff_job_history.staff_id = Staff_Id
+order by
+	staff_job_history.created_at desc;
+end;
+
+-- View the work of a doctor in a given duration
+create procedure SP_ViewDoctorWorkInDuration (in Doctor_Id int, in Start_Date date, in End_Date date) begin
+select
+    'Appointments' as work,
+    appointments.start_time,
+    appointments.end_time,
+    appointments.purpose
+from 
+	appointments
+where
+	appointments.staff_id = Doctor_Id
+    and appointments.start_time between Start_Date and End_Date
+union all
+select 
+	'Treatments' as work,
+	treatments.treatment_date,
+    treatmennts.treatment_details
+from 
+	treatments
+where
+	treatments.staff_id = Doctor_Id
+    and treatments.treatment_date between Start_Dare and End_Date;
+end;
+
+-- View the work of all doctors in a given duration
+create procedure SP_ViewAllDoctorsWorkInDuration (in Start_Date date, in End_Date date) begin
+select
+	'Appointments' as work,
+    staffs.first_name,
+    staffs.last_name,
+    appointments.start_time,
+    appointments.end_time,
+    appointments.purpose
+from
+	appointments
+join staffs on appointments.staff_id = staffs.id
+where
+	staffs.job_type = 'Doctor'
+    and appointments.start_time between Start_Date and End_Date
+union all
+select 
+	'Treatments' as work,
+    staffs.first_name,
+    staffs.last_name,
+    treatments.treatment_date,
+    treatments.treatment_details
+from
+	treatments
+join staffs on treatments.staff_id = staffs.id
+where
+	staffs.job_type = 'Doctor'
+    and treatments.treatment_date between Start_Date and End_Date;
+end;
+	
+    
+
+=======
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
 create procedure SP_CancelAppoinment (in AppointmentId int) begin
 delete from Appointments
