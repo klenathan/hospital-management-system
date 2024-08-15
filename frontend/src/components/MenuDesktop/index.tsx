@@ -1,6 +1,5 @@
-import { version } from '@/../package.json'
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
-import { ChevronRight, CircleUserRound, LineChart, LogOutIcon, Users, Hospital } from 'lucide-react'
+import { ChevronRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays } from 'lucide-react'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -66,16 +65,27 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
               } font-bold transition duration-500 ease-in-out w-4  h-4 2lg:w-3  2lg:h-3`}
           />
         </button>
+        <div className='z-10 flex justify-between items-center p-4 !pb-2'>
+          <NavLink
+            to='/'
+            className={` relative flex  items-center h-16 w-full ${expanded ? 'justify-start gap-5' : 'justify-between'
+              }`}
+          >
+            <div className={`flex justify-center items-center  ${expanded ? 'w-min' : 'w-full'}`}><Hospital /></div>
+            <h2
+              className={`font-semibold text-xl xl:text-2xl text-archivo text-foreground ${expanded ? ' w-max opacity-100' : '!w-0 opacity-0'
+                }`}
+            >
+              Hospital
+            </h2>
+          </NavLink>
+        </div>
 
-        <SidebarContext.Provider value={{ expanded }}>
-          <div className='px-3'>
-            <SidebarItem to='/' icon={<Hospital />} text='Hospital' />
-          </div>
-        </SidebarContext.Provider>
 
         <SidebarContext.Provider value={{ expanded }}>
           <div className='flex-1 px-3'>
-            <SidebarItem to='/' icon={<LineChart />} text='Analysis' />
+            <SidebarItem to='/staff' icon={<Users />} text='Staff' />
+            <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment ' />
             {/* {user.is_admin && (
               <>
                 <SidebarItem to='/admin' icon={<Users />} text='Accounts' />

@@ -1,13 +1,13 @@
-import Dashboard from '@/layouts/Dashboard'
-// import Upload from '@/layouts/Upload'
+import AppointmentManagement from '@/layouts/AppointmentManagement';
+import StaffManagement from '@/layouts/StaffManagement';
 
 export const RouteKeys = {
-    dashboard: 'dashboard',
-    upload: 'upload'
+    staff: 'staff',
+    appointment: 'appointment',
 }
 
 export const RouteLayoutMap: Record<keyof typeof RouteKeys, { component: React.FunctionComponent; allowAll: boolean }> =
 {
-    dashboard: { component: Dashboard, allowAll: true },
-    upload: { component: Dashboard, allowAll: false }
+    staff: { component: StaffManagement, allowAll: true },
+    appointment: { component: AppointmentManagement, allowAll: true }
 }

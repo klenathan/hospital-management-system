@@ -2,7 +2,7 @@ import { version } from '@/../package.json'
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
 // import { Badge } from '@/components/ui/badge'
 // import { User } from '@/types/user'
-import { AlignRight, CircleUserRound, LineChart, LogOutIcon, Users } from 'lucide-react'
+import { AlignRight, CircleUserRound, LineChart, LogOutIcon, Users, Hospital, CalendarDays } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
@@ -52,9 +52,9 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
       <div className='flex justify-between items-center gap-4'>
         <div className='flex justify-between items-center'>
           <div className={`relative flex items-center w-full h-16 justify-start gap-5`}>
-            <img src='assets/cassavaSmile.svg' alt='logo cassava smile' className='h-[70%] aspect-square' />
+            <div className={`flex justify-center items-center`}><Hospital /></div>
             <h2 className={`font-semibold text-xl xl:text-2xl text-archivo text-foreground w-max opacity-100`}>
-              CassavaPrice
+              Hospital
             </h2>
           </div>
         </div>
@@ -68,7 +68,9 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
               <SheetHeader className='w-full'>
                 <SheetTitle></SheetTitle>
                 <SheetDescription>
-                  <SidebarItem to='/' icon={<LineChart />} text='Analysis' onClick={() => setIsSheetOpen(false)} />
+                  <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
+                  <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
+
                   {/* {user.is_admin && (
                      <>
                        <SidebarItem to='/admin' icon={<Users />} text='Accounts' onClick={() => setIsSheetOpen(false)} />
@@ -80,12 +82,6 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
                 <div className='relative flex items-center my-1 px-3 pt-2 rounded-md font-semibold transition-colors group'>
                   <CircleUserRound className='bg-primary rounded-full text-background' />
                   <div className={`flex justify-between items-center overflow-hidden transition-all flex-1 ml-3`}>
-                    {/* <div className='flex flex-col justify-start items-start'>
-                      <div className='font-semibold text-lg'>{user.username}</div>
-                      <Badge variant='outline' className={`${user.is_admin ? 'bg-lime-200' : 'bg-sky-200'} text-black`}>
-                        {user.is_admin ? 'Admin' : 'User'}
-                      </Badge>
-                    </div> */}
                   </div>
                 </div>
                 <SidebarItem
