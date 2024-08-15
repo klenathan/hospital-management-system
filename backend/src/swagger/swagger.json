@@ -62,9 +62,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
@@ -119,8 +116,7 @@
                 "last_name",
                 "date_of_birth",
                 "contact_info",
-                "address",
-                "allergies"
+                "address"
               ]
             }
           }
@@ -130,9 +126,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
@@ -165,9 +158,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
@@ -200,9 +190,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
@@ -300,6 +287,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -323,6 +313,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -346,6 +339,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -368,6 +364,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -398,6 +397,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -448,6 +450,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -471,6 +476,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -507,6 +515,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }

@@ -45,9 +45,9 @@ reportRouter.get(
         startTime,
         endTime
       );
-      res.send(appointments);
+      return res.status(200).send(appointments);
     } catch (e) {
-      res.status(400).json({ error: (e as Error).message });
+      return res.status(400).json({ error: (e as Error).message });
     }
   }
 );
@@ -67,9 +67,9 @@ reportRouter.get(
       const staffs = await reportService.getStaffHistory({
         staffId,
       });
-      res.send(staffs);
+      return res.status(200).send(staffs);
     } catch (e) {
-      res.status(400).json({ error: (e as Error).message });
+      return res.status(400).json({ error: (e as Error).message });
     }
   }
 );
@@ -112,9 +112,9 @@ reportRouter.get("/doctorWorkHistory", async (req: Request, res: Response) => {
       startTime,
       endTime
     );
-    res.send(appointments);
+    return res.status(200).send(appointments);
   } catch (e) {
-    res.status(400).json({ error: (e as Error).message });
+    return res.status(400).json({ error: (e as Error).message });
   }
 });
 

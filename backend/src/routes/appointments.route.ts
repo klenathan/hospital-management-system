@@ -22,7 +22,7 @@ appointmentRouter.get("/", async (req: Request, res: Response) => {
       }
     }
     const appointments = await appointmentService.getAllAppointments(staffId);
-    res.send(appointments);
+    res.status(200).send(appointments);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }
@@ -50,7 +50,7 @@ appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
       startTime,
       endTime
     );
-    res.send(appointments);
+    res.status(200).send(appointments);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }

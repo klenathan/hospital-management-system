@@ -24,7 +24,7 @@ patientRouter.get("/", async (req: Request, res: Response) => {
     const patients = await patientService.getAllPatients({
       order: order as "asc" | "desc",
     });
-    return res.send(patients);
+    return res.status(200).send(patients);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }
@@ -44,7 +44,7 @@ patientRouter.get("/id/:id", async (req: Request, res: Response) => {
     const patients = await patientService.getPatientByID({
       id,
     });
-    return res.send(patients);
+    return res.status(200).send(patients);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }
@@ -62,17 +62,18 @@ patientRouter.get("/name/:name", async (req: Request, res: Response) => {
       throw new Error("Missing `Name` param");
     }
 
-    const patients = await patientService.getPatientByName({
+    await patientService.getPatientByName({
       name,
     });
-    return res.send(patients);
+    return res.status(200).json({ status: "success" });
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }
 });
 
-patientRouter.post("/", (_: Request, res: Response) => {
+patientRouter.post("/", async (req: Request, res: Response) => {
   // #swagger.summary = 'Create new patients'
+
   /*  #swagger.parameters['body'] = {
             in: 'body',
             description: 'Add new patients.',
@@ -82,10 +83,25 @@ patientRouter.post("/", (_: Request, res: Response) => {
                 $date_of_birth: '01-01-2000',
                 $contact_info: '0912789JQK',
                 $address: 'Nguyen Van Linh',
-                $allergies: 'peanut'
+                allergies: 'peanut'
             }
     } */
-  return res.json({ message: "POST patients" }).status(200);
+  try {
+    const body = req.body;
+    const dobParsed = new Date(body.date_of_birth).toISOString().split("T")[0];
+
+    const result = await patientService.createNewPatient({
+      firstName: body.first_name,
+      lastName: body.last_name,
+      dob: dobParsed,
+      contactInfo: body.contact_info,
+      address: body.address,
+      allergies: body.allergies,
+    });
+    return res.status(200).send(result);
+  } catch (e) {
+    return res.status(400).json({ error: (e as Error).message });
+  }
 });
 
 patientRouter.put("/:id", (_: Request, res: Response) => {

@@ -1,4 +1,8 @@
-import { RowDataPacket, ProcedureCallPacket } from "mysql2/promise";
+import {
+  RowDataPacket,
+  ProcedureCallPacket,
+  ResultSetHeader,
+} from "mysql2/promise";
 import connection from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
@@ -49,5 +53,29 @@ export default class PatientService {
       },
       data: rows[0],
     };
+  }
+
+  public async createNewPatient(props: {
+    firstName: string;
+    lastName: string;
+    dob: string;
+    contactInfo: string;
+    address: string;
+    allergies?: string;
+  }): Promise<any> {
+    const conn = await connection;
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL SP_RegisterNewPatient(
+      "${props.firstName}",
+      "${props.lastName}",
+      "${props.dob}",
+      "${props.contactInfo}",
+      "${props.address}",
+      "${props.allergies ?? "None"}",
+      )`);
+
+    return true;
   }
 }
