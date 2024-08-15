@@ -32,10 +32,10 @@ END;
 -- View the work of a doctor in a given duration
 -- View the work of all doctors in a given duration
 CREATE PROCEDURE R_ViewOneOrManyDoctorWorkByDuration(in staffID int, in fromDate DATETIME, in toDate DATETIME) Begin
-SELECT s.first_name, s.last_name, s.job_type, COUNT(a.id) as appointment_nums, COUNT(t.id) as treatment_nums
-FROM staffs s
-LEFT JOIN appointments a ON a.staff_id = s.id AND a.start_time <= toDate AND a.end_time >= fromDate AND a.deleted = 0
-JOIN treatments t on t.staff_id = s.id AND t.treatment_date BETWEEN fromDate AND toDate AND t.deleted = 0
-WHERE s.job_type = 'Doctor' AND (staffID IS NULL OR s.id = staffID) AND s.deleted = 0
+    SELECT s.first_name, s.last_name, s.job_type, COUNT(a.id) as appointment_nums, COUNT(t.id) as treatment_nums
+    FROM staffs s
+    LEFT JOIN appointments a ON a.staff_id = s.id AND a.start_time <= toDate AND a.end_time >= fromDate AND a.deleted = 0
+    LEFT JOIN treatments t on t.staff_id = s.id AND t.treatment_date BETWEEN fromDate AND toDate AND t.deleted = 0
+    WHERE s.job_type = 'Doctor' AND (staffID IS NULL OR s.id = staffID) AND s.deleted = 0
 GROUP BY s.id;
 END;

@@ -39,8 +39,6 @@ END IF;
 
 END;
 
-drop PROCEDURE S_ViewStaffScheduleByID;
-
 CREATE PROCEDURE S_ViewStaffScheduleByID (in staff_id int) begin
 SELECT
     s.*,
