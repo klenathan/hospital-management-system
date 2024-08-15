@@ -60,7 +60,7 @@ SET
     MESSAGE_TEXT = 'Trung lich',
     MYSQL_ERRNO = 1001;
 
-ELSEIF newStartTime = newEndTime then SIGNAL SQLSTATE '2201R'
+ELSEIF newStartTime >= newEndTime then SIGNAL SQLSTATE '2201R'
 SET
     MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
@@ -88,3 +88,14 @@ commit;
 end if;
 
 end;
+
+call A_BookAppointmentWithDoctor (
+    1,
+    1,
+    "2024-08-15 16:30:00",
+    "2024-08-15 13:30:00",
+    "Bui Kham"
+);
+
+-- SELECT
+--     LAST_INSERT_ID ();
