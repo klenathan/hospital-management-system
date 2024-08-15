@@ -19,7 +19,6 @@ services:
   mysql:
     image: mysql:8.4.2
     container_name: mysql
-    network_mode: host
     command:
       - --mysql-native-password=ON
     environment:
@@ -32,7 +31,6 @@ services:
     volumes:
       - ./database/sql-data:/var/lib/mysql
   app:
-    network_mode: host
     build:
       context: ./backend
       dockerfile: Dockerfile
