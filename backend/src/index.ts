@@ -1,10 +1,12 @@
 // import dotenv from "dotenv";
 
 import "module-alias/register";
-import CONFIG from "./config";
 
 import express, { Express, NextFunction, Request, Response } from "express";
+import cors from "cors";
 import path from "path";
+
+import CONFIG from "./config";
 import router from "./routes/router";
 
 import * as swaggerUi from "swagger-ui-express";
@@ -14,6 +16,8 @@ const port = CONFIG.port;
 const app: Express = express();
 
 app.disable("x-powered-by");
+
+app.use(cors());
 
 // logger middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
