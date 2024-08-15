@@ -3,8 +3,8 @@ import { useAxios, useAxiosWithToken } from './useAxios'
 
 export const useQueryWithoutTokenAPI = <T,>(key: string[], url: string, options?: QueryOptions<T, unknown>) => {
   const fetchData = async (): Promise<T> => {
-    const response = await useAxios.get(url)
-    return response.data
+    const response = await useAxios.get(url);
+    return response.data;
   }
 
   const data = useQuery({

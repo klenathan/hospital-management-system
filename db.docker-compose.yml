@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   mongodb:
@@ -8,14 +8,13 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - ./database/mongo-data:/data/db
 
   mysql:
     image: mysql:8.4.2
     container_name: mysql
-    network_mode: host
     command:
       - --mysql-native-password=ON
     environment:
@@ -24,6 +23,6 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD:
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - ./database/sql-data:/var/lib/mysql

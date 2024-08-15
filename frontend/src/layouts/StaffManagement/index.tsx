@@ -1,226 +1,260 @@
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { MoreHorizontal, Plus, CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MoreHorizontal } from 'lucide-react';
 import { StaffMember } from '@/types/staffs';
-import { Department } from '@/types/staffs';
+import { Department } from '@/types/department';
+import { Schedule } from '@/types/schedule';
+
 import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import ScheduleForm from '@/components/ScheduleForm';
+
+import {
+    Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
+} from '@/components/ui/pagination';
 
 export default function StaffManagement() {
-    const [filterDepartment, setFilterDepartment] = useState<number | ''>('');
-    const [sortOrder, setSortOrder] = useState('asc');
+    const [sortField, setSortField] = useState<'first_name' | 'id'>('id');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedDepartment, setSelectedDepartment] = useState<number | 'all'>('all');
+    const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
+    // const [scheduleData, setScheduleData] = useState<any[]>([]); // Store multiple schedules
+    const itemsPerPage = 8;
 
-    const { data: staffList = [], isLoading: staffLoading } = useQueryWithoutTokenAPI<StaffMember[]>(['staff'], '/api/staff/');
-    const { data: departments = [], isLoading: departmentsLoading } = useQueryWithoutTokenAPI<Department[]>(['departments'], '/api/departments/');
+    type StaffListResponse = {
+        queryResult: {
+            count: number;
+        };
+        data: StaffMember[];
+    };
+    type DepartmentResponse = {
+        queryResult: {
+            count: number;
+        };
+        data: Department[];
+    };
+    type ScheduleResponse = {
+        queryResult: {
+            count: number;
+        };
+        data: Schedule[];
+    };
 
-    const filteredStaff = staffList
-        .filter(staff => filterDepartment ? staff.department_id === filterDepartment : true)
-        .sort((a, b) => sortOrder === 'asc' ? a.first_name.localeCompare(b.first_name) : b.first_name.localeCompare(a.first_name));
+    const { data: departmentListData, isLoading: departmentLoading } =
+        useQueryWithoutTokenAPI<DepartmentResponse>(['department'], '/api/department/');
 
-    if (staffLoading || departmentsLoading) {
+    const { data: staffListData, isLoading: staffLoading, refetch } =
+        useQueryWithoutTokenAPI<StaffListResponse>(
+            ['staff', selectedDepartment.toString()], selectedDepartment === 'all'
+            ? '/api/staff/'
+            : `/api/staff/department/${selectedDepartment}`
+        );
+
+    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithoutTokenAPI<ScheduleResponse>(
+        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : ''
+    );
+
+
+    // Ensure staffList is always an array
+    const staffList = Array.isArray(staffListData?.data) ? staffListData.data : [];
+
+    // Sort the staff list based on the sortField and sortOrder state
+    const sortedStaff = staffList.sort((a, b) => {
+        if (!sortField) {
+            // Default sorting by ID in ascending order when no sorting is selected
+            return a.id - b.id;
+        }
+
+        const aField = a[sortField as keyof StaffMember];
+        const bField = b[sortField as keyof StaffMember];
+
+        if (sortOrder === 'asc') {
+            return aField < bField ? -1 : 1;
+        } else {
+            return aField > bField ? -1 : 1;
+        }
+    });
+
+    // Pagination logic
+    const totalPages = Math.ceil(sortedStaff.length / itemsPerPage);
+    const paginatedStaff = sortedStaff.slice(
+        (currentPage - 1) * itemsPerPage, currentPage * itemsPerPage
+    );
+
+    useEffect(() => {
+        setCurrentPage(1); // Reset to first page when department or sorting changes
+        refetch(); // Refetch data when department is changed
+    }, [selectedDepartment, sortField, sortOrder]);
+
+    if (staffLoading || departmentLoading) {
         return <div>Loading...</div>;
     }
 
     return (
-        <div className="mx-auto p-6 container">
-            <h1 className="mb-6 font-bold text-2xl">Staff Management</h1>
+        <div className='flex-1 p-6'>
+            <h1 className='mb-6 font-bold text-2xl'>Staff Management</h1>
 
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex space-x-4">
-                    <Select onValueChange={(value) => setFilterDepartment(value === 'all' ? '' : parseInt(value))}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filter by Department" />
+            <div className='flex justify-between items-center mb-4'>
+                <div className='flex space-x-4'>
+                    {/* Filter by Department */}
+                    <Select
+                        onValueChange={(value) => setSelectedDepartment(value === 'all' ? 'all' : parseInt(value))}
+                    >
+                        <SelectTrigger className='w-[180px]'>
+                            <SelectValue placeholder='Filter by Department' />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Departments</SelectItem>
-                            {departments.map((dept) => (
-                                <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
+                            <SelectItem value='all'>All Departments</SelectItem>
+                            {departmentListData?.data.map(department => (
+                                <SelectItem
+                                    key={department.id}
+                                    value={department.id.toString()}
+                                >
+                                    {department.name}
+                                </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
-                    <Select onValueChange={setSortOrder}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Sort by Name" />
+
+                    {/* Sort by Options */}
+                    <Select
+                        defaultValue='none'
+                        onValueChange={(value) => {
+                            if (value === 'none') {
+                                setSortField('id');
+                                setSortOrder('asc'); // Default to ascending when no sorting is selected
+                            } else {
+                                setSortField(value as 'first_name');
+                                setSortOrder('asc'); // Reset to ascending when a new field is selected
+                            }
+                        }}
+                    >
+                        <SelectTrigger className='w-[180px]'>
+                            <SelectValue placeholder='Sort by' />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="asc">A-Z</SelectItem>
-                            <SelectItem value="desc">Z-A</SelectItem>
+                            <SelectItem value='none'>ID</SelectItem>
+                            <SelectItem value='first_name'>Name</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    {/* Sort Order */}
+                    <Select
+                        onValueChange={(value) => setSortOrder(value as 'asc' | 'desc')}
+                    >
+                        <SelectTrigger className='w-[180px]'>
+                            <SelectValue placeholder='Sort Order' />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='asc'>Ascending</SelectItem>
+                            <SelectItem value='desc'>Descending</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
-
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button>Add New Staff</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Add New Staff</DialogTitle>
-                            <DialogDescription>Enter the details of the new staff member</DialogDescription>
-                        </DialogHeader>
-                        <form className="space-y-4" onSubmit={(e) => {
-                            e.preventDefault();
-                            const form = e.target as HTMLFormElement;
-                            // Add new staff logic here
-                            form.reset();
-                        }}>
-                            <div className="space-y-2">
-                                <Label htmlFor="first_name">First Name</Label>
-                                <Input id="first_name" name="first_name" placeholder="Enter first name" required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="last_name">Last Name</Label>
-                                <Input id="last_name" name="last_name" placeholder="Enter last name" required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="department">Department</Label>
-                                <Select name="department" required>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a department" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {departments.map((dept) => (
-                                            <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <Button type="submit">Add Staff</Button>
-                        </form>
-                    </DialogContent>
-                </Dialog>
             </div>
 
             <Table>
                 <TableHeader>
                     <TableRow>
+                        <TableHead>ID</TableHead>
                         <TableHead>First Name</TableHead>
                         <TableHead>Last Name</TableHead>
-                        <TableHead>Department</TableHead>
+                        <TableHead>Job Type</TableHead>
+                        <TableHead>Qualifications</TableHead>
+                        <TableHead>Department ID</TableHead>
+                        <TableHead>Salary</TableHead>
                         <TableHead>Schedule</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {filteredStaff.map(staff => (
+                    {paginatedStaff.map((staff) => (
                         <TableRow key={staff.id}>
+                            <TableCell>{staff.id}</TableCell>
                             <TableCell>{staff.first_name}</TableCell>
                             <TableCell>{staff.last_name}</TableCell>
-                            <TableCell>{departments.find(dept => dept.id === staff.department_id)?.name || 'Unknown'}</TableCell>
-                            <TableCell>{format(new Date(staff.created_at), "PPP")}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell>{staff.job_type}</TableCell>
+                            <TableCell>{staff.qualifications}</TableCell>
+                            <TableCell>{staff.department_id}</TableCell>
+                            <TableCell>{staff.salary}</TableCell>
+                            <TableCell>{new Date(staff.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell className='text-right'>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button variant="ghost" className="p-0 w-8 h-8">
-                                            <span className="sr-only">Open menu</span>
-                                            <MoreHorizontal className="w-4 h-4" />
+                                        <Button
+                                            variant='ghost'
+                                            className='p-0 w-8 h-8'
+                                            onClick={() => setSelectedStaffId(staff.id)}
+                                        >
+                                            <span className='sr-only'>Open menu</span>
+                                            <MoreHorizontal className='w-4 h-4' />
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="max-w-3xl">
+                                    <DialogContent className='max-w-3xl'>
                                         <DialogHeader>
-                                            <DialogTitle>Staff Details</DialogTitle>
+                                            <DialogTitle>{staff.first_name + " " + staff.last_name}</DialogTitle>
                                         </DialogHeader>
-                                        <Tabs defaultValue="info" className="w-full">
+                                        <Tabs
+                                            defaultValue='info'
+                                            className='w-full'
+                                        >
                                             <TabsList>
-                                                <TabsTrigger value="info">Personal Info</TabsTrigger>
-                                                <TabsTrigger value="custom">Custom Objects</TabsTrigger>
+                                                <TabsTrigger value='info'>Personal Info</TabsTrigger>
+                                                <TabsTrigger value='schedule'>Schedule</TabsTrigger>
                                             </TabsList>
-                                            <TabsContent value="info">
-                                                <form className="space-y-4" onSubmit={(e) => {
-                                                    e.preventDefault();
-                                                    const form = e.target as HTMLFormElement;
-                                                    // Update staff info logic here
-                                                }}>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor="staff-first_name">First Name</Label>
-                                                        <Input id="staff-first_name" name="first_name" defaultValue={staff.first_name} />
+                                            <TabsContent value='info'>
+                                                <form
+                                                    className='space-y-4'
+                                                    onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        const form = e.target as HTMLFormElement;
+                                                        // Update staff info logic here
+                                                    }}
+                                                >
+                                                    <div className='space-y-2'>
+                                                        <Label htmlFor='staff-first_name'>First Name</Label>
+                                                        <Input
+                                                            id='staff-first_name'
+                                                            name='first_name'
+                                                            defaultValue={staff.first_name}
+                                                        />
                                                     </div>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor="staff-last_name">Last Name</Label>
-                                                        <Input id="staff-last_name" name="last_name" defaultValue={staff.last_name} />
+                                                    <div className='space-y-2'>
+                                                        <Label htmlFor='staff-last_name'>Last Name</Label>
+                                                        <Input
+                                                            id='staff-last_name'
+                                                            name='last_name'
+                                                            defaultValue={staff.last_name}
+                                                        />
                                                     </div>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor="staff-department">Department</Label>
-                                                        <Select name="department" defaultValue={staff.department_id.toString()}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Select a department" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {departments.map((dept) => (
-                                                                    <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                    <Button type="submit">Update Info</Button>
+                                                    <Button type='submit'>Update Info</Button>
                                                 </form>
                                             </TabsContent>
-                                            {/* <TabsContent value="custom">
-                                                <div className="space-y-4">
-                                                    <div className="flex justify-between items-center">
-                                                        <h3 className="font-semibold text-lg">Custom Objects</h3>
-                                                        <Dialog>
-                                                            <DialogTrigger asChild>
-                                                                <Button size="sm">
-                                                                    <Plus className="mr-2 w-4 h-4" />
-                                                                    Add Object
-                                                                </Button>
-                                                            </DialogTrigger>
-                                                            <DialogContent>
-                                                                <DialogHeader>
-                                                                    <DialogTitle>Add Custom Object</DialogTitle>
-                                                                    <DialogDescription>Add a new custom object for {staff.first_name} {staff.last_name}</DialogDescription>
-                                                                </DialogHeader>
-                                                                <form className="space-y-4" onSubmit={(e) => {
-                                                                    e.preventDefault();
-                                                                    const form = e.target as HTMLFormElement;
-                                                                    // Add custom object logic here
-                                                                    form.reset();
-                                                                }}>
-                                                                    <div className="space-y-2">
-                                                                        <Label htmlFor="object-type">Object Type</Label>
-                                                                        <Select name="objectType">
-                                                                            <SelectTrigger>
-                                                                                <SelectValue placeholder="Select object type" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent>
-                                                                                <SelectItem value="note">Note</SelectItem>
-                                                                                <SelectItem value="image">Image</SelectItem>
-                                                                                <SelectItem value="document">Document</SelectItem>
-                                                                            </SelectContent>
-                                                                        </Select>
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        <Label htmlFor="object-content">Content</Label>
-                                                                        <Textarea name="objectContent" placeholder="Enter note or description" />
-                                                                    </div>
-                                                                    <Button type="submit">Add Custom Object</Button>
-                                                                </form>
-                                                            </DialogContent>
-                                                        </Dialog>
-                                                    </div>
-                                                    {staff.customObjects && staff.customObjects.length > 0 ? (
-                                                        <ul className="space-y-2">
-                                                            {staff.customObjects.map((obj, index) => (
-                                                                <li key={index} className="flex justify-between items-center bg-muted p-2 rounded">
-                                                                    <span>{obj.type}: {obj.content}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    ) : (
-                                                        <p className="text-muted-foreground">No custom objects added yet.</p>
-                                                    )}
-                                                </div>
-                                            </TabsContent> */}
+                                            <ScheduleForm selectedStaffId={selectedStaffId} />
+                                            <TabsContent value='schedule'>
+                                                {scheduleLoading ? (
+                                                    <p>Loading schedules...</p>
+                                                ) : scheduleData?.data && scheduleData.data.length > 0 ? (
+                                                    <ul>
+                                                        {scheduleData.data.map((schedule) => (
+                                                            <li key={schedule.start_time}>
+                                                                <strong>{schedule.purpose}</strong><br />
+                                                                Start: {new Date(schedule.start_time).toLocaleString()}
+                                                                <br />
+                                                                End: {new Date(schedule.end_time).toLocaleString()}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>No schedules found.</p>
+                                                )}
+                                            </TabsContent>
                                         </Tabs>
                                     </DialogContent>
                                 </Dialog>
@@ -229,6 +263,84 @@ export default function StaffManagement() {
                     ))}
                 </TableBody>
             </Table>
+
+            {/* Pagination Controls */}
+            <Pagination className="mt-4">
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious
+                            href="#"
+                            onClick={currentPage !== 1 ? () => setCurrentPage((prev) => Math.max(prev - 1, 1)) : () => { }}
+                        />
+                    </PaginationItem>
+
+                    {/* Render first page if it's not within the visible range */}
+                    {currentPage > 2 && (
+                        <>
+                            <PaginationItem>
+                                <PaginationLink
+                                    href="#"
+                                    onClick={() => setCurrentPage(1)}
+                                >
+                                    1
+                                </PaginationLink>
+                            </PaginationItem>
+                            <PaginationItem>
+                                <PaginationEllipsis />
+                            </PaginationItem>
+                        </>
+                    )}
+
+                    {/* Render visible pages */}
+                    {[...Array(totalPages)].map((_, index) => {
+                        const pageNumber = index + 1;
+                        if (
+                            pageNumber === currentPage ||
+                            pageNumber === currentPage - 1 ||
+                            pageNumber === currentPage + 1
+                        ) {
+                            return (
+                                <PaginationItem key={pageNumber}>
+                                    <PaginationLink
+                                        href="#"
+                                        onClick={() => setCurrentPage(pageNumber)}
+                                        isActive={currentPage === pageNumber}
+                                        className={pageNumber === currentPage ? 'active' : ''}
+                                    >
+                                        {pageNumber}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            );
+                        }
+                        return null;
+                    })}
+
+                    {/* Render last page if it's not within the visible range */}
+                    {currentPage < totalPages - 1 && (
+                        <>
+                            <PaginationItem>
+                                <PaginationEllipsis />
+                            </PaginationItem>
+                            <PaginationItem>
+                                <PaginationLink
+                                    href="#"
+                                    onClick={() => setCurrentPage(totalPages)}
+
+                                >
+                                    {totalPages}
+                                </PaginationLink>
+                            </PaginationItem>
+                        </>
+                    )}
+
+                    <PaginationItem>
+                        <PaginationNext
+                            href="#"
+                            onClick={currentPage !== totalPages ? () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) : () => { }}
+                        />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
     );
 }

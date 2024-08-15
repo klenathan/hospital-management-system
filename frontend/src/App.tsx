@@ -4,7 +4,7 @@ export default function App() {
   return (
     <div className="flex justify-center items-start">
       <Dashboard />
-      <div className="flex-1 py-6">
+      <div className="flex flex-1 justify-start items-start py-6 min-h-screen">
         <Outlet />
       </div>
     </div>
