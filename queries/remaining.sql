@@ -1,16 +1,15 @@
 -- Use function for return the status of function (SUCCESS | FAIL)
 -- Add new patient
-create procedure SP_RegisterNewPatient (
-    in First_Name varchar(50),
-    in Last_Name varchar(50),
-    in date_of_birth date,
-    in Contact_Info varchar(255),
-    in Address varchar(255),
-    in Allergies text
-) begin start transaction;
+CREATE PROCEDURE SP_RegisterNewPatient (
+    IN First_Name varchar(50),
+    IN Last_Name varchar(50),
+    IN date_of_birth date,
+    IN Contact_Info varchar(255),
+    IN Address varchar(255),
+    IN Allergies text
+) BEGIN START transaction;
 
-insert into
-    Patients (
+INSERT INTO Patients (
         First_Name,
         Last_Name,
         date_of_birth,
@@ -18,8 +17,7 @@ insert into
         Address,
         Allergies
     )
-values
-    (
+VALUES (
         First_Name,
         Last_Name,
         date_of_birth,
@@ -28,101 +26,87 @@ values
         Allergies
     );
 
-commit;
+COMMIT;
 
-end;
+END;
 
 -- Add treatment -> (Only doctor can add, change to function using transaction)
-create procedure SP_AddTreatment (
-    in Patient_Id int,
-    in Staff_Id int,
-    in Treatment_Date date,
-    in Treatment_Details text
-) begin declare Staff_Job_Type enum ('Doctor', 'Nurse', 'Admin');
+CREATE PROCEDURE SP_AddTreatment (
+    IN Patient_Id int,
+    IN Staff_Id int,
+    IN Treatment_Date date,
+    IN Treatment_Details text
+) BEGIN
+DECLARE Staff_Job_Type enum ('Doctor', 'Nurse', 'Admin');
 
-select
-    job_type into Staff_Job_Type
-from
-    staffs
-where
-    staffs.id = Staff_Id;
+SELECT job_type INTO Staff_Job_Type
+FROM staffs
+WHERE staffs.id = Staff_Id;
 
-if Staff_Job_Type = 'Doctor' then start transaction;
+IF Staff_Job_Type = 'Doctor' THEN START transaction;
 
-insert into
-    treatments (
+INSERT INTO treatments (
         patient_id,
         staff_id,
         treatment_date,
         treatment_details
     )
-values
-    (
+VALUES (
         Patient_Id,
         Staff_Id,
         Treatment_Date,
         Treatment_Details
     );
 
-commit;
+COMMIT;
 
-else rollback;
+ELSE ROLLBACK;
 
-end if;
+END IF;
 
-end;
+END;
 
 -- Update staff info
-create procedure SP_UpdateStaffInfo (
-    in Staff_Id int,
-    in Job_Type enum ('Doctor', 'Nurse', 'Admin'),
-    in Salary decimal(10, 2),
-    in Department_Id int
-) begin start transaction;
+CREATE PROCEDURE SP_UpdateStaffInfo (
+    IN Staff_Id int,
+    IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
+    IN Salary decimal(10, 2),
+    IN Department_Id int
+) BEGIN START transaction;
 
-update staffs
-set
-    staffs.job_type = Job_Type,
+UPDATE staffs
+SET staffs.job_type = Job_Type,
     staffs.salary = Salary,
     staffs.department_id = Department_Id
-where
-    staffs.id = Staff_Id;
+WHERE staffs.id = Staff_Id;
 
 -- Also save information to Staff_Job_History
-insert into
-    Staff_Job_History (staff_id, job_type, salary, department_id)
-values
-    (Staff_Id, Job_Type, Salary, Department_Id);
+INSERT INTO Staff_Job_History (staff_id, job_type, salary, department_id)
+VALUES (Staff_Id, Job_Type, Salary, Department_Id);
 
-commit;
+COMMIT;
 
-end;
+END;
 
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
-create procedure SP_CancelAppoinment (in Appointment_Id int) begin declare Staff_Job_Type enum ('Doctor', 'Nurse', 'Admin');
+CREATE PROCEDURE SP_CancelAppoinment (IN Appointment_Id int) BEGIN
+DECLARE Staff_Job_Type enum ('Doctor', 'Nurse', 'Admin');
 
-select
-    staffs.job_type into Staff_Job_Type
-from
-    appointments
-    join staffs on appointments.staff_id = staffs.id
-where
-    appointments.id = Appointment_Id;
+SELECT staffs.job_type INTO Staff_Job_Type
+FROM appointments
+    JOIN staffs ON appointments.staff_id = staffs.id
+WHERE appointments.id = Appointment_Id;
 
-if Staff_Job_Type = 'Doctor' then
-update appointments
-set
-    appointments.deleted = 1
-where
-    appointments.id = Appointment_Id;
+IF Staff_Job_Type = 'Doctor' THEN
+UPDATE appointments
+SET appointments.deleted = 1
+WHERE appointments.id = Appointment_Id;
 
-select
-    'success' as status;
+SELECT 'success' AS STATUS;
 
-else
-select
-    'fail' as status;
+ELSE
+SELECT 'fail' AS STATUS;
 
-end if;
+END IF;
 
-end;
+END;
