@@ -1,5 +1,6 @@
 -- Use function for return the status of function (SUCCESS | FAIL)
 -- Add new patient
+
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
     in Last_Name varchar(50),

@@ -346,6 +346,23 @@
         }
       }
     },
+    "/api/department/": {
+      "get": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "Get all department",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/appointment/": {
       "get": {
         "tags": [
@@ -414,6 +431,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
