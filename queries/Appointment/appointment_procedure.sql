@@ -33,3 +33,8 @@ WHERE
     AND s.deleted = 0;
 
 END;
+
+call A_ViewDoctorScheduleByDuration (
+    "2024-08-11 13:00:00",
+    "2024-08-11 13:30:00"
+);
