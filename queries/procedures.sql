@@ -1,6 +1,6 @@
 -- 4. Stored procedures & transaction management
 -- Patient
--- Add new patient 
+-- Add new patient
 -- TODO: Should use function
 create procedure SP_RegisterNewPatient (
     in First_Name varchar(50),
@@ -142,7 +142,7 @@ end;
 --     staffs.last_name desc;
 -- end if;
 -- end;
->> >> >> >> > Temporary merge branch 2
+
 -- Update staff info
 create procedure SP_UpdateStaffInfo (
     in Staff_Id int,
@@ -243,10 +243,7 @@ call SP_UpdateStaffSchedule (
     "2024-08-18 10:01:00"
 );
 
-select
-    *
-from
-    appointments;
+select * from appointments;
 
 call SP_UpdateStaffSchedule (
     2,
@@ -255,10 +252,7 @@ call SP_UpdateStaffSchedule (
     "2024-08-18 10:01:00"
 );
 
-select
-    *
-from
-    appointments;
+select * from appointments;
 
 -- Appointment
 -- DONG
@@ -295,7 +289,7 @@ end if;
 end;
 
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
-<<<<<<< HEAD
+<< << << < HEAD
 -- Cancel Appointment
 create procedure SP_CancelAppoinment (in Appointment_Id int) begin
 delete from appointments
@@ -303,7 +297,6 @@ where
     appointments.id = Appointment_Id;
 
 end;
-
 
 -- MỚI ADD
 
@@ -327,10 +320,7 @@ where
 	and appointments.start_time between Start_Date and End_Date
 order by 3, 2, 4;
 end;
-		
-
 -- Report
-
 -- View a patient treatment history for a given duration
 create procedure SP_ViewPatientTreatmentHistoryInDuration (in Patient_Id int, in Start_Date date, in End_Date date) begin
 select
@@ -417,10 +407,8 @@ where
 	staffs.job_type = 'Doctor'
     and treatments.treatment_date between Start_Date and End_Date;
 end;
-	
-    
 
-=======
+= = = = = = =
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
 create procedure SP_CancelAppoinment (in AppointmentId int) begin
 delete from Appointments

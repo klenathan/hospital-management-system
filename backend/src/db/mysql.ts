@@ -19,8 +19,6 @@ const access: PoolOptions = {
 
 // console.log("[CREDENTIAL]", configBuilder("test", "test"));
 
-console.log(access);
-
 const connection = mysql.createConnection(access);
 
 export default connection;
