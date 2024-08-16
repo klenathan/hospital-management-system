@@ -1,11 +1,9 @@
 -- DROP DATABASE IF EXISTS `hospital_management`;
-
 CREATE DATABASE IF NOT EXISTS `hospital_management`;
 
 USE `hospital_management`;
 
 -- 1. CREATE TABLE
-
 CREATE TABLE departments (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL,
