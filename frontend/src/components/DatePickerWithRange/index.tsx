@@ -83,7 +83,7 @@ export function DatePickerWithRange({
                         <TimePickerDemo date={dateRange?.to} setDate={(date) => handleSelectDate({ from: dateRange?.from, to: date })} />
                     </div>
                     <div className="flex justify-end p-3 border-t border-border">
-                        <Button onClick={handleSubmit}>Submit</Button>
+                        <Button onClick={handleSubmit}>Add Time</Button>
                     </div>
                 </PopoverContent>
             </Popover>

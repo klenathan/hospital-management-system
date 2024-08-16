@@ -1,5 +1,5 @@
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
-import { ChevronRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays } from 'lucide-react'
+import { ChevronRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays, ClipboardList } from 'lucide-react'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -86,6 +86,7 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
           <div className='flex-1 px-3'>
             <SidebarItem to='/staff' icon={<Users />} text='Staff' />
             <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment ' />
+            <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
             {/* {user.is_admin && (
               <>
                 <SidebarItem to='/admin' icon={<Users />} text='Accounts' />

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +18,8 @@ import {
     Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
 } from '@/components/ui/pagination';
 
+import AddStaffForm from '@/components/AddStaffForm';
+
 export default function StaffManagement() {
     const [sortField, setSortField] = useState<'first_name' | 'id'>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -25,6 +27,9 @@ export default function StaffManagement() {
     const [selectedDepartment, setSelectedDepartment] = useState<number | 'all'>('all');
     const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
     // const [scheduleData, setScheduleData] = useState<any[]>([]); // Store multiple schedules
+
+
+
     const itemsPerPage = 8;
 
     type StaffListResponse = {
@@ -56,8 +61,10 @@ export default function StaffManagement() {
             : `/api/staff/department/${selectedDepartment}`
         );
 
+
+
     const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithoutTokenAPI<ScheduleResponse>(
-        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : ''
+        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
     );
 
 
@@ -95,6 +102,12 @@ export default function StaffManagement() {
     if (staffLoading || departmentLoading) {
         return <div>Loading...</div>;
     }
+
+    const handleAddStaff = (newStaff: StaffMember) => {
+        // Logic to handle adding new staff to the list or making an API call
+        console.log('New staff added:', newStaff);
+        refetch(); // Refetch the staff list after adding new staff
+    };
 
     return (
         <div className='flex-1 p-6'>
@@ -157,6 +170,8 @@ export default function StaffManagement() {
                         </SelectContent>
                     </Select>
                 </div>
+                <AddStaffForm departments={departmentListData?.data || []} onAddStaff={handleAddStaff} />
+
             </div>
 
             <Table>
@@ -199,21 +214,24 @@ export default function StaffManagement() {
                                     <DialogContent className='max-w-3xl'>
                                         <DialogHeader>
                                             <DialogTitle>{staff.first_name + " " + staff.last_name}</DialogTitle>
+                                            <DialogDescription></DialogDescription>
                                         </DialogHeader>
-                                        <Tabs
-                                            defaultValue='info'
-                                            className='w-full'
-                                        >
+                                        <Tabs defaultValue='info' className='w-full'>
                                             <TabsList>
                                                 <TabsTrigger value='info'>Personal Info</TabsTrigger>
                                                 <TabsTrigger value='schedule'>Schedule</TabsTrigger>
+                                                <TabsTrigger value='custom-objects'>Custom Objects</TabsTrigger> {/* New Tab */}
                                             </TabsList>
+
                                             <TabsContent value='info'>
                                                 <form
                                                     className='space-y-4'
                                                     onSubmit={(e) => {
                                                         e.preventDefault();
                                                         const form = e.target as HTMLFormElement;
+                                                        const firstName = (form.elements.namedItem('staff-first_name') as HTMLInputElement).value;
+                                                        const LastName = (form.elements.namedItem('staff-last_name') as HTMLInputElement).files?.[0]?.name;
+                                                        console.log("Form: " + firstName + " " + LastName);
                                                         // Update staff info logic here
                                                     }}
                                                 >
@@ -236,8 +254,8 @@ export default function StaffManagement() {
                                                     <Button type='submit'>Update Info</Button>
                                                 </form>
                                             </TabsContent>
-                                            <ScheduleForm selectedStaffId={selectedStaffId} />
                                             <TabsContent value='schedule'>
+                                                {/* <ScheduleForm selectedStaffId={selectedStaffId} />
                                                 {scheduleLoading ? (
                                                     <p>Loading schedules...</p>
                                                 ) : scheduleData?.data && scheduleData.data.length > 0 ? (
@@ -253,9 +271,77 @@ export default function StaffManagement() {
                                                     </ul>
                                                 ) : (
                                                     <p>No schedules found.</p>
+                                                )} */}
+
+                                                {/* {scheduleLoading ? (
+                                                    <p>Loading schedules...</p>
+                                                ) : scheduleData?.data && scheduleData.data.length > 0 ? (
+                                                    <>
+                                                        <ScheduleForm
+                                                            selectedStaffId={selectedStaffId}
+                                                            scheduleData={scheduleData.data[0]}
+                                                            scheduleLoading={scheduleLoading}
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    <p>No schedules found.</p>
+                                                )} */}
+                                                {scheduleLoading ? (
+                                                    <p>Loading schedules...</p>
+                                                ) : scheduleData?.data && scheduleData.data.length > 0 ? (
+                                                    <ScheduleForm
+                                                        selectedStaffId={selectedStaffId}
+                                                        scheduleData={scheduleData.data[0]}
+                                                        scheduleLoading={scheduleLoading}
+                                                    />
+                                                ) : (
+                                                    <ScheduleForm
+                                                        selectedStaffId={selectedStaffId}
+                                                        scheduleLoading={scheduleLoading}
+                                                    />
                                                 )}
+
+
+
+                                            </TabsContent>
+
+                                            <TabsContent value='custom-objects'> {/* New Tab Content */}
+                                                <form
+                                                    className='space-y-4'
+                                                    onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        const form = e.target as HTMLFormElement;
+                                                        const note = (form.elements.namedItem('custom_note') as HTMLInputElement).value;
+                                                        const image = (form.elements.namedItem('custom_image') as HTMLInputElement).files?.[0]?.name;
+
+                                                        console.log("Note: " + note);
+                                                        console.log("Image: " + image);
+
+                                                        // Logic to add custom objects (e.g., notes, images)
+                                                    }}
+                                                >
+                                                    <div className='space-y-2'>
+                                                        <Label htmlFor='custom_note'>Add a Note</Label>
+                                                        <Input
+                                                            id='custom_note'
+                                                            name='custom_note'
+                                                            placeholder='Enter your note here'
+                                                        />
+                                                    </div>
+                                                    <div className='space-y-2'>
+                                                        <Label htmlFor='custom_image'>Upload an Image</Label>
+                                                        <Input
+                                                            id='custom_image'
+                                                            name='custom_image'
+                                                            type='file'
+                                                            accept='image/*'
+                                                        />
+                                                    </div>
+                                                    <Button type='submit'>Add Custom Object</Button>
+                                                </form>
                                             </TabsContent>
                                         </Tabs>
+
                                     </DialogContent>
                                 </Dialog>
                             </TableCell>

@@ -7,6 +7,7 @@ import LandingPage from './layouts/LandingPage'
 import './styles/index.css'
 import AppointmentManagement from './layouts/AppointmentManagement'
 import StaffManagement from './layouts/StaffManagement'
+import ReportPage from './layouts/ReportPage'
 import App from './App'
 
 const queryClient = new QueryClient()
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: '/staff',
         element: <StaffManagement />
+      },
+      {
+        path: '/reports',
+        element: <ReportPage />
       }
     ],
     errorElement: <ErrorPage />
