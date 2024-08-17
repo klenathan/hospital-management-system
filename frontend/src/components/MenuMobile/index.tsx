@@ -2,7 +2,7 @@ import { version } from '@/../package.json'
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
 // import { Badge } from '@/components/ui/badge'
 // import { User } from '@/types/user'
-import { AlignRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays, ClipboardList } from 'lucide-react'
+import { AlignRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays, ClipboardList, HeartPulse } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
@@ -68,6 +68,7 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
               <SheetHeader className='w-full'>
                 <SheetTitle></SheetTitle>
                 <SheetDescription>
+                  <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
                   <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
                   <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
                   <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />

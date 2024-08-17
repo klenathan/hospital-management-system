@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Eye, MoreHorizontal, Search } from "lucide-react";
-import { data } from "@/Pages/data.tsx";
+import { MoreHorizontal, Search } from "lucide-react";
+import { data } from "@/layouts/Patient/data";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -46,7 +46,7 @@ interface Patient {
   Status: string;
 }
 
-function DataTable() {
+function Patient() {
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState<Patient[]>(data);
   const [editPatient, setEditPatient] = useState<Patient | null>(null);
@@ -99,64 +99,64 @@ function DataTable() {
   };
 
   return (
-    <div className="flex-1 p-6 bg-white shadow-md">
-      <h1 className="text-3xl font-bold mb-5">Patient</h1>
+    <div className="flex-1 bg-white shadow-md p-6">
+      <h1 className="mb-5 font-bold text-3xl">Patient</h1>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center bg-gray-200 rounded-lg p-2 ">
+        <div className="flex items-center bg-gray-200 p-2 rounded-lg">
           <Search className="mr-2 text-gray-600" />
           <input
             type="text"
             placeholder="Search by name or ID"
             value={searchTerm}
             onChange={handleSearch}
-            className="bg-transparent w-full focus:outline-none text-sm text-black"
+            className="bg-transparent w-full focus:outline-none text-black text-sm"
           />
         </div>
 
         <div>
-          <button className="border border-black rounded-xl px-4 py-2 rounded hover:bg-gray-100">
+          <button className="hover:bg-gray-100 px-4 py-2 border border-black rounded rounded-xl">
             Register a new patient
           </button>
         </div>
 
-        <Table className="min-w-full border">
+        <Table className="border min-w-full">
           <thead>
-            <tr className="border bg-gray-100">
-              <th className="text-center px-4 py-2">ID</th>
-              <th className="text-center px-4 py-2">First Name</th>
-              <th className="text-center px-4 py-2">Last Name</th>
-              <th className="text-center px-4 py-2">Date of Birth</th>
-              <th className="text-center px-4 py-2">Email</th>
-              <th className="text-center px-4 py-2">Address</th>
-              <th className="text-center px-4 py-2">allergies</th>
-              <th className="text-center px-4 py-2">Created at</th>
-              <th className="text-center px-4 py-2">Updated at</th>
-              <th className="text-center px-4 py-2">Status</th>
-              <th className="text-center px-4 py-2">Action</th>
+            <tr className="bg-gray-100 border">
+              <th className="px-4 py-2 text-center">ID</th>
+              <th className="px-4 py-2 text-center">First Name</th>
+              <th className="px-4 py-2 text-center">Last Name</th>
+              <th className="px-4 py-2 text-center">Date of Birth</th>
+              <th className="px-4 py-2 text-center">Email</th>
+              <th className="px-4 py-2 text-center">Address</th>
+              <th className="px-4 py-2 text-center">allergies</th>
+              <th className="px-4 py-2 text-center">Created at</th>
+              <th className="px-4 py-2 text-center">Updated at</th>
+              <th className="px-4 py-2 text-center">Status</th>
+              <th className="px-4 py-2 text-center">Action</th>
             </tr>
           </thead>
           <TableBody>
             {patients.map((item) => (
               <tr className="border" key={item["id"]}>
-                <td className=" text-center px-4 py-2">{item["id"]}</td>
-                <td className=" text-center px-4 py-2">{item["First Name"]}</td>
-                <td className=" text-center px-4 py-2">{item["Last Name"]}</td>
-                <td className=" text-center px-4 py-2">
+                <td className="px-4 py-2 text-center">{item["id"]}</td>
+                <td className="px-4 py-2 text-center">{item["First Name"]}</td>
+                <td className="px-4 py-2 text-center">{item["Last Name"]}</td>
+                <td className="px-4 py-2 text-center">
                   {item["Date of Birth"]}
                 </td>
-                <td className=" text-center px-4 py-2">{item["Email"]}</td>
-                <td className=" text-center px-4 py-2">{item["Address"]}</td>
-                <td className=" text-center px-4 py-2">{item["allergies"]}</td>
-                <td className=" text-center px-4 py-2">{item["Created at"]}</td>
-                <td className=" text-center px-4 py-2">{item["Updated at"]}</td>
-                <td className=" text-center px-4 py-2">{item["Status"]}</td>
-                <th className="text-center px-6 py-2 h-1">
+                <td className="px-4 py-2 text-center">{item["Email"]}</td>
+                <td className="px-4 py-2 text-center">{item["Address"]}</td>
+                <td className="px-4 py-2 text-center">{item["allergies"]}</td>
+                <td className="px-4 py-2 text-center">{item["Created at"]}</td>
+                <td className="px-4 py-2 text-center">{item["Updated at"]}</td>
+                <td className="px-4 py-2 text-center">{item["Status"]}</td>
+                <th className="px-6 py-2 h-1 text-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button variant="ghost" className="p-0 w-8 h-8">
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -175,14 +175,14 @@ function DataTable() {
           </TableBody>
         </Table>
       </div>
-            
+
       {/* Edit Patient Form */}
       {editPatient && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Edit Patient</h2>
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white shadow-lg p-6 rounded-lg">
+            <h2 className="mb-4 font-bold text-xl">Edit Patient</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">First Name</label>
+              <label className="block font-medium text-gray-700 text-sm">First Name</label>
               <Input
                 type="text"
                 value={editPatient["First Name"]}
@@ -192,7 +192,7 @@ function DataTable() {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Last Name</label>
+              <label className="block font-medium text-gray-700 text-sm">Last Name</label>
               <Input
                 type="text"
                 value={editPatient["Last Name"]}
@@ -214,7 +214,7 @@ function DataTable() {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete this patient ? 
+                Are you sure you want to delete this patient ?
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -235,4 +235,4 @@ function DataTable() {
   );
 }
 
-export default DataTable;
+export default Patient;

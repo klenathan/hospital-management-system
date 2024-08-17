@@ -11,16 +11,21 @@ import ReportPage from './layouts/ReportPage'
 import App from './App'
 
 //Phuong
-import Login from './Pages/Login'
+import Login from './layouts/Login/index.tsx'
 import Patient from './layouts/Patient/index.tsx'
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
+    path: '/dashboard',
+    element: <LandingPage />
+  },
+  {
     path: '/', element: <App />,
 
     children: [
+
       {
         path: '/djtmecuocdoi',
         element: <div className='bg-red-300 w-screen h-screen'>Hello</div>
