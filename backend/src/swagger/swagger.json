@@ -585,6 +585,32 @@
         }
       }
     },
+    "/api/appointment/{id}": {
+      "delete": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Cancel appointment with doctor",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Appointment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/treatment/": {
       "get": {
         "tags": [

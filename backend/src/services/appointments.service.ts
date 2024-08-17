@@ -78,4 +78,18 @@ export default class AppointmentService {
       status: "success",
     };
   }
+
+  public async cancelAppointment(appointmentId: number): Promise<any> {
+    const conn = await connection;
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL A_CancelAppoinment(
+      "${appointmentId}"
+      )`);
+
+    return {
+      status: "success",
+    };
+  }
 }

@@ -113,4 +113,26 @@ appointmentRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
+appointmentRouter.delete("/:id", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'Cancel appointment with doctor'
+
+  #swagger.parameters['id'] = { description: 'Appointment ID' }
+  */
+  try {
+    const id = parseInt(req.params["id"] as string);
+    if (isNaN(id)) {
+      throw new Error("Invalid patient ID: id");
+    }
+
+    const staffs = await appointmentService.cancelAppointment(id);
+    return res.status(200).send(staffs);
+  } catch (error) {
+    console.error("Error: ", error);
+    return res.status(400).json({
+      message: `Server error: ${error}`,
+    });
+  }
+});
+
 export default appointmentRouter;
