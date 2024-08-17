@@ -1,4 +1,6 @@
--- @block Add a new staff
+DROP PROCEDURE IF EXISTS S_AddNewStaff;
+
+------------------------ Procedure ađ new staff ------------------------
 CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
@@ -18,7 +20,7 @@ START TRANSACTION;
 
 SAVEPOINT start_sp;
 
--- Insert into staffs table
+------------ Insert into staffs table ------------
 INSERT INTO staffs (
         first_name,
         last_name,

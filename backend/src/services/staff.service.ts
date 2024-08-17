@@ -53,4 +53,19 @@ export default class StaffService {
       data: rows[0],
     };
   }
+
+  public async createSingleNewStaff(props: {
+    staffId: number;
+  }): Promise<GetRequestResult> {
+    const conn = await connection;
+    const [rows, _fields] = await conn.query<
+      ProcedureCallPacket<RowDataPacket[]>
+    >(`CALL S_AddNewStaff("${props.staffId}")`);
+    return {
+      queryResult: {
+        count: rows[0].length,
+      },
+      data: rows[0],
+    };
+  }
 }
