@@ -159,7 +159,7 @@ WHERE s.id = staff_id
 END;
 
 -- @block Update a staff schedule
-CREATE PROCEDURE SP_UpdateStaffSchedule (
+CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
     IN Appointment_Id int,
     IN newStartTime datetime,
@@ -173,15 +173,28 @@ WHERE appointments.staff_id = Staff_Id
     AND appointments.end_time > newStartTime
     AND appointments.id != Appointment_Id;
 
-IF @Appointment_Count = 0 THEN
-UPDATE appointments
-SET appointments.start_time = newStartTime,
-    appointments.end_time = newEndTime
-WHERE Appointment_Id = AppointmentId;
+IF @Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'TIME ALREADY BOOKED',
+    MYSQL_ERRNO = 1001;
+
+ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'INVALID TIME FRAME',
+    MYSQL_ERRNO = 1001;
+
+ELSEIF @Appointment_Count = 1 THEN START transaction;
+
+UPDATE appointments a
+SET a.start_time = newStartTime,
+    a.end_time = newEndTime
+WHERE a.id = Appointment_Id;
 
 COMMIT;
 
-ELSE ROLLBACK;
+ELSE SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'INVALID APPOINTMENT',
+    MYSQL_ERRNO = 1001;
+
+ROLLBACK;
 
 END IF;
 

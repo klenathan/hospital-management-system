@@ -56,14 +56,12 @@ CREATE PROCEDURE P_AddTreatment (
     IN Treatment_Date DATE,
     IN Treatment_Details text
 ) BEGIN
-SET
-    @is_doctor = (
+SET @is_doctor = (
         CASE
             WHEN (
                 SELECT job_type
                 FROM staffs
-                WHERE
-                    id = Staff_Id
+                WHERE id = Staff_Id
             ) = 'Doctor' THEN TRUE
             ELSE FALSE
         END
@@ -86,12 +84,11 @@ VALUES (
 
 COMMIT;
 
-ELSE
-SIGNAL SQLSTATE '2201R'
-SET
-    MESSAGE_TEXT = 'Staff is not a doctor',
+ELSE SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'INVALID STAFF',
     MYSQL_ERRNO = 01004;
- ROLLBACK;
+
+ROLLBACK;
 
 END IF;
 

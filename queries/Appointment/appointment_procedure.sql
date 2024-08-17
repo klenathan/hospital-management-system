@@ -41,9 +41,13 @@ CREATE PROCEDURE A_BookAppointmentWithDoctor (
 ) BEGIN
 DECLARE Appointment_Count int;
 
-START transaction;
-
-SELECT COUNT(*) INTO Appointment_Count
+SELECT IF (
+        (s.job_type = 'Doctor'),
+        TRUE,
+        FALSE
+    ),
+    COUNT(*) INTO @isDocter,
+    Appointment_Count
 FROM appointments ap
     JOIN staffs s ON s.id = ap.staff_id
 WHERE ap.staff_id = Staff_Id
@@ -52,14 +56,19 @@ WHERE ap.staff_id = Staff_Id
     AND s.job_type = 'Doctor';
 
 IF Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
-SET MESSAGE_TEXT = 'Trung lich',
+SET MESSAGE_TEXT = 'TIME ALREADY BOOKED',
     MYSQL_ERRNO = 1001;
 
 ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSE
+ELSEIF ! @isDocter THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = "This is not a doctor's appointment ",
+    MYSQL_ERRNO = 01004;
+
+ELSE START transaction;
+
 INSERT INTO Appointments (
         patient_id,
         staff_id,
