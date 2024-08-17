@@ -20,7 +20,7 @@ START TRANSACTION;
 
 SAVEPOINT start_sp;
 
------------- Insert into staffs table ------------
+
 INSERT INTO staffs (
         first_name,
         last_name,
@@ -158,6 +158,7 @@ WHERE s.id = staff_id
 
 END;
 
+drop PROCEDURE if EXISTS SP_UpdateStaffSchedule;
 -- @block Update a staff schedule
 CREATE PROCEDURE SP_UpdateStaffSchedule (
     IN Staff_Id int,
@@ -177,7 +178,7 @@ IF @Appointment_Count = 0 THEN
 UPDATE appointments
 SET appointments.start_time = newStartTime,
     appointments.end_time = newEndTime
-WHERE Appointment_Id = AppointmentId;
+WHERE id = Appointment_Id;
 
 COMMIT;
 

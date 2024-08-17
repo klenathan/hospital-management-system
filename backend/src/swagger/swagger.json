@@ -473,18 +473,26 @@
         }
       }
     },
-    "/api/appointment/": {
+    "/api/appointment/schedule": {
       "get": {
         "tags": [
           "Appointments"
         ],
-        "summary": "Get all appointments",
+        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
         "description": "",
         "parameters": [
           {
-            "name": "staffId",
+            "name": "startTime",
             "in": "query",
-            "description": "Query Staff ID (INT)",
+            "description": "Query start time",
+            "default": "2024-08-11 12:00:00",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12 12:30:00",
             "type": "string"
           }
         ],
@@ -496,7 +504,9 @@
             "description": "Bad Request"
           }
         }
-      },
+      }
+    },
+    "/api/appointment/": {
       "post": {
         "tags": [
           "Appointments"
@@ -540,39 +550,6 @@
                 "purpose"
               ]
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/api/appointment/schedule": {
-      "get": {
-        "tags": [
-          "Appointments"
-        ],
-        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
-        "description": "",
-        "parameters": [
-          {
-            "name": "startTime",
-            "in": "query",
-            "description": "Query start time",
-            "default": "2024-08-11 12:00:00",
-            "type": "string"
-          },
-          {
-            "name": "endTime",
-            "in": "query",
-            "description": "Query end time",
-            "default": "2024-08-12 12:30:00",
-            "type": "string"
           }
         ],
         "responses": {

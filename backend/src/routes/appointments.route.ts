@@ -15,29 +15,29 @@ const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
 
-appointmentRouter.get("/", async (req: Request, res: Response) => {
-  /*  
-  #swagger.summary = "Get all appointments"
-  
-  #swagger.parameters['staffId'] = {
-            in: 'query',
-            description: 'Query Staff ID (INT)',
-    } */
-  try {
-    let staffId;
+// appointmentRouter.get("/", async (req: Request, res: Response) => {
+//   /*
+//   #swagger.summary = "Get all appointments"
 
-    if (req.query["staffId"]) {
-      staffId = parseInt(req.query["staffId"] as string);
-      if (isNaN(staffId)) {
-        throw new Error("Invalid Query: staffId");
-      }
-    }
-    const appointments = await appointmentService.getAllAppointments(staffId);
-    res.status(200).send(appointments);
-  } catch (e) {
-    res.status(400).json({ error: (e as Error).message });
-  }
-});
+//   #swagger.parameters['staffId'] = {
+//             in: 'query',
+//             description: 'Query Staff ID (INT)',
+//     } */
+//   try {
+//     let staffId;
+
+//     if (req.query["staffId"]) {
+//       staffId = parseInt(req.query["staffId"] as string);
+//       if (isNaN(staffId)) {
+//         throw new Error("Invalid Query: staffId");
+//       }
+//     }
+//     const appointments = await appointmentService.getAllAppointments(staffId);
+//     res.status(200).send(appointments);
+//   } catch (e) {
+//     res.status(400).json({ error: (e as Error).message });
+//   }
+// });
 
 appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
   /*  
