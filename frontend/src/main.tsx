@@ -10,6 +10,10 @@ import StaffManagement from './layouts/StaffManagement'
 import ReportPage from './layouts/ReportPage'
 import App from './App'
 
+//Phuong
+import Login from './Pages/Login'
+import Patient from './layouts/Patient/index.tsx'
+
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
@@ -22,8 +26,18 @@ const router = createBrowserRouter([
         element: <div className='bg-red-300 w-screen h-screen'>Hello</div>
       },
       {
-        path: '',
-        element: <LandingPage />
+        path: '/patient',
+        element: <>
+
+          <div className="flex-1 bg-gray-100 min-h-screen">
+            <Patient />
+          </div>
+
+        </>
+      },
+      {
+        path: '/patient',
+        element: <AppointmentManagement />
       },
       {
         path: '/appointment',
@@ -39,6 +53,9 @@ const router = createBrowserRouter([
       }
     ],
     errorElement: <ErrorPage />
+  },
+  {
+    path: '/login', element: <Login />
   }
 ])
 
