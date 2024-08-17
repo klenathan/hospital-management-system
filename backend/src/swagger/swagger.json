@@ -403,6 +403,57 @@
             "description": "Bad Request"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Update a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Update staff schedule body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "appointmentId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "newStartTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:00:00.000Z"
+                },
+                "newEndTime": {
+                  "type": "string",
+                  "example": "2024-08-11T06:00:00.000Z"
+                }
+              },
+              "required": [
+                "appointmentId",
+                "newStartTime",
+                "newEndTime"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/api/department/": {

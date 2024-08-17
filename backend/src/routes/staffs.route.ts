@@ -11,6 +11,13 @@ const NewStaffDTO = z.object({
   salary: z.number(),
 });
 
+const UpdateStaffScheduleDTO = z.object({
+  // staffId: z.number(),
+  appointmentId: z.number(),
+  newStartTime: z.coerce.date(),
+  newEndTime: z.coerce.date(),
+});
+
 const staffRouter = Router();
 
 const staffService = new StaffService();
@@ -80,7 +87,7 @@ staffRouter.post("/", async (req: Request, res: Response) => {
     } else {
       console.error("Error: ", error);
       return res.status(400).json({
-        message: `Validation error: ${error}`,
+        message: `Server error: ${error}`,
       });
     }
   }
@@ -121,6 +128,51 @@ staffRouter.get("/schedule/:staffId", async (req: Request, res: Response) => {
     return res.status(200).send(staffs);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
+  }
+});
+
+staffRouter.put("/schedule/:staffId", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'Update a staff's schedule'
+  
+  #swagger.parameters['staffId'] = { description: 'Staff ID' }
+  
+  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update staff schedule body.',
+            schema: {
+                $appointmentId: 1,
+                $newStartTime: "2024-08-10T06:00:00.000Z",
+                $newEndTime: "2024-08-11T06:00:00.000Z",
+            }
+    } 
+  */
+  try {
+    const staffId = parseInt(req.params["staffId"] as string);
+    if (isNaN(staffId)) {
+      throw new Error("Invalid staff ID: staffId");
+    }
+
+    const params = UpdateStaffScheduleDTO.parse(req.body);
+
+    const staffs = await staffService.updateStaffSchedule(staffId, params);
+    return res.status(200).send(staffs);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        console.error("Validation failed: ", issue);
+      }
+      return res.status(400).json({
+        message: `Validation error: ${error.issues
+          .map((e) => e.path)
+          .join("; ")}`,
+      });
+    } else {
+      console.error("Error: ", error);
+      return res.status(400).json({
+        message: `Server error: ${error}`,
+      });
+    }
   }
 });
 

@@ -7,6 +7,7 @@ import connection from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
 export default class StaffService {
+  tzoffset = new Date().getTimezoneOffset() * 60000;
   public constructor() {}
 
   public async getAllStaffs(props: {
@@ -76,6 +77,40 @@ export default class StaffService {
       "${props.qualification}",
       "${props.deptId}",
       "${props.salary}"
+      )`);
+
+    return {
+      status: "success",
+    };
+  }
+
+  public async updateStaffSchedule(
+    staffId: number,
+    props: {
+      appointmentId: number;
+      newStartTime: Date;
+      newEndTime: Date;
+    }
+  ): Promise<any> {
+    const conn = await connection;
+
+    const newStartTimeStr = new Date(
+      props.newStartTime.getTime() - this.tzoffset
+    )
+      .toISOString()
+      .slice(0, -1);
+
+    const newEndTimeStr = new Date(props.newEndTime.getTime() - this.tzoffset)
+      .toISOString()
+      .slice(0, -1);
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL SP_UpdateStaffSchedule(
+      "${staffId}",
+      "${props.appointmentId}",
+      "${newStartTimeStr}",
+      "${newEndTimeStr}"
       )`);
 
     return {
