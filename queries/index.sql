@@ -2,13 +2,14 @@
 -- Patient
 -- Add new patient
 CREATE PROCEDURE SP_RegisterNewPatient (
-    IN First_Name varchar(50),
-    IN Last_Name varchar(50),
-    IN DOB date,
-    IN Contact_Info varchar(255),
-    IN Address varchar(255),
+    IN First_Name VARCHAR(50),
+    IN Last_Name VARCHAR(50),
+    IN DOB DATE,
+    IN Contact_Info VARCHAR(255),
+    IN Address VARCHAR(255),
     IN Allergies text
-) BEGIN
+)
+BEGIN
 INSERT INTO patients (
         first_name,
         last_name,
@@ -29,7 +30,8 @@ VALUES (
 END;
 
 -- Find patient by name or ID -> split into 2 procedures
-CREATE PROCEDURE SP_SearchPatientByName (IN Patient_Name varchar(50)) BEGIN
+CREATE PROCEDURE SP_SearchPatientByName (IN Patient_Name VARCHAR(50))
+BEGIN
 SELECT *
 FROM patients
 WHERE patients.first_name LIKE ('%', Patient_Name, '%')
@@ -37,7 +39,8 @@ WHERE patients.first_name LIKE ('%', Patient_Name, '%')
 
 END;
 
-CREATE PROCEDURE SP_SearchPatientById (IN Patient_Id int) BEGIN
+CREATE PROCEDURE SP_SearchPatientById (IN Patient_Id INT)
+BEGIN
 SELECT *
 FROM patients
 WHERE patients.id = Patient_Id;
@@ -46,11 +49,12 @@ END;
 
 -- Add treatment -> ok
 CREATE PROCEDURE SP_AddTreatment (
-    IN Patient_Id int,
-    IN Staff_Id int,
-    IN Treatment_Date date,
+    IN Patient_Id INT,
+    IN Staff_Id INT,
+    IN Treatment_Date DATE,
     IN Treatment_Details text
-) BEGIN
+)
+BEGIN
 INSERT INTO treatments (
         patient_id,
         staff_id,
@@ -69,13 +73,14 @@ END;
 -- Staff
 -- Add staff
 CREATE PROCEDURE SP_AddStaff (
-    IN First_Name varchar(50),
-    IN Last_Name varchar(50),
+    IN First_Name VARCHAR(50),
+    IN Last_Name VARCHAR(50),
     IN Job_Type ENUM ('Doctor', 'Nurse', 'Admin'),
     IN Qualification text,
-    IN Department_Id int,
-    IN Salary decimal(10, 2)
-) BEGIN START transaction;
+    IN Department_Id INT,
+    IN Salary DECIMAL(10, 2)
+)
+BEGIN START TRANSACTION;
 
 INSERT INTO staffs (
         first_name,
@@ -103,7 +108,8 @@ COMMIT;
 END;
 
 -- List the staff by department
-CREATE PROCEDURE SP_ListStaffByDepartment (IN Department_Id int) BEGIN
+CREATE PROCEDURE SP_ListStaffByDepartment (IN Department_Id INT)
+BEGIN
 SELECT *
 FROM staffs
 WHERE staffs.department_id = Department_Id;
@@ -111,7 +117,8 @@ WHERE staffs.department_id = Department_Id;
 END;
 
 -- List staff by name
-CREATE PROCEDURE SP_ListStaffByName (IN p_order varchar(4)) BEGIN IF p_order = 'ASC' THEN
+CREATE PROCEDURE SP_ListStaffByName (IN p_order VARCHAR(4))
+BEGIN IF p_order = 'ASC' THEN
 SELECT *
 FROM staffs
 ORDER BY staffs.first_name,
@@ -129,11 +136,12 @@ END;
 
 -- Update staff info
 CREATE PROCEDURE SP_UpdateStaffInfo (
-    IN Staff_Id int,
+    IN Staff_Id INT,
     IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
-    IN Salary decimal(10, 2),
-    IN Department_Id int
-) BEGIN START transaction;
+    IN Salary DECIMAL(10, 2),
+    IN Department_Id INT
+)
+BEGIN START TRANSACTION;
 
 UPDATE staffs
 SET staffs.job_type = Job_Type,
@@ -150,7 +158,8 @@ COMMIT;
 END;
 
 -- View staff's schedule
-CREATE PROCEDURE SP_ViewStaffSchedule (IN Staff_Id int) BEGIN
+CREATE PROCEDURE SP_ViewStaffSchedule (IN Staff_Id INT)
+BEGIN
 SELECT *
 FROM appointments
 WHERE appointments.staff_id = Staff_Id
@@ -160,13 +169,14 @@ END;
 
 -- Update staff's schedule
 CREATE PROCEDURE SP_UpdateStaffSchedule (
-    IN Staff_Id int,
-    IN Appointment_Id int,
+    IN Staff_Id INT,
+    IN Appointment_Id INT,
     IN NewDate_Time datetime
-) BEGIN
-DECLARE Appointment_Count int;
+)
+BEGIN
+DECLARE Appointment_Count INT;
 
-START transaction;
+START TRANSACTION;
 
 SELECT COUNT(*) INTO Appointment_Count
 FROM appointments
@@ -190,14 +200,15 @@ END;
 -- Appointment
 -- Schedule an appointment
 CREATE PROCEDURE SP_BookAppointment (
-    IN Patient_Id int,
-    IN Staff_Id int,
+    IN Patient_Id INT,
+    IN Staff_Id INT,
     IN DateTime datetime,
     IN purpose text
-) BEGIN
-DECLARE Apointment_Count int;
+)
+BEGIN
+DECLARE Apointment_Count INT;
 
-START transaction;
+START TRANSACTION;
 
 SELECT COUNT(*) INTO Appointment_Count
 FROM appointments
@@ -217,7 +228,8 @@ END IF;
 END;
 
 -- Cancel Appointment
-CREATE PROCEDURE SP_CancelAppoinment (IN Appointment_Id int) BEGIN
+CREATE PROCEDURE SP_CancelAppoinment (IN Appointment_Id INT)
+BEGIN
 DELETE FROM appointments
 WHERE appointments.id = Appointment_Id;
 
@@ -225,7 +237,8 @@ END;
 
 -- MỚI ADD
 -- View working schedule of all doctors for a given duration (with busy or available status)
-CREATE PROCEDURE SP_ViewDoctorsSchedule (IN Start_Date datetime, IN End_Date datetime) BEGIN
+CREATE PROCEDURE SP_ViewDoctorsSchedule (IN Start_Date datetime, IN End_Date datetime)
+BEGIN
 SELECT staffs.id,
     staffs.first_name,
     staffs.last_name,
@@ -248,10 +261,11 @@ END;
 -- Report
 -- View a patient treatment history for a given duration
 CREATE PROCEDURE SP_ViewPatientTreatmentHistoryInDuration (
-    IN Patient_Id int,
-    IN Start_Date date,
-    IN End_Date date
-) BEGIN
+    IN Patient_Id INT,
+    IN Start_Date DATE,
+    IN End_Date DATE
+)
+BEGIN
 SELECT *
 FROM treatments
 WHERE treatments.patient_id = Patient_Id
@@ -260,7 +274,8 @@ WHERE treatments.patient_id = Patient_Id
 END;
 
 -- View all patient treatment in a given duration\
-CREATE PROCEDURE SP_ViewAllPatientTreatments (IN Start_Date date, IN End_Date date) BEGIN
+CREATE PROCEDURE SP_ViewAllPatientTreatments (IN Start_Date DATE, IN End_Date DATE)
+BEGIN
 SELECT *
 FROM treatments
 WHERE treatments.treatment_date BETWEEN Start_Date AND End_Date;
@@ -268,7 +283,8 @@ WHERE treatments.treatment_date BETWEEN Start_Date AND End_Date;
 END;
 
 -- View job change history of a staff
-CREATE PROCEDURE SP_ViewStaffJobChangeHistory (IN Staff_Id int) BEGIN
+CREATE PROCEDURE SP_ViewStaffJobChangeHistory (IN Staff_Id INT)
+BEGIN
 SELECT *
 FROM staff_job_history
 WHERE staff_job_history.staff_id = Staff_Id
@@ -278,10 +294,11 @@ END;
 
 -- View the work of a doctor in a given duration
 CREATE PROCEDURE SP_ViewDoctorWorkInDuration (
-    IN Doctor_Id int,
-    IN Start_Date date,
-    IN End_Date date
-) BEGIN
+    IN Doctor_Id INT,
+    IN Start_Date DATE,
+    IN End_Date DATE
+)
+BEGIN
 SELECT 'Appointments' AS WORK,
     appointments.start_time,
     appointments.end_time,
@@ -289,7 +306,8 @@ SELECT 'Appointments' AS WORK,
 FROM appointments
 WHERE appointments.staff_id = Doctor_Id
     AND appointments.start_time BETWEEN Start_Date AND End_Date
-UNION ALL
+UNION
+ALL
 SELECT 'Treatments' AS WORK,
     treatments.treatment_date,
     treatmennts.treatment_details
@@ -300,7 +318,8 @@ WHERE treatments.staff_id = Doctor_Id
 END;
 
 -- View the work of all doctors in a given duration
-CREATE PROCEDURE SP_ViewAllDoctorsWorkInDuration (IN Start_Date date, IN End_Date date) BEGIN
+CREATE PROCEDURE SP_ViewAllDoctorsWorkInDuration (IN Start_Date DATE, IN End_Date DATE)
+BEGIN
 SELECT 'Appointments' AS WORK,
     staffs.first_name,
     staffs.last_name,
@@ -311,7 +330,8 @@ FROM appointments
     JOIN staffs ON appointments.staff_id = staffs.id
 WHERE staffs.job_type = 'Doctor'
     AND appointments.start_time BETWEEN Start_Date AND End_Date
-UNION ALL
+UNION
+ALL
 SELECT 'Treatments' AS WORK,
     staffs.first_name,
     staffs.last_name,

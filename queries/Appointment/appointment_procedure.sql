@@ -1,4 +1,4 @@
--- View working schedule of all doctors for a given duration (with busy or available status)
+-- @blocks View working schedule of all doctors for a given duration (with busy or available status)
 ---- Index for this procedure
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
@@ -31,6 +31,7 @@ WHERE s.job_type = 'Doctor'
 
 END;
 
+-- @block Book an appointment WITH a doctor (FOR a given time, no more than one appointment FOR a doctor)
 CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN PatientId int,
     IN Staff_Id int,
@@ -80,13 +81,34 @@ END IF;
 
 END;
 
-call A_BookAppointmentWithDoctor (
-    1,
-    1,
-    "2024-08-15 16:30:00",
-    "2024-08-15 13:30:00",
-    "Bui Kham"
-);
+-- @block Cancel an appointment WITH a doctor
+CREATE PROCEDURE A_CancelAppoinment (IN appointment_Id INT) BEGIN
+SET @is_doctor = (
+        CASE
+            WHEN (
+                SELECT job_type
+                FROM staffs s
+                    JOIN appointments a ON a.staff_id = s.id
+                WHERE a.id = appointment_Id
+            ) = 'Doctor' THEN TRUE
+            ELSE FALSE
+        END
+    );
 
--- SELECT
---     LAST_INSERT_ID ();
+IF @is_doctor THEN START TRANSACTION;
+
+UPDATE appointments
+SET appointments.deleted = 1
+WHERE appointments.id = Appointment_Id;
+
+COMMIT;
+
+ELSE SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = "This is not a doctor's appointment ",
+    MYSQL_ERRNO = 01004;
+
+ROLLBACK;
+
+END IF;
+
+END;

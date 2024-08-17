@@ -3,11 +3,11 @@
 -- Add new patient
 -- TODO: Should use function
 CREATE PROCEDURE SP_RegisterNewPatient (
-    IN First_Name varchar(50),
-    IN Last_Name varchar(50),
-    IN DOB date,
-    IN Contact_Info varchar(255),
-    IN Address varchar(255),
+    IN First_Name VARCHAR(50),
+    IN Last_Name VARCHAR(50),
+    IN DOB DATE,
+    IN Contact_Info VARCHAR(255),
+    IN Address VARCHAR(255),
     IN Allergies text
 ) BEGIN
 INSERT INTO patients (
@@ -47,9 +47,9 @@ END;
 -- end;
 -- Add treatment -> (Only doctor can add, change to function using transaction)
 CREATE PROCEDURE SP_AddTreatment (
-    IN Patient_Id int,
-    IN Staff_Id int,
-    IN Treatment_Date date,
+    IN Patient_Id INT,
+    IN Staff_Id INT,
+    IN Treatment_Date DATE,
     IN Treatment_Details text
 ) BEGIN
 INSERT INTO treatments (
@@ -74,13 +74,13 @@ END;
 -- Add staff
 -- ASSIGN: Dong Thai imporve for login
 CREATE PROCEDURE SP_AddStaff (
-    IN First_Name varchar(50),
-    IN Last_Name varchar(50),
+    IN First_Name VARCHAR(50),
+    IN Last_Name VARCHAR(50),
     IN Job_Type ENUM ('Doctor', 'Nurse', 'Admin'),
     IN Qualification text,
-    IN Department_Id int,
-    IN Salary decimal(10, 2)
-) BEGIN START transaction;
+    IN Department_Id INT,
+    IN Salary DECIMAL(10, 2)
+) BEGIN START TRANSACTION;
 
 INSERT INTO staffs (
         first_name,
@@ -137,11 +137,11 @@ END;
 -- end;
 -- Update staff info
 CREATE PROCEDURE SP_UpdateStaffInfo (
-    IN Staff_Id int,
+    IN Staff_Id INT,
     IN Job_Type enum('Doctor', 'Nurse', 'Admin'),
-    IN Salary decimal(10, 2),
-    IN Department_Id int
-) BEGIN START transaction;
+    IN Salary DECIMAL(10, 2),
+    IN Department_Id INT
+) BEGIN START TRANSACTION;
 
 UPDATE staffs
 SET staffs.job_type = Job_Type,
@@ -180,14 +180,14 @@ END;
 -- end;
 -- Update staff's schedule (DONG)
 CREATE PROCEDURE SP_UpdateStaffSchedule (
-    IN Staff_Id int,
-    IN Appointment_Id int,
+    IN Staff_Id INT,
+    IN Appointment_Id INT,
     IN newStartTime datetime,
     IN newEndTime datetime
 ) BEGIN
-DECLARE Appointment_Count int;
+DECLARE Appointment_Count INT;
 
-START transaction;
+START TRANSACTION;
 
 SELECT COUNT(*) INTO Appointment_Count
 FROM appointments
@@ -211,14 +211,14 @@ END IF;
 
 END;
 
-call SP_UpdateStaffSchedule (
+CALL SP_UpdateStaffSchedule (
     1,
     1,
     '2024-08-11 13:00:00',
     '2024-08-11 13:01:00'
 );
 
-call SP_UpdateStaffSchedule (
+CALL SP_UpdateStaffSchedule (
     2,
     2,
     "2024-08-12 13:30:00",
@@ -228,7 +228,7 @@ call SP_UpdateStaffSchedule (
 SELECT *
 FROM appointments;
 
-call SP_UpdateStaffSchedule (
+CALL SP_UpdateStaffSchedule (
     2,
     2,
     "2024-08-12 13:30:00",
@@ -238,7 +238,7 @@ call SP_UpdateStaffSchedule (
 SELECT *
 FROM appointments;
 
-call SP_UpdateStaffSchedule (
+CALL SP_UpdateStaffSchedule (
     2,
     2,
     "2024-08-12 13:30:00",
@@ -252,14 +252,14 @@ FROM appointments;
 -- DONG
 -- Book an appointment with a doctor (for a given time, no more than one appointment for a doctor)
 CREATE PROCEDURE SP_BookAppointment (
-    IN Patient_Id int,
-    IN Staff_Id int,
+    IN Patient_Id INT,
+    IN Staff_Id INT,
     IN DateTime datetime,
     IN purpose text
 ) BEGIN
-DECLARE Apointment_Count int;
+DECLARE Apointment_Count INT;
 
-START transaction;
+START TRANSACTION;
 
 SELECT COUNT(*) INTO Appointment_Count
 FROM appointments
@@ -280,7 +280,7 @@ END;
 
 -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
 << << << < HEAD -- Cancel Appointment
-CREATE PROCEDURE SP_CancelAppoinment (IN Appointment_Id int) BEGIN
+CREATE PROCEDURE SP_CancelAppoinment (IN Appointment_Id INT) BEGIN
 DELETE FROM appointments
 WHERE appointments.id = Appointment_Id;
 
@@ -311,9 +311,9 @@ END;
 -- Report
 -- View a patient treatment history for a given duration
 CREATE PROCEDURE SP_ViewPatientTreatmentHistoryInDuration (
-    IN Patient_Id int,
-    IN Start_Date date,
-    IN End_Date date
+    IN Patient_Id INT,
+    IN Start_Date DATE,
+    IN End_Date DATE
 ) BEGIN
 SELECT *
 FROM treatments
@@ -323,7 +323,7 @@ WHERE treatments.patient_id = Patient_Id
 END;
 
 -- View all patient treatment in a given duration\
-CREATE PROCEDURE SP_ViewAllPatientTreatments (IN Start_Date date, IN End_Date date) BEGIN
+CREATE PROCEDURE SP_ViewAllPatientTreatments (IN Start_Date DATE, IN End_Date DATE) BEGIN
 SELECT *
 FROM treatments
 WHERE treatments.treatment_date BETWEEN Start_Date AND End_Date;
@@ -331,7 +331,7 @@ WHERE treatments.treatment_date BETWEEN Start_Date AND End_Date;
 END;
 
 -- View job change history of a staff
-CREATE PROCEDURE SP_ViewStaffJobChangeHistory (IN Staff_Id int) BEGIN
+CREATE PROCEDURE SP_ViewStaffJobChangeHistory (IN Staff_Id INT) BEGIN
 SELECT *
 FROM staff_job_history
 WHERE staff_job_history.staff_id = Staff_Id
@@ -341,9 +341,9 @@ END;
 
 -- View the work of a doctor in a given duration
 CREATE PROCEDURE SP_ViewDoctorWorkInDuration (
-    IN Doctor_Id int,
-    IN Start_Date date,
-    IN End_Date date
+    IN Doctor_Id INT,
+    IN Start_Date DATE,
+    IN End_Date DATE
 ) BEGIN
 SELECT 'Appointments' AS WORK,
     appointments.start_time,
@@ -363,7 +363,7 @@ WHERE treatments.staff_id = Doctor_Id
 END;
 
 -- View the work of all doctors in a given duration
-CREATE PROCEDURE SP_ViewAllDoctorsWorkInDuration (IN Start_Date date, IN End_Date date) BEGIN
+CREATE PROCEDURE SP_ViewAllDoctorsWorkInDuration (IN Start_Date DATE, IN End_Date DATE) BEGIN
 SELECT 'Appointments' AS WORK,
     staffs.first_name,
     staffs.last_name,
@@ -388,7 +388,7 @@ WHERE staffs.job_type = 'Doctor'
 END;
 
 = = = = = = = -- Cancel Appointment (SOFT DELETE AND CHECK DOCTOR FOR SAVE)
-CREATE PROCEDURE SP_CancelAppoinment (IN AppointmentId int) BEGIN
+CREATE PROCEDURE SP_CancelAppoinment (IN AppointmentId INT) BEGIN
 DELETE FROM Appointments
 WHERE appointments.id = Appointment_Id;
 
