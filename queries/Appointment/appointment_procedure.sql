@@ -4,9 +4,8 @@ CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
-CREATE PROCEDURE A_ViewDoctorScheduleByDuration (in fromDate DATETIME, in toDate DATETIME) BEGIN
-SELECT DISTINCT
-    (s.id),
+CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
+SELECT DISTINCT (s.id),
     s.first_name,
     s.last_name,
     s.job_type,
@@ -23,18 +22,71 @@ SELECT DISTINCT
         ),
         TRUE,
         FALSE
-    ) as busy
-FROM
-    staffs s
+    ) AS busy
+FROM staffs s
     LEFT JOIN appointments a ON s.id = a.staff_id
     AND a.deleted = 0
-WHERE
-    s.job_type = 'Doctor'
+WHERE s.job_type = 'Doctor'
     AND s.deleted = 0;
 
 END;
 
-call A_ViewDoctorScheduleByDuration (
-    "2024-08-11 13:00:00",
-    "2024-08-11 13:30:00"
+CREATE PROCEDURE A_BookAppointmentWithDoctor (
+    IN PatientId int,
+    IN Staff_Id int,
+    IN newStartTime datetime,
+    IN newEndTime datetime,
+    IN purpose text
+) BEGIN
+DECLARE Appointment_Count int;
+
+START transaction;
+
+SELECT COUNT(*) INTO Appointment_Count
+FROM appointments ap
+    JOIN staffs s ON s.id = ap.staff_id
+WHERE ap.staff_id = Staff_Id
+    AND ap.start_time < newEndTime
+    AND ap.end_time > newStartTime
+    AND s.job_type = 'Doctor';
+
+IF Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'Trung lich',
+    MYSQL_ERRNO = 1001;
+
+ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = 'INVALID TIME FRAME',
+    MYSQL_ERRNO = 1001;
+
+ELSE
+INSERT INTO Appointments (
+        patient_id,
+        staff_id,
+        start_time,
+        end_time,
+        purpose
+    )
+VALUES (
+        PatientId,
+        Staff_Id,
+        newStartTime,
+        newEndTime,
+        purpose
+    );
+
+COMMIT;
+
+END IF;
+
+END;
+
+call A_BookAppointmentWithDoctor (
+    1,
+    1,
+    "2024-08-15 16:30:00",
+    "2024-08-15 13:30:00",
+    "Bui Kham"
 );
+
+-- SELECT
+--     LAST_INSERT_ID ();

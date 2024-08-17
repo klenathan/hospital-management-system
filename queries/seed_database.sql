@@ -1,12 +1,10 @@
-insert into
-    Departments (name)
-values ('Cardiology'),
+INSERT INTO Departments (name)
+VALUES ('Cardiology'),
     ('Neurology'),
     ('Pediatrics'),
     ('Emergency');
 
-insert ignore into
-    Patients (
+INSERT IGNORE INTO Patients (
         id,
         first_name,
         last_name,
@@ -15,7 +13,7 @@ insert ignore into
         address,
         allergies
     )
-values (
+VALUES (
         2,
         'Duong',
         'Nguyen',
@@ -25,8 +23,7 @@ values (
         'None'
     );
 
-insert into
-    Patients (
+INSERT INTO Patients (
         first_name,
         last_name,
         date_of_birth,
@@ -34,7 +31,7 @@ insert into
         address,
         allergies
     )
-values (
+VALUES (
         'Duong',
         'Nguyen',
         '2000-08-18',
@@ -67,8 +64,7 @@ values (
         'None'
     );
 
-insert into
-    Staffs (
+INSERT INTO Staffs (
         first_name,
         last_name,
         job_type,
@@ -76,7 +72,7 @@ insert into
         department_id,
         salary
     )
-values (
+VALUES (
         'Dr. Peter',
         'Julian',
         'Doctor',
@@ -109,15 +105,14 @@ values (
         30000000.00
     );
 
-insert into
-    appointments (
+INSERT INTO appointments (
         patient_id,
         staff_id,
         start_time,
         end_time,
         purpose
     )
-values (
+VALUES (
         1,
         1,
         '2024-08-11 13:00:00',
@@ -146,14 +141,13 @@ values (
         'Emergency treatment'
     );
 
-insert into
-    treatments (
+INSERT INTO treatments (
         patient_id,
         staff_id,
         treatment_date,
         treatment_details
     )
-values (
+VALUES (
         1,
         1,
         '2024-08-11',
@@ -178,15 +172,14 @@ values (
         'Emergency care'
     );
 
-insert into
-    Staff_Job_History (
+INSERT INTO Staff_Job_History (
         staff_id,
         job_type,
         salary,
         department_id,
         created_at
     )
-values (
+VALUES (
         1,
         'Cardiologist',
         40000000.00,
