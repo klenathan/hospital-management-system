@@ -435,7 +435,7 @@
                 },
                 "newEndTime": {
                   "type": "string",
-                  "example": "2024-08-11T06:00:00.000Z"
+                  "example": "2024-08-11T06:10:00.000Z"
                 }
               },
               "required": [
@@ -486,6 +486,60 @@
             "in": "query",
             "description": "Query Staff ID (INT)",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Create new appointment with doctor",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new staff body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "patientId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "staffId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "startTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:00:00.000Z"
+                },
+                "endTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:40:00.000Z"
+                },
+                "purpose": {
+                  "type": "string",
+                  "example": "Checkups"
+                }
+              },
+              "required": [
+                "patientId",
+                "staffId",
+                "startTime",
+                "endTime",
+                "purpose"
+              ]
+            }
           }
         ],
         "responses": {

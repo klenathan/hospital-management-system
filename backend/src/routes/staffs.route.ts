@@ -143,7 +143,7 @@ staffRouter.put("/schedule/:staffId", async (req: Request, res: Response) => {
             schema: {
                 $appointmentId: 1,
                 $newStartTime: "2024-08-10T06:00:00.000Z",
-                $newEndTime: "2024-08-11T06:00:00.000Z",
+                $newEndTime: "2024-08-11T06:10:00.000Z",
             }
     } 
   */

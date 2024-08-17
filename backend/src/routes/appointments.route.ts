@@ -1,5 +1,16 @@
 import { Request, Response, Router } from "express";
 import AppointmentService from "../services/appointments.service";
+
+import { z } from "zod";
+
+const CreateNewAppointment = z.object({
+  patientId: z.number(),
+  staffId: z.number(),
+  startTime: z.coerce.date(),
+  endTime: z.coerce.date(),
+  purpose: z.string(),
+});
+
 const appointmentRouter = Router();
 
 const appointmentService = new AppointmentService();
@@ -53,6 +64,52 @@ appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
     res.status(200).send(appointments);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
+  }
+});
+
+appointmentRouter.post("/", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'Create new appointment with doctor'
+  
+  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add new staff body.',
+            schema: {
+                $patientId: 1,
+                $staffId: 1,
+                $startTime: "2024-08-10T06:00:00.000Z",
+                $endTime: "2024-08-10T06:40:00.000Z",
+                $purpose: "Checkups",
+            }
+    } */
+  try {
+    // const staffId = parseInt(req.params["staffId"] as string);
+    // if (isNaN(staffId)) {
+    //   throw new Error("Invalid staff ID: staffId");
+    // }
+
+    const newAppointmentProps = CreateNewAppointment.parse(req.body);
+
+    const staffs = await appointmentService.createNewAppointment(
+      newAppointmentProps
+    );
+    return res.status(200).send(staffs);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        console.error("Validation failed: ", issue);
+      }
+      return res.status(400).json({
+        message: `Validation error: ${error.issues
+          .map((e) => e.path)
+          .join("; ")}`,
+      });
+    } else {
+      console.error("Error: ", error);
+      return res.status(400).json({
+        message: `Server error: ${error}`,
+      });
+    }
   }
 });
 
