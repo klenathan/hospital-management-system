@@ -1,4 +1,8 @@
-import { ProcedureCallPacket, RowDataPacket } from "mysql2/promise";
+import {
+  ProcedureCallPacket,
+  ResultSetHeader,
+  RowDataPacket,
+} from "mysql2/promise";
 import connection from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
@@ -55,17 +59,27 @@ export default class StaffService {
   }
 
   public async createSingleNewStaff(props: {
-    staffId: number;
-  }): Promise<GetRequestResult> {
+    firstName: string;
+    lastName: string;
+    jobType: string;
+    qualification: string;
+    deptId: number;
+    salary: number;
+  }): Promise<any> {
     const conn = await connection;
-    const [rows, _fields] = await conn.query<
-      ProcedureCallPacket<RowDataPacket[]>
-    >(`CALL S_AddNewStaff("${props.staffId}")`);
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL S_AddNewStaff(
+      "${props.firstName}",
+      "${props.lastName}",
+      "${props.jobType}",
+      "${props.qualification}",
+      "${props.deptId}",
+      "${props.salary}"
+      )`);
+
     return {
-      queryResult: {
-        count: rows[0].length,
-      },
-      data: rows[0],
+      status: "success",
     };
   }
 }

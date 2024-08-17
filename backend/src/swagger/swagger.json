@@ -292,6 +292,65 @@
             "description": "Bad Request"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Create new staff (with new user to system)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new staff body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "example": "Super"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Saiyan"
+                },
+                "jobType": {
+                  "type": "string",
+                  "example": "Doctor"
+                },
+                "qualification": {
+                  "type": "string",
+                  "example": "MD"
+                },
+                "deptId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "salary": {
+                  "type": "number",
+                  "example": 100000000
+                }
+              },
+              "required": [
+                "firstName",
+                "lastName",
+                "jobType",
+                "qualification",
+                "deptId",
+                "salary"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/api/staff/department/{depId}": {
