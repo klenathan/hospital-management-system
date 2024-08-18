@@ -19,6 +19,13 @@ export interface Appointment {
   busy?: boolean
 }
 
+export type AppointmentResponse = {
+  queryResult: {
+    count: number
+  }
+  data: Appointment[]
+}
+
 export interface WorkingSchedule {
   id: number
   first_name: string
@@ -31,4 +38,10 @@ export interface WorkingSchedule {
   created_at: string
   updated_at: string
   busy: boolean
+}
+export type WorkingScheduleResponse = {
+  queryResult: {
+    count: number
+  }
+  data: WorkingSchedule[]
 }

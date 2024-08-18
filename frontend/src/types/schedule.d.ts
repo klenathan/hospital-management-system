@@ -13,3 +13,10 @@ export interface Schedule {
   start_time: string
   end_time: string
 }
+
+export type ScheduleResponse = {
+  queryResult: {
+    count: number
+  }
+  data: Schedule[]
+}

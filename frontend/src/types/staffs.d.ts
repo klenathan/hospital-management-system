@@ -10,3 +10,10 @@ export interface StaffMember {
   created_at: string
   updated_at: string
 }
+
+export type StaffListResponse = {
+  queryResult: {
+    count: number
+  }
+  data: StaffMember[]
+}

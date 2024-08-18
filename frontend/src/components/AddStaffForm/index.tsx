@@ -1,79 +1,60 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Department } from '@/types/department';
-import { StaffMember } from '@/types/staffs';
+import { LoaderCircle } from 'lucide-react';
+import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
+// Define the zod schema for validation
+const staffSchema = z.object({
+    first_name: z.string().min(1, "First name is required."),
+    last_name: z.string().min(1, "Last name is required."),
+    department_id: z.string().nonempty("Please select a department."),
+    job_type: z.string().nonempty("Please select a job type."),
+    qualifications: z.string().optional(),
+    salary: z.preprocess(
+        (value) => parseFloat(value as string),
+        z.number().positive("Salary must be a positive number.")
+    ),
+});
+
+type StaffFormData = z.infer<typeof staffSchema>;
 
 interface AddStaffFormProps {
     departments: Department[];
-    onAddStaff: (newStaff: StaffMember) => void;
 }
 
 const jobTypes = ['Doctor', 'Nurse', 'Admin'];
 
-interface StaffFormData {
-    first_name: string;
-    last_name: string;
-    department_id: number | '';
-    job_type: string;
-    qualifications: string;
-    salary: number | '';
-}
-
-export default function AddStaffForm({ departments, onAddStaff }: AddStaffFormProps) {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-
-    const [formData, setFormData] = useState<StaffFormData>({
-        first_name: '',
-        last_name: '',
-        department_id: '',
-        job_type: '',
-        qualifications: '',
-        salary: '',
+export default function AddStaffForm({ departments }: AddStaffFormProps) {
+    const form = useForm<StaffFormData>({
+        resolver: zodResolver(staffSchema),
+        defaultValues: {
+            first_name: "",
+            last_name: "",
+            job_type: "",
+            qualifications: "",
+            department_id: "",
+            salary: 0,
+        },
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
 
-    const handleDepartmentChange = (value: string) => {
-        setFormData({
-            ...formData,
-            department_id: parseInt(value, 10),
-        });
-    };
 
-    const handleJobTypeChange = (value: string) => {
-        setFormData({
-            ...formData,
-            job_type: value,
-        });
-    };
+    const submitForm = useMutationWithoutTokenAPI('add/staff');
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // Validate salary before submitting
-        if (typeof formData.salary === 'string') {
-            formData.salary = parseFloat(formData.salary);
-        }
-        if (formData.department_id === '') {
-            alert('Please select a department');
-            return;
-        }
-        onAddStaff(formData as StaffMember);
-        setIsOpen(false);
-    };
+    const onSubmit = (values: z.infer<typeof staffSchema>) => {
+        submitForm.mutate(values)
+    }
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog>
             <DialogTrigger asChild>
-                <Button onClick={() => setIsOpen(true)}>Add New Staff</Button>
+                <Button>Add New Staff</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -82,79 +63,114 @@ export default function AddStaffForm({ departments, onAddStaff }: AddStaffFormPr
                 <DialogDescription>
                     Fill out the form below to add a new staff member.
                 </DialogDescription>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="first_name">First Name</Label>
-                        <Input
-                            id="first_name"
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
                             name="first_name"
-                            value={formData.first_name}
-                            onChange={handleChange}
-                            required
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.first_name?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="last_name">Last Name</Label>
-                        <Input
-                            id="last_name"
+                        <FormField
+                            control={form.control}
                             name="last_name"
-                            value={formData.last_name}
-                            onChange={handleChange}
-                            required
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.last_name?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="department_id">Department</Label>
-                        <Select onValueChange={handleDepartmentChange}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {departments.map((department) => (
-                                    <SelectItem key={department.id} value={department.id.toString()}>
-                                        {department.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="job_type">Job Type</Label>
-                        <Select onValueChange={handleJobTypeChange}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Job Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {jobTypes.map((job, index) => (
-                                    <SelectItem key={index} value={job}>
-                                        {job}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="qualifications">Qualifications</Label>
-                        <Input
-                            id="qualifications"
+                        <FormField
+                            control={form.control}
+                            name="department_id"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Department</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select Department" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {departments.map((department) => (
+                                                    <SelectItem key={department.id} value={department.id.toString()}>
+                                                        {department.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.department_id?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="job_type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Job Type</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select Job Type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {jobTypes.map((job, index) => (
+                                                    <SelectItem key={index} value={job}>
+                                                        {job}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.job_type?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
                             name="qualifications"
-                            value={formData.qualifications}
-                            onChange={handleChange}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Qualifications</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.qualifications?.message}</FormMessage>
+                                    <FormDescription>Optional</FormDescription>
+                                </FormItem>
+                            )}
                         />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="salary">Salary</Label>
-                        <Input
-                            id="salary"
+                        <FormField
+                            control={form.control}
                             name="salary"
-                            type="number"
-                            value={formData.salary}
-                            onChange={handleChange}
-                            required
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Salary</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.salary?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                    </div>
-                    <Button type="submit">Add Staff</Button>
-                </form>
+                        <Button type="submit" className="w-full text-background" disabled={submitForm.isPending}>
+                            {submitForm.isPending ? <LoaderCircle className="animate-spin" /> : <span>Add Staff</span>}
+                        </Button>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     );
