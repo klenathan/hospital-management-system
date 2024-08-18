@@ -76,6 +76,8 @@ export default class PatientService {
       "${props.allergies ?? "None"}",
       )`);
 
-    return true;
+    return {
+      status: "success",
+    };
   }
 }

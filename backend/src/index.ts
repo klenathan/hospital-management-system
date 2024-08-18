@@ -20,6 +20,8 @@ app.disable("x-powered-by");
 app.use(cors({}));
 app.use(express.json());
 
+console.log(new Date().toISOString());
+
 // logger middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.locals.startTime = Date.now();

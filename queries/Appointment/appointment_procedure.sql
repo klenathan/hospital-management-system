@@ -1,4 +1,4 @@
--- View working schedule of all doctors for a given duration (with busy or available status)
+-- @blocks View working schedule of all doctors for a given duration (with busy or available status)
 ---- Index for this procedure
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
@@ -31,6 +31,7 @@ WHERE s.job_type = 'Doctor'
 
 END;
 
+-- @block Book an appointment WITH a doctor (FOR a given time, no more than one appointment FOR a doctor)
 CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN PatientId int,
     IN Staff_Id int,
@@ -40,9 +41,13 @@ CREATE PROCEDURE A_BookAppointmentWithDoctor (
 ) BEGIN
 DECLARE Appointment_Count int;
 
-START transaction;
-
-SELECT COUNT(*) INTO Appointment_Count
+SELECT IF (
+        (s.job_type = 'Doctor'),
+        TRUE,
+        FALSE
+    ),
+    COUNT(*) INTO @isDocter,
+    Appointment_Count
 FROM appointments ap
     JOIN staffs s ON s.id = ap.staff_id
 WHERE ap.staff_id = Staff_Id
@@ -51,14 +56,19 @@ WHERE ap.staff_id = Staff_Id
     AND s.job_type = 'Doctor';
 
 IF Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
-SET MESSAGE_TEXT = 'Trung lich',
+SET MESSAGE_TEXT = 'TIME ALREADY BOOKED',
     MYSQL_ERRNO = 1001;
 
 ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSE
+ELSEIF ! @isDocter THEN SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = "This is not a doctor's appointment ",
+    MYSQL_ERRNO = 01004;
+
+ELSE START transaction;
+
 INSERT INTO Appointments (
         patient_id,
         staff_id,
@@ -80,13 +90,34 @@ END IF;
 
 END;
 
-call A_BookAppointmentWithDoctor (
-    1,
-    1,
-    "2024-08-15 16:30:00",
-    "2024-08-15 13:30:00",
-    "Bui Kham"
-);
+-- @block Cancel an appointment WITH a doctor
+CREATE PROCEDURE A_CancelAppoinment (IN appointment_Id INT) BEGIN
+SET @is_doctor = (
+        CASE
+            WHEN (
+                SELECT job_type
+                FROM staffs s
+                    JOIN appointments a ON a.staff_id = s.id
+                WHERE a.id = appointment_Id
+            ) = 'Doctor' THEN TRUE
+            ELSE FALSE
+        END
+    );
 
--- SELECT
---     LAST_INSERT_ID ();
+IF @is_doctor THEN START TRANSACTION;
+
+UPDATE appointments
+SET appointments.deleted = 1
+WHERE appointments.id = Appointment_Id;
+
+COMMIT;
+
+ELSE SIGNAL SQLSTATE '2201R'
+SET MESSAGE_TEXT = "This is not a doctor's appointment ",
+    MYSQL_ERRNO = 01004;
+
+ROLLBACK;
+
+END IF;
+
+END;
