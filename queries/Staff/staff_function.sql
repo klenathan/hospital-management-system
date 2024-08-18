@@ -3,10 +3,8 @@ CREATE FUNCTION S_InsertStaffJobHistory (
     j_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
     department_id INT
-) RETURNS BOOL DETERMINISTIC
-BEGIN
-INSERT INTO
-    staff_job_history (
+) RETURNS BOOL DETERMINISTIC BEGIN
+INSERT INTO staff_job_history (
         staff_id,
         job_type,
         salary,
@@ -18,5 +16,7 @@ VALUES (
         salary,
         department_id
     );
+
 RETURN TRUE;
+
 END;

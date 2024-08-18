@@ -1,5 +1,3 @@
-DROP PROCEDURE IF EXISTS S_AddNewStaff;
-
 ------------------------ Procedure ađ new staff ------------------------
 CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
@@ -19,7 +17,6 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 
 SAVEPOINT start_sp;
-
 
 INSERT INTO staffs (
         first_name,
@@ -41,18 +38,16 @@ VALUES (
 SET @userID = LAST_INSERT_ID();
 
 -- Insert into staff job history
-SET @addStaffJobHis = S_InsertStaffJobHistory (@userID, j_type, salary, department_id);
+SET @addStaffJobHis = S_InsertStaffJobHistory(@userID, j_type, salary, department_id);
 
--- Insert create user
+-- Create a username by concatenating first name, last name, and user ID
 SET @username = CONCAT(f_name, l_name, @userID);
 
+-- Create the user
 SET @query1 = CONCAT(
-        '
-            CREATE USER "',
+        'CREATE USER "',
         @username,
-        '"@"%" IDENTIFIED BY "',
-        'password',
-        '"'
+        '"@"%" IDENTIFIED BY "password"'
     );
 
 PREPARE stmt
@@ -61,6 +56,78 @@ FROM @query1;
 EXECUTE stmt;
 
 DEALLOCATE PREPARE stmt;
+
+-- Grant role and set default role
+IF j_type = 'Doctor' THEN
+SET @query2 = CONCAT('GRANT doctor TO "', @username, '"@"%"');
+
+PREPARE stmt
+FROM @query2;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+SET @query3 = CONCAT(
+        'SET DEFAULT ROLE doctor TO "',
+        @username,
+        '"@"%"'
+    );
+
+PREPARE stmt
+FROM @query3;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+ELSEIF j_type = 'Nurse' THEN
+SET @query2 = CONCAT('GRANT nurse TO "', @username, '"@"%"');
+
+PREPARE stmt
+FROM @query2;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+SET @query3 = CONCAT(
+        'SET DEFAULT ROLE nurse TO "',
+        @username,
+        '"@"%"'
+    );
+
+PREPARE stmt
+FROM @query3;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+ELSEIF j_type = 'Admin' THEN
+SET @query2 = CONCAT('GRANT adminStaff TO "', @username, '"@"%"');
+
+PREPARE stmt
+FROM @query2;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+SET @query3 = CONCAT(
+        'SET DEFAULT ROLE adminStaff TO "',
+        @username,
+        '"@"%"'
+    );
+
+PREPARE stmt
+FROM @query3;
+
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
+END IF;
 
 IF `_rollback` THEN ROLLBACK TO SAVEPOINT start_sp;
 
@@ -158,7 +225,6 @@ WHERE s.id = staff_id
 
 END;
 
-drop PROCEDURE if EXISTS SP_UpdateStaffSchedule;
 -- @block Update a staff schedule
 CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
