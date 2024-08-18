@@ -29,6 +29,19 @@ export default class StaffService {
     };
   }
 
+  public async getAllDoctor(): Promise<GetRequestResult> {
+    const conn = await connection;
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM staffs WHERE job_type = "Doctor"`
+    );
+    return {
+      queryResult: {
+        count: rows.length,
+      },
+      data: rows,
+    };
+  }
+
   public async listStaffByDep(props: {
     depId: number;
   }): Promise<GetRequestResult> {
