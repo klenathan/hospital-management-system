@@ -24,7 +24,7 @@ const staffService = new StaffService();
 
 staffRouter.get("/", async (req: Request, res: Response) => {
   /*  
-  #swagger.summary = 'Get all staffs'
+  #swagger.summary = 'List the staff by name (in ASC and DESC order)'
   
   #swagger.parameters['order'] = {
             in: 'query',
@@ -50,7 +50,7 @@ staffRouter.get("/", async (req: Request, res: Response) => {
 
 staffRouter.post("/", async (req: Request, res: Response) => {
   /*  
-  #swagger.summary = 'Create new staff (with new user to system)'
+  #swagger.summary = 'Add a new staff'
   
   #swagger.parameters['body'] = {
             in: 'body',
@@ -95,7 +95,7 @@ staffRouter.post("/", async (req: Request, res: Response) => {
 
 staffRouter.get("/department/:depId", async (req: Request, res: Response) => {
   /*  
-  #swagger.summary = 'Get all staffs by department ID'
+  #swagger.summary = 'List the staff by department'
   
   #swagger.parameters['depId'] = { description: 'Department ID' }*/
   try {

@@ -274,7 +274,7 @@
         "tags": [
           "Staff"
         ],
-        "summary": "Get all staffs",
+        "summary": "List the staff by name (in ASC and DESC order)",
         "description": "",
         "parameters": [
           {
@@ -297,7 +297,7 @@
         "tags": [
           "Staff"
         ],
-        "summary": "Create new staff (with new user to system)",
+        "summary": "Add a new staff",
         "description": "",
         "parameters": [
           {
@@ -358,7 +358,7 @@
         "tags": [
           "Staff"
         ],
-        "summary": "Get all staffs by department ID",
+        "summary": "List the staff by department",
         "description": "",
         "parameters": [
           {
