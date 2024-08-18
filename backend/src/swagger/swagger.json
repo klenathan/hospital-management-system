@@ -353,6 +353,23 @@
         }
       }
     },
+    "/api/staff/doctors": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "List all doctors [For dev purpose]",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/staff/department/{depId}": {
       "get": {
         "tags": [

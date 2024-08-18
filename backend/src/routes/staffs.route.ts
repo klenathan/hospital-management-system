@@ -47,6 +47,19 @@ staffRouter.get("/", async (req: Request, res: Response) => {
     return res.status(400).json({ error: (e as Error).message });
   }
 });
+staffRouter.get("/doctors", async (_req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'List all doctors [For dev purpose]'
+  
+  */
+  try {
+    const staffs = await staffService.getAllDoctor();
+    return res.status(200).send(staffs);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({ error: (e as Error).message });
+  }
+});
 
 staffRouter.post("/", async (req: Request, res: Response) => {
   /*  
