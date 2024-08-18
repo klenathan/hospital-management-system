@@ -40,6 +40,7 @@
     "react-hook-form": "^7.52.2",
     "react-resizable-panels": "^2.0.20",
     "react-router-dom": "^6.23.1",
+    "react-select": "^5.8.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"

@@ -1,4 +1,3 @@
-"use client";
 
 import * as React from "react";
 import { format } from "date-fns";
@@ -8,28 +7,33 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { TimePickerDemo } from "../TimePicker/time-picker-demo";
 
-interface DatePickerWithRangeProps {
+interface DateTimePickerWithRangeProps {
     className?: string;
     selected: DateRange | undefined;
     onSubmit: (date: DateRange | undefined) => void;
 }
 
-export function DatePickerWithRange({
+export function DateTimePickerWithRange({
     className,
     selected,
     onSubmit,
-}: DatePickerWithRangeProps) {
+}: DateTimePickerWithRangeProps) {
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(selected);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
     const handleSelectDate = (range: DateRange | undefined) => {
-        setDateRange(range);
+        if (!range) {
+            setDateRange(undefined);
+            return;
+        }
+
+        const updatedFrom = range.from ? new Date(range.from) : undefined;
+        const updatedTo = range.to ? new Date(range.to) : undefined;
+
+        setDateRange({ from: updatedFrom, to: updatedTo });
     };
 
     const handleSubmit = () => {
@@ -40,7 +44,7 @@ export function DatePickerWithRange({
     return (
         <div className={cn("grid gap-2", className)}>
             <Popover open={isOpen}>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild >
                     <Button
                         id="date"
                         variant={"outline"}
@@ -72,10 +76,14 @@ export function DatePickerWithRange({
                         defaultMonth={dateRange?.from}
                         selected={dateRange}
                         onSelect={handleSelectDate}
-                        numberOfMonths={1}
+                        numberOfMonths={2}
                     />
+                    <div className="flex justify-between items-center p-3 border-t border-border">
+                        <TimePickerDemo date={dateRange?.from} setDate={(date) => handleSelectDate({ from: date, to: dateRange?.to })} />
+                        <TimePickerDemo date={dateRange?.to} setDate={(date) => handleSelectDate({ from: dateRange?.from, to: date })} />
+                    </div>
                     <div className="flex justify-end p-3 border-t border-border">
-                        <Button onClick={handleSubmit}>Apply</Button>
+                        <Button onClick={handleSubmit}>Add Time</Button>
                     </div>
                 </PopoverContent>
             </Popover>

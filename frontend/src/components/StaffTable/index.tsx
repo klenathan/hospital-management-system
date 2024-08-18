@@ -13,7 +13,7 @@ interface StaffTableProps {
 
 const StaffTable: React.FC<StaffTableProps> = ({ staffData, isLoading, children }) => {
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['department'], '/api/department/');
+        useQueryWithoutTokenAPI<DepartmentResponse>(['patient'], '/api/department/');
 
     // Create a map of department ID to department name
     const departmentMap = departmentListData?.data.reduce((acc, department) => {

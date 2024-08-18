@@ -45,11 +45,16 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
 
 
 
-    const submitForm = useMutationWithoutTokenAPI('add/staff');
+    const submitForm = useMutationWithoutTokenAPI('/api/staff/');
 
-    const onSubmit = (values: z.infer<typeof staffSchema>) => {
-        submitForm.mutate(values)
-    }
+    const onSubmit = (data: StaffFormData) => {
+        submitForm.mutate(data, {
+            onSuccess: () => {
+                form.reset();
+            },
+        });
+    };
+
 
     return (
         <Dialog>

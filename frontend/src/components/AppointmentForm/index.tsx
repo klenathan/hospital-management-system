@@ -2,11 +2,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
+
 // Define the zod schema for validation
 const appointmentSchema = z.object({
     doctor: z.string().min(1, "Please select a doctor."),
@@ -20,12 +21,16 @@ const appointmentSchema = z.object({
 type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
 export default function AppointmentForm() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<AppointmentFormValues>({
+    const form = useForm<AppointmentFormValues>({
         resolver: zodResolver(appointmentSchema),
+        defaultValues: {
+            doctor: '',
+            patient: '',
+            date: '',
+            startTime: '',
+            endTime: '',
+            purpose: '',
+        }
     });
 
     const doctors = [
@@ -42,10 +47,21 @@ export default function AppointmentForm() {
         { id: 4, name: "Alice Green" },
     ];
 
+    const submitForm = useMutationWithoutTokenAPI('/api/appointment/');
+
+
     const onSubmit = (data: AppointmentFormValues) => {
         console.log("Form data submitted:", data);
+
         // Call your API here with the form data
+        submitForm.mutate(data, {
+            onSuccess: () => {
+                form.reset();
+            },
+        });
     };
+
+
 
     return (
         <Dialog>
@@ -59,102 +75,103 @@ export default function AppointmentForm() {
                         Select a doctor, patient, date, and purpose for your appointment
                     </DialogDescription>
                 </DialogHeader>
-                <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-2">
-                        <Label htmlFor="doctor">Doctor</Label>
-                        <select
-                            id="doctor"
-                            className="p-2 border rounded w-full"
-                            {...register("doctor")}
-                        >
-                            <option value="" disabled>
-                                Select a doctor...
-                            </option>
-                            {doctors.map((doctor) => (
-                                <option key={doctor.id} value={doctor.id.toString()}>
-                                    {doctor.name}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.doctor && (
-                            <p className="text-red-500">{errors.doctor.message}</p>
-                        )}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="patient">Patient</Label>
-                        <select
-                            id="patient"
-                            className="p-2 border rounded w-full"
-                            {...register("patient")}
-                        >
-                            <option value="" disabled>
-                                Select a patient...
-                            </option>
-                            {patients.map((patient) => (
-                                <option key={patient.id} value={patient.id.toString()}>
-                                    {patient.name}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.patient && (
-                            <p className="text-red-500">{errors.patient.message}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="date">Date</Label>
-                        <Input
-                            id="date"
-                            type="date"
-                            {...register("date")}
-                            className="p-2 border rounded w-full"
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="doctor"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Doctor</FormLabel>
+                                    <FormControl>
+                                        <select className="p-2 border rounded w-full" {...field}>
+                                            <option value="" disabled>Select a doctor...</option>
+                                            {doctors.map((doctor) => (
+                                                <option key={doctor.id} value={doctor.id.toString()}>
+                                                    {doctor.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.doctor?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                        {errors.date && (
-                            <p className="text-red-500">{errors.date.message}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="startTime">Start Time</Label>
-                        <Input
-                            id="startTime"
-                            type="time"
-                            {...register("startTime")}
-                            className="p-2 border rounded w-full"
+                        <FormField
+                            control={form.control}
+                            name="patient"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Patient</FormLabel>
+                                    <FormControl>
+                                        <select className="p-2 border rounded w-full" {...field}>
+                                            <option value="" disabled>Select a patient...</option>
+                                            {patients.map((patient) => (
+                                                <option key={patient.id} value={patient.id.toString()}>
+                                                    {patient.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.patient?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                        {errors.startTime && (
-                            <p className="text-red-500">{errors.startTime.message}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="endTime">End Time</Label>
-                        <Input
-                            id="endTime"
-                            type="time"
-                            {...register("endTime")}
-                            className="p-2 border rounded w-full"
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date</FormLabel>
+                                    <FormControl>
+                                        <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.date?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                        {errors.endTime && (
-                            <p className="text-red-500">{errors.endTime.message}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="purpose">Purpose</Label>
-                        <Textarea
-                            id="purpose"
-                            placeholder="Enter the purpose of the appointment"
-                            {...register("purpose")}
-                            className="p-2 border rounded w-full"
+                        <FormField
+                            control={form.control}
+                            name="startTime"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Start Time</FormLabel>
+                                    <FormControl>
+                                        <Input type="time" {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.startTime?.message}</FormMessage>
+                                </FormItem>
+                            )}
                         />
-                        {errors.purpose && (
-                            <p className="text-red-500">{errors.purpose.message}</p>
-                        )}
-                    </div>
-
-                    <Button type="submit">Book Appointment</Button>
-                </form>
+                        <FormField
+                            control={form.control}
+                            name="endTime"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>End Time</FormLabel>
+                                    <FormControl>
+                                        <Input type="time" {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.endTime?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="purpose"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Purpose</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="Enter the purpose of the appointment" {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.purpose?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit">Book Appointment</Button>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     );

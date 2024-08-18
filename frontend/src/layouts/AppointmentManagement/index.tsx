@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
-import { DatePickerWithRange } from '@/components/DatePickerWithRange';
+import { DateTimePickerWithRange } from '@/components/DateTimePickerWithRange';
 import { DateRange } from 'react-day-picker';
 import { MoreHorizontal } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -20,9 +20,6 @@ export default function AppointmentManagement() {
     });
     const [isCancelDialogOpen, setIsCancelDialogOpen] = useState<number | null>(null);
     const [isNoteDialogOpen, setIsNoteDialogOpen] = useState<number | null>(null);
-
-
-
 
 
     const getFormattedDate = (date?: Date) => {
@@ -74,7 +71,7 @@ export default function AppointmentManagement() {
             <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center space-y-4 sm:space-y-0 mb-4">
                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                     <Label htmlFor="dateRange">Date Range</Label>
-                    <DatePickerWithRange
+                    <DateTimePickerWithRange
                         className="w-full sm:w-auto"
                         selected={dateRange}
                         onSubmit={(range) => {
