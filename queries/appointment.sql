@@ -1,6 +1,6 @@
-DELIMITER $$
+call A_ViewDoctorScheduleByDuration("2024-08-19", "2024-08-19");
 
-CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
+DELIMITER $$ CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
 SELECT DISTINCT (s.id),
     s.first_name,
     s.last_name,
@@ -11,7 +11,6 @@ SELECT DISTINCT (s.id),
     s.deleted,
     s.created_at,
     s.updated_at,
-    a.id,
     IF (
         (
             a.start_time <= toDate
@@ -26,9 +25,7 @@ FROM staffs s
 WHERE s.job_type = 'Doctor'
     AND s.deleted = 0;
 
-END $$
-
-CREATE PROCEDURE A_BookAppointmentWithDoctor (
+END $$ CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN PatientId int,
     IN Staff_Id int,
     IN newStartTime datetime,
@@ -84,9 +81,7 @@ COMMIT;
 
 END IF;
 
-END $$
-
-CREATE PROCEDURE A_CancelAppoinment (IN appointment_Id INT) BEGIN
+END $$ CREATE PROCEDURE A_CancelAppoinment (IN appointment_Id INT) BEGIN
 SET @is_doctor = (
         CASE
             WHEN (
