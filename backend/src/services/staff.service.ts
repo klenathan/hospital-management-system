@@ -19,6 +19,10 @@ export default class StaffService {
     config: PoolOptions
   ): Promise<GetRequestResult> {
     const conn = await getMySqlConnnection(config);
+    console.log(config);
+
+    // console.log(conn.);
+
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(
@@ -26,6 +30,7 @@ export default class StaffService {
         props.order ? props.order.toLocaleLowerCase() : "asc"
       }")`
     );
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
