@@ -1,5 +1,3 @@
-call A_ViewDoctorScheduleByDuration ("2024-08-19", "2024-08-19");
-
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
