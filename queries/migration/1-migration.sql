@@ -495,7 +495,6 @@ SELECT DISTINCT (s.id),
     s.deleted,
     s.created_at,
     s.updated_at,
-    a.id,
     IF (
         (
             a.start_time <= toDate
