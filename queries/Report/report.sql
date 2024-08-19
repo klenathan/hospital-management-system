@@ -1,5 +1,8 @@
--- View a patient treatment history for a given duration
--- View all patient treatment in a given duration
+-- @label Indexing
+-- CREATE INDEX treatments_del_idx ON treatments (deleted);
+-- CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
+-- @label Procedure
+-- @block View a patient treatment history for a given duration and View all patient treatment in a given duration
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
     IN patientID INT,
     IN fromDate DATETIME,
@@ -13,7 +16,7 @@ SELECT p.first_name AS patient_first_name,
     t.treatment_date,
     t.treatment_details
 FROM treatments t
-    JOIN `Patients` p ON p.id = t.patient_id
+    JOIN `patients` p ON p.id = t.patient_id
     AND p.deleted = 0
     JOIN staffs s ON s.id = t.staff_id
     AND s.deleted = 0
@@ -26,7 +29,7 @@ WHERE t.treatment_date BETWEEN fromDate AND toDate
 
 END;
 
--- View job change history of a staff
+-- @block View job change history of a staff
 CREATE PROCEDURE R_ViewOneJobChangeHistoryByID(IN staffID int) BEGIN
 SELECT *
 FROM staff_job_history sj
@@ -35,8 +38,7 @@ WHERE staff_id = staffID
 
 END;
 
--- View the work of a doctor in a given duration
--- View the work of all doctors in a given duration
+-- @block View the work of a doctor in a given duration and View the work of all doctors in a given duration
 CREATE PROCEDURE R_ViewOneOrManyDoctorWorkByDuration(
     IN staffID int,
     IN fromDate DATETIME,

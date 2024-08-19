@@ -16,6 +16,8 @@ GRANT EXECUTE ON PROCEDURE hospital_management.A_BookAppointmentWithDoctor TO do
 
 GRANT EXECUTE ON PROCEDURE hospital_management.A_CancelAppoinment TO doctor;
 
+GRANT EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO doctor;
+
 GRANT EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO doctor;
 
 GRANT EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyDoctorWorkByDuration TO doctor;
@@ -34,6 +36,8 @@ GRANT EXECUTE ON PROCEDURE hospital_management.A_ViewDoctorScheduleByDuration TO
 GRANT EXECUTE ON PROCEDURE hospital_management.A_BookAppointmentWithDoctor TO nurse;
 
 GRANT EXECUTE ON PROCEDURE hospital_management.A_CancelAppoinment TO nurse;
+
+GRANT EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO nurse;
 
 GRANT EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO nurse;
 

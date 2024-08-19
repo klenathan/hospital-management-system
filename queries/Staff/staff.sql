@@ -1,4 +1,33 @@
------------------------- Procedure ađ new staff ------------------------
+-- @label Indexing
+CREATE INDEX staff_del_idx ON staffs (deleted);
+
+CREATE INDEX departments_del_idx ON departments (deleted);
+
+-- @label Functional
+CREATE FUNCTION S_InsertStaffJobHistory (
+    userID int,
+    j_type ENUM('Doctor', 'Nurse', 'Admin'),
+    salary BIGINT,
+    department_id INT
+) RETURNS BOOL DETERMINISTIC BEGIN
+INSERT INTO staff_job_history (
+        staff_id,
+        job_type,
+        salary,
+        department_id
+    )
+VALUES (
+        userID,
+        j_type,
+        salary,
+        department_id
+    );
+
+RETURN TRUE;
+
+END;
+
+-- @block Procedure ađ new staff
 CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
@@ -151,14 +180,14 @@ END;
 -- @block List the staff by name (in ASC and DESC order)
 CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
-FROM Staffs s
+FROM staffs s
 WHERE s.deleted = 0
 ORDER BY s.first_name ASC,
     s.last_name ASC;
 
 ELSE
 SELECT *
-FROM Staffs s
+FROM staffs s
 WHERE s.deleted = 0
 ORDER BY s.first_name DESC,
     s.last_name DESC;
@@ -234,7 +263,7 @@ CREATE PROCEDURE S_UpdateStaffSchedule (
 ) BEGIN START transaction;
 
 SELECT COUNT(*) INTO @Appointment_Count
-FROM Appointments
+FROM ppointments
 WHERE appointments.staff_id = Staff_Id
     AND appointments.start_time < newEndTime
     AND appointments.end_time > newStartTime
