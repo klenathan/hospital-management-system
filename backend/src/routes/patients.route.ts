@@ -1,5 +1,13 @@
 import { Request, Response, Router } from "express";
 import PatientService from "../services/patients.service";
+import { z } from "zod";
+
+const NewTreatmentDTO = z.object({
+  patientId: z.number(),
+  staffId: z.number(),
+  treatmentDate: z.coerce.date(),
+  treatmentDetail: z.string().optional(),
+});
 
 const patientRouter = Router();
 
@@ -98,6 +106,29 @@ patientRouter.post("/", async (req: Request, res: Response) => {
       address: body.address,
       allergies: body.allergies,
     });
+    return res.status(200).send(result);
+  } catch (e) {
+    return res.status(400).json({ error: (e as Error).message });
+  }
+});
+
+patientRouter.post("/treatment", async (req: Request, res: Response) => {
+  // #swagger.summary = 'Create new patients'
+
+  /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add new patients.',
+            schema: {
+                $patientId: 1,
+                $staffId: 1,
+                $treatmentDate: "10-08-2024",
+                treatmentDetail: "Testing"
+            }
+    } */
+  try {
+    const createNewTreatment = NewTreatmentDTO.parse(req.body);
+
+    const result = await patientService.createNewTreatment(createNewTreatment);
     return res.status(200).send(result);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });

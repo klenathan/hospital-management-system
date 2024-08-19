@@ -7,6 +7,7 @@ import connection from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
 export default class PatientService {
+  tzoffset = new Date().getTimezoneOffset() * 60000;
   public constructor() {}
 
   public async getAllPatients(props: {
@@ -76,6 +77,33 @@ export default class PatientService {
       "${props.allergies ?? "None"}",
       )`);
 
+    return {
+      status: "success",
+    };
+  }
+
+  public async createNewTreatment(props: {
+    patientId: number;
+    staffId: number;
+    treatmentDate: Date;
+    treatmentDetail?: string;
+  }): Promise<any> {
+    const conn = await connection;
+
+    const treatmentDateStr = new Date(
+      props.treatmentDate.getTime() - this.tzoffset
+    )
+      .toISOString()
+      .slice(0, -1);
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL P_AddTreatment(
+      "${props.patientId}",
+      "${props.staffId}",
+      "${treatmentDateStr}",
+      "${props.treatmentDetail ?? ""}"
+      )`);
     return {
       status: "success",
     };
