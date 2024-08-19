@@ -2,20 +2,29 @@
   "swagger": "2.0",
   "info": {
     "title": "Hospital management system API",
-    "description": "A RMIT Database application assignment",
-    "version": "1.0.0"
+    "version": "v0.0.1",
+    "description": "A RMIT Database application assignment"
   },
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "authStr": {
+      "type": "apiKey",
+      "name": "x-auth-string",
+      "scheme": "bearer",
+      "in": "header"
+    }
+  },
   "paths": {
-    "/api/patient/": {
+    "/api/auth/publicToken": {
       "get": {
         "tags": [
-          "Patients"
+          "Auth"
         ],
+        "summary": "Get auth public key",
         "description": "",
         "responses": {
           "200": {
@@ -31,6 +40,37 @@
             "description": "Internal Server Error"
           }
         }
+      }
+    },
+    "/api/patient/": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Get all patients",
+        "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
       },
       "post": {
         "tags": [
@@ -42,7 +82,7 @@
           {
             "name": "body",
             "in": "body",
-            "description": "Add new user.",
+            "description": "Add new patients.",
             "schema": {
               "type": "object",
               "properties": {
@@ -76,8 +116,7 @@
                 "last_name",
                 "date_of_birth",
                 "contact_info",
-                "address",
-                "allergies"
+                "address"
               ]
             }
           }
@@ -87,9 +126,126 @@
             "description": "OK"
           },
           "400": {
+            "description": "Bad Request"
+          },
+          "500": {
             "schema": {
-              "$ref": "#/definitions/errSchema"
+              "$ref": "#/definitions/serverErrSchema"
             },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/patient/id/{id}": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Search patient by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/patient/name/{name}": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Search patients by name",
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient name (will search lastname and firstname)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/patient/treatment": {
+      "post": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Create new patients",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new patients.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "patientId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "staffId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "treatmentDate": {
+                  "type": "string",
+                  "example": "10-08-2024"
+                },
+                "treatmentDetail": {
+                  "type": "string",
+                  "example": "Testing"
+                }
+              },
+              "required": [
+                "patientId",
+                "staffId",
+                "treatmentDate"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
             "description": "Bad Request"
           },
           "500": {
@@ -174,39 +330,454 @@
         "tags": [
           "Staff"
         ],
-        "summary": "Get staffs info",
+        "summary": "List the staff by name (in ASC and DESC order)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Add a new staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new staff body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "example": "Super"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Saiyan"
+                },
+                "jobType": {
+                  "type": "string",
+                  "example": "Doctor"
+                },
+                "qualification": {
+                  "type": "string",
+                  "example": "MD"
+                },
+                "deptId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "salary": {
+                  "type": "number",
+                  "example": 100000000
+                }
+              },
+              "required": [
+                "firstName",
+                "lastName",
+                "jobType",
+                "qualification",
+                "deptId",
+                "salary"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/staff/doctors": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "List all doctors [For dev purpose]",
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/staff/department/{depId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "List the staff by department",
+        "description": "",
+        "parameters": [
+          {
+            "name": "depId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Department ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/staff/schedule/{staffId}": {
+      "get": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Get a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Update a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Update staff schedule body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "appointmentId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "newStartTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:00:00.000Z"
+                },
+                "newEndTime": {
+                  "type": "string",
+                  "example": "2024-08-11T06:10:00.000Z"
+                }
+              },
+              "required": [
+                "appointmentId",
+                "newStartTime",
+                "newEndTime"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/department/": {
+      "get": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "Get all department",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/appointment/schedule": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11 12:00:00",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12 12:30:00",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
     },
     "/api/appointment/": {
-      "get": {
+      "post": {
         "tags": [
           "Appointments"
         ],
-        "summary": "Get all appointments",
+        "summary": "Create new appointment with doctor",
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new staff body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "patientId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "staffId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "startTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:00:00.000Z"
+                },
+                "endTime": {
+                  "type": "string",
+                  "example": "2024-08-10T06:40:00.000Z"
+                },
+                "purpose": {
+                  "type": "string",
+                  "example": "Checkups"
+                }
+              },
+              "required": [
+                "patientId",
+                "staffId",
+                "startTime",
+                "endTime",
+                "purpose"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
     },
-    "/api/report/": {
+    "/api/appointment/{id}": {
+      "delete": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Cancel appointment with doctor",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Appointment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/treatment/": {
       "get": {
         "tags": [
-          "Report"
+          "Treatments"
         ],
-        "summary": "Get reports",
+        "summary": "Get all treatments",
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/report/patientTreatmentHistory": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View a patient treatment history for a given duration & View all patient treatment in a given duration",
+        "description": "",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/report/jobHistory/{staffId}": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View job change history of a staff",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Staff ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/report/doctorWorkHistory": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View the work of a doctor in a given duration & View the work of all doctors in a given duratio",
+        "description": "",
+        "parameters": [
+          {
+            "name": "staffId",
+            "in": "query",
+            "description": "Query Staff ID (INT)",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Query start time",
+            "default": "2024-08-11",
+            "type": "string"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Query end time",
+            "default": "2024-08-12",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -254,5 +825,10 @@
         "message"
       ]
     }
-  }
+  },
+  "security": [
+    {
+      "authStr": []
+    }
+  ]
 }

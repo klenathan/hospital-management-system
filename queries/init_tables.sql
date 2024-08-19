@@ -1,11 +1,10 @@
--- DROP DATABASE IF EXISTS `hospital_management`;
+DROP DATABASE IF EXISTS `hospital_management`;
 
 CREATE DATABASE IF NOT EXISTS `hospital_management`;
 
 USE `hospital_management`;
 
 -- 1. CREATE TABLE
-
 CREATE TABLE departments (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(100) NOT NULL,
@@ -80,3 +79,21 @@ CREATE TABLE treatments (
     FOREIGN KEY (patient_id) REFERENCES patients (`id`),
     FOREIGN KEY (staff_id) REFERENCES staffs (`id`)
 );
+
+CREATE INDEX staff_del_idx ON staffs (deleted);
+
+CREATE INDEX departments_del_idx ON departments (deleted);
+
+CREATE INDEX patient_del_idx ON patients (deleted);
+
+CREATE FULLTEXT INDEX fx_name ON patients (first_name, last_name);
+
+CREATE INDEX appointment_del_idx ON appointments (deleted);
+
+CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
+
+CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
+
+CREATE INDEX treatments_del_idx ON treatments (deleted);
+
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);

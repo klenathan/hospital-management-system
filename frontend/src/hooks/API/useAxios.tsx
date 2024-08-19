@@ -7,10 +7,7 @@ import { UserContext } from '../Auth/UserContext'
 
 const baseConfig: CreateAxiosDefaults = {
   baseURL: `${import.meta.env.VITE_BE_ENDPOINT}`,
-  timeout: 2000
-  //   headers: {
-  //     'x-access-token': ''
-  //   }
+  timeout: 10000
 }
 
 /**
