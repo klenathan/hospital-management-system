@@ -1,19 +1,24 @@
 import {
+  PoolOptions,
   ProcedureCallPacket,
   ResultSetHeader,
   RowDataPacket,
 } from "mysql2/promise";
-import connection from "../db/mysql";
+
+import { getMySqlConnnection } from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
 export default class StaffService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
   public constructor() {}
 
-  public async getAllStaffs(props: {
-    order?: "asc" | "desc";
-  }): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async getAllStaffs(
+    props: {
+      order?: "asc" | "desc";
+    },
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(
@@ -29,8 +34,8 @@ export default class StaffService {
     };
   }
 
-  public async getAllDoctor(): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async getAllDoctor(config: PoolOptions): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
       `SELECT * FROM staffs WHERE job_type = "Doctor"`
     );
@@ -42,10 +47,13 @@ export default class StaffService {
     };
   }
 
-  public async listStaffByDep(props: {
-    depId: number;
-  }): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async listStaffByDep(
+    props: {
+      depId: number;
+    },
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_ListStaffByDepartmentID("${props.depId}")`);
@@ -57,10 +65,13 @@ export default class StaffService {
     };
   }
 
-  public async getStaffSchedule(props: {
-    staffId: number;
-  }): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async getStaffSchedule(
+    props: {
+      staffId: number;
+    },
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_ViewStaffScheduleByID("${props.staffId}")`);
@@ -72,17 +83,20 @@ export default class StaffService {
     };
   }
 
-  public async createSingleNewStaff(props: {
-    firstName: string;
-    lastName: string;
-    jobType: string;
-    qualification: string;
-    deptId: number;
-    salary: number;
-  }): Promise<any> {
-    const conn = await connection;
+  public async createSingleNewStaff(
+    props: {
+      firstName: string;
+      lastName: string;
+      jobType: string;
+      qualification: string;
+      deptId: number;
+      salary: number;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
     const [_rows, _fields] = await conn.query<
-      ProcedureCallPacket<ResultSetHeader>
+      ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_AddNewStaff(
       "${props.firstName}",
       "${props.lastName}",
@@ -94,6 +108,7 @@ export default class StaffService {
 
     return {
       status: "success",
+      data: _rows[0],
     };
   }
 
@@ -103,9 +118,10 @@ export default class StaffService {
       appointmentId: number;
       newStartTime: Date;
       newEndTime: Date;
-    }
+    },
+    config: PoolOptions
   ): Promise<any> {
-    const conn = await connection;
+    const conn = await getMySqlConnnection(config);
 
     const newStartTimeStr = new Date(
       props.newStartTime.getTime() - this.tzoffset

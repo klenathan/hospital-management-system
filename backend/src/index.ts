@@ -11,6 +11,7 @@ import router from "./routes/router";
 
 import * as swaggerUi from "swagger-ui-express";
 import * as swaggerDocs from "./swagger/swagger.json";
+import protectedRouteMiddleware from "./middlewares/protectedRoutes";
 
 const port = CONFIG.port;
 const app: Express = express();
@@ -42,8 +43,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 //// SERVICE API
 
-// protectedRouteMiddleware -> this is auth middleware
-app.use("/api", router);
+app.use("/api", protectedRouteMiddleware, router);
 
 //// SWAGGER
 
