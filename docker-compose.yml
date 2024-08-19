@@ -28,10 +28,11 @@ services:
       - ./database/sql-data:/var/lib/mysql
   app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
     depends_on:
       - mysql
+      - mongodb
     restart: always

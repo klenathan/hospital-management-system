@@ -1,4 +1,4 @@
-FROM node:20-alpine as frontend-build
+FROM node:20-alpine as frontend_build
 
 WORKDIR /app
 
@@ -10,23 +10,30 @@ COPY ./frontend .
 
 RUN yarn build
 
-FROM node:20-alpine as backend-build
+FROM node:20-alpine as backend_build
 
 WORKDIR /app
-
-COPY --from=frontend-build /frontend/node_modules ./node_modules
-COPY --from=frontend-build /frontend/dist ./dist
-COPY --from=frontend-build /frontend/package*.json ./
 
 COPY ./backend/package.json yarn.lock ./
 
 RUN yarn install
 
-COPY ./backend .
+COPY ./backend ./
 
 RUN yarn tsc && \
     rm -r ./src/**/*.ts
 
+FROM node:20-alpine as prod
+
+WORKDIR /app
+
+COPY --from=frontend_build /app/dist /app/frontend/dist
+COPY --from=frontend_build /app/package*.json /app/frontend/
+
+COPY --from=backend_build /app/ /app/backend/
+
+COPY ./.env /app/
+
 EXPOSE 3000
 
-CMD ["node", "./src/index.js"]
+CMD ["node", "./backend/src/index.js"]
