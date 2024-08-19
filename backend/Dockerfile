@@ -8,9 +8,8 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn tsc
-
-RUN rm -r ./src/**/*.ts
+RUN yarn tsc && \
+    rm -r ./src/**/*.ts
 
 EXPOSE 3000
 
