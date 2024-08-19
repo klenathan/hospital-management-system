@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
@@ -9,7 +9,7 @@ import { PatientResponse } from '@/types/patients';
 import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
 import { PatientTreatmentResponse } from '@/types/report';
 import { format } from "date-fns";
-
+import TableEmpty from '@/components/TableEmpty';
 export default function PatientTreatmentTab() {
     const [selectedPatient, setSelectedPatient] = useState<{ value: string; label: string } | null>({
         value: 'All Patients',
@@ -54,7 +54,7 @@ export default function PatientTreatmentTab() {
     const queryEndTime = getFormattedDate(dateRange?.to);
     const patientID = selectedPatient?.value || 'All Patients';
 
-    const { data: patientTreatementData, isLoading: patientTreatementDataLoading, refetch } =
+    const { data: patientTreatementData, isLoading: patientTreatementDataLoading } =
         useQueryWithoutTokenAPI<PatientTreatmentResponse>(
             ['patientTreatment', patientID, queryStartTime, queryEndTime],
             patientID !== "All Patients"
@@ -62,9 +62,12 @@ export default function PatientTreatmentTab() {
                 : `/api/report/patientTreatmentHistory?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
         );
 
-    const generateReport = () => {
-        refetch();  // Refetch the data when the user clicks "Generate Report"
-    };
+    // const generateReport = () => {
+    //     refetch();  // Refetch the data when the user clicks "Generate Report"
+    // };
+
+    // console.log(patientTreatementData);
+
 
     return (
         <div className="space-y-4">
@@ -91,7 +94,7 @@ export default function PatientTreatmentTab() {
                     />
                 </div>
             </div>
-            <Button onClick={generateReport}>Generate Report</Button>
+            {/* <Button onClick={generateReport}>Generate Report</Button> */}
             {/* {selectedPatient?.label + '' + selectedPatient?.value} */}
             <Table>
                 <TableHeader>
@@ -108,17 +111,25 @@ export default function PatientTreatmentTab() {
                         <TableRow>
                             <TableCell colSpan={5} className="text-center">Loading...</TableCell>
                         </TableRow>
-                    ) : (
-                        patientTreatementData && patientTreatementData.data.map((treatment, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{`${treatment.patient_first_name} ${treatment.patient_last_name}`}</TableCell>
-                                <TableCell>{`${treatment.staff_first_name} ${treatment.staff_last_name}`}</TableCell>
-                                <TableCell>{treatment.staff_job_type}</TableCell>
-                                <TableCell>{format(new Date(treatment.treatment_date), "PPP")}</TableCell>
-                                <TableCell>{treatment.treatment_details}</TableCell>
-                            </TableRow>
-                        ))
-                    )}
+                    ) :
+                        <>
+                            {patientTreatementData?.queryResult.count === 0 ?
+                                <>
+                                    <TableEmpty colSpan={5} />
+                                </> :
+
+                                patientTreatementData && patientTreatementData.data.map((treatment, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{`${treatment.patient_first_name} ${treatment.patient_last_name}`}</TableCell>
+                                        <TableCell>{`${treatment.staff_first_name} ${treatment.staff_last_name}`}</TableCell>
+                                        <TableCell>{treatment.staff_job_type}</TableCell>
+                                        <TableCell>{format(new Date(treatment.treatment_date), "PPP")}</TableCell>
+                                        <TableCell>{treatment.treatment_details}</TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </>
+                    }
                 </TableBody>
             </Table>
         </div>

@@ -1,4 +1,3 @@
-import { version } from '@/../package.json'
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
 // import { Badge } from '@/components/ui/badge'
 // import { User } from '@/types/user'
