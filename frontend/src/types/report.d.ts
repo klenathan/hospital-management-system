@@ -14,3 +14,21 @@ export type PatientTreatmentResponse = {
   }
   data: PatientTreatment[]
 }
+
+export interface StaffJobChangeHistory {
+  id: number
+  staff_id: number
+  job_type: string
+  salary: string
+  department_id: number
+  deleted: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type StaffJobChangeHistoryResponse = {
+  queryResult: {
+    count: number
+  }
+  data: StaffJobChangeHistory[]
+}
