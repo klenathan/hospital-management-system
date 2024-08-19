@@ -1,10 +1,4 @@
--- @block Indexing
-CREATE INDEX appointment_del_idx ON appointments (deleted);
-
--- @blocks View working schedule of all doctors for a given duration (with busy or available status)
-CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
-
-CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
+DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
 SELECT DISTINCT (s.id),
@@ -32,9 +26,8 @@ FROM staffs s
 WHERE s.job_type = 'Doctor'
     AND s.deleted = 0;
 
-END;
+END $$
 
--- @block Book an appointment WITH a doctor (FOR a given time, no more than one appointment FOR a doctor)
 CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN PatientId int,
     IN Staff_Id int,
@@ -91,9 +84,8 @@ COMMIT;
 
 END IF;
 
-END;
+END $$
 
--- @block Cancel an appointment WITH a doctor
 CREATE PROCEDURE A_CancelAppoinment (IN appointment_Id INT) BEGIN
 SET @is_doctor = (
         CASE
@@ -123,4 +115,4 @@ ROLLBACK;
 
 END IF;
 
-END;
+END $$

@@ -1,3 +1,4 @@
+
 USE `hospital_management`;
 
 INSERT INTO departments (name)

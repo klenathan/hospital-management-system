@@ -1,9 +1,5 @@
--- @label Indexing
-CREATE INDEX staff_del_idx ON staffs (deleted);
+DELIMITER $$
 
-CREATE INDEX departments_del_idx ON departments (deleted);
-
--- @label Functional
 CREATE FUNCTION S_InsertStaffJobHistory (
     userID int,
     j_type ENUM('Doctor', 'Nurse', 'Admin'),
@@ -25,9 +21,8 @@ VALUES (
 
 RETURN TRUE;
 
-END;
+END $$
 
--- @block Procedure ađ new staff
 CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
@@ -164,9 +159,8 @@ ELSE COMMIT;
 
 END IF;
 
-END;
+END $$
 
--- @block List the staff by department
 CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
 SELECT *
 FROM staffs s
@@ -175,9 +169,8 @@ FROM staffs s
 WHERE s.department_id = departmentID
     AND s.deleted = 0;
 
-END;
+END $$
 
--- @block List the staff by name (in ASC and DESC order)
 CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
 FROM staffs s
@@ -194,9 +187,8 @@ ORDER BY s.first_name DESC,
 
 END IF;
 
-END;
+END $$
 
--- @block Update a staff information
 CREATE PROCEDURE S_UpdateStaffInfo (
     IN Staff_Id INT,
     IN f_name varchar(50),
@@ -238,9 +230,8 @@ ELSE COMMIT;
 
 END IF;
 
-END;
+END $$
 
--- @block View a staff schedule
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
     a.purpose,
@@ -252,9 +243,8 @@ FROM appointments a
 WHERE s.id = staff_id
     AND a.deleted = 0;
 
-END;
+END $$
 
--- @block Update a staff schedule
 CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
     IN Appointment_Id int,
@@ -294,4 +284,4 @@ ROLLBACK;
 
 END IF;
 
-END;
+END $$

@@ -1,7 +1,5 @@
--- @label Indexing
-CREATE INDEX patient_del_idx ON patients (deleted);
+DELIMITER $$
 
--- @block Register a new patient
 CREATE PROCEDURE P_RegisterNewPatient (
     IN First_Name VARCHAR(50),
     IN Last_Name VARCHAR(50),
@@ -30,19 +28,15 @@ VALUES (
 
 COMMIT;
 
-END;
+END $$
 
--- @block Search pation by ID
 CREATE PROCEDURE P_SearchPatientById (IN patient_id int) BEGIN
 SELECT *
 FROM patients
 WHERE `id` = patient_id
     AND deleted = 0;
 
-END;
-
--- @block  Search by name (exactly name)
-CREATE FULLTEXT INDEX fx_name ON patients (first_name, last_name);
+END $$
 
 CREATE PROCEDURE P_SearchPatitentByName (IN Patient_Name varchar(100)) BEGIN
 SELECT *
@@ -50,9 +44,8 @@ FROM patients p
 WHERE MATCH (p.first_name, p.last_name) AGAINST (Patient_Name IN BOOLEAN MODE)
     AND p.deleted = 0;
 
-END;
+END $$
 
--- @block Add a treatment
 CREATE PROCEDURE P_AddTreatment (
     IN Patient_Id INT,
     IN Staff_Id INT,
@@ -95,4 +88,4 @@ ROLLBACK;
 
 END IF;
 
-END;
+END $$

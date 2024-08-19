@@ -1,8 +1,5 @@
--- @label Indexing
--- CREATE INDEX treatments_del_idx ON treatments (deleted);
--- CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
--- @label Procedure
--- @block View a patient treatment history for a given duration and View all patient treatment in a given duration
+DELIMITER $$
+
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
     IN patientID INT,
     IN fromDate DATETIME,
@@ -27,18 +24,16 @@ WHERE t.treatment_date BETWEEN fromDate AND toDate
     )
     AND t.deleted = 0;
 
-END;
+END $$
 
--- @block View job change history of a staff
 CREATE PROCEDURE R_ViewOneJobChangeHistoryByID(IN staffID int) BEGIN
 SELECT *
 FROM staff_job_history sj
 WHERE staff_id = staffID
     AND sj.deleted = 0;
 
-END;
+END $$
 
--- @block View the work of a doctor in a given duration and View the work of all doctors in a given duration
 CREATE PROCEDURE R_ViewOneOrManyDoctorWorkByDuration(
     IN staffID int,
     IN fromDate DATETIME,
@@ -65,4 +60,4 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END;
+END $$
