@@ -5,8 +5,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-database/mongo-data/*
-database/sql-data/*
+
+database/*
 
 # Node modules
 node_modules/
