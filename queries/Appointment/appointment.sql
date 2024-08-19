@@ -1,5 +1,7 @@
+-- @block Indexing
+CREATE INDEX appointment_del_idx ON appointments (deleted);
+
 -- @blocks View working schedule of all doctors for a given duration (with busy or available status)
----- Index for this procedure
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
@@ -15,6 +17,7 @@ SELECT DISTINCT (s.id),
     s.deleted,
     s.created_at,
     s.updated_at,
+    a.id,
     IF (
         (
             a.start_time <= toDate
@@ -69,7 +72,7 @@ SET MESSAGE_TEXT = "This is not a doctor's appointment ",
 
 ELSE START transaction;
 
-INSERT INTO Appointments (
+INSERT INTO appointments (
         patient_id,
         staff_id,
         start_time,

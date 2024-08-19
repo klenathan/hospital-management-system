@@ -1,1 +1,0 @@
-CREATE INDEX patient_del_idx ON patients (deleted);

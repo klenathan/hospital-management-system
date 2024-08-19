@@ -1,3 +1,6 @@
+-- @label Indexing
+CREATE INDEX patient_del_idx ON patients (deleted);
+
 -- @block Register a new patient
 CREATE PROCEDURE P_RegisterNewPatient (
     IN First_Name VARCHAR(50),
@@ -8,7 +11,7 @@ CREATE PROCEDURE P_RegisterNewPatient (
     IN Allergies text
 ) BEGIN START TRANSACTION;
 
-INSERT INTO Patients (
+INSERT INTO patients (
         First_Name,
         Last_Name,
         date_of_birth,
@@ -32,18 +35,18 @@ END;
 -- @block Search pation by ID
 CREATE PROCEDURE P_SearchPatientById (IN patient_id int) BEGIN
 SELECT *
-FROM Patients
+FROM patients
 WHERE `id` = patient_id
     AND deleted = 0;
 
 END;
 
 -- @block  Search by name (exactly name)
-CREATE FULLTEXT INDEX fx_name ON Patients (first_name, last_name);
+CREATE FULLTEXT INDEX fx_name ON patients (first_name, last_name);
 
 CREATE PROCEDURE P_SearchPatitentByName (IN Patient_Name varchar(100)) BEGIN
 SELECT *
-FROM Patients p
+FROM patients p
 WHERE MATCH (p.first_name, p.last_name) AGAINST (Patient_Name IN BOOLEAN MODE)
     AND p.deleted = 0;
 
