@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Department } from '@/types/department';
 import { LoaderCircle } from 'lucide-react';
 import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
@@ -15,7 +15,7 @@ const staffSchema = z.object({
     last_name: z.string().min(1, "Last name is required."),
     department_id: z.string().nonempty("Please select a department."),
     job_type: z.string().nonempty("Please select a job type."),
-    qualifications: z.string().optional(),
+    qualifications: z.string().nonempty("Please add a qualifications."),
     salary: z.preprocess(
         (value) => parseFloat(value as string),
         z.number().positive("Salary must be a positive number.")
@@ -154,7 +154,6 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                                         <Input {...field} />
                                     </FormControl>
                                     <FormMessage>{form.formState.errors.qualifications?.message}</FormMessage>
-                                    <FormDescription>Optional</FormDescription>
                                 </FormItem>
                             )}
                         />

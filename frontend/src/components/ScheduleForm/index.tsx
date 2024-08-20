@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { TabsContent } from '@/components/ui/tabs';
 import { Label } from "@/components/ui/label";
 import { Schedule } from '@/types/schedule';
 
@@ -17,15 +16,16 @@ type ScheduleTest = {
 
 interface ScheduleFormProps {
     selectedStaffId: number | null;
-    scheduleData?: Schedule;
+    scheduleData?: Schedule[]; // Now expecting an array of schedules
     scheduleLoading?: boolean; // Loading state for the schedule
 }
 
 export default function ScheduleForm({
     selectedStaffId,
-    scheduleData,
+    scheduleData = [], // Default to an empty array
     scheduleLoading = false,
 }: ScheduleFormProps) {
+    const [selectedScheduleIndex, setSelectedScheduleIndex] = useState<number>(0); // Track selected schedule index
     const [schedule, setSchedule] = useState<ScheduleTest>({
         id: undefined,
         title: '',
@@ -37,19 +37,20 @@ export default function ScheduleForm({
     });
 
     useEffect(() => {
-        if (scheduleData) {
-            // Initialize the schedule state with the passed scheduleData
-            const startDate = scheduleData.start_time ? new Date(scheduleData.start_time) : null;
-            const endDate = scheduleData.end_time ? new Date(scheduleData.end_time) : null;
+        if (scheduleData.length > 0 && scheduleData[selectedScheduleIndex]) {
+            // Initialize the schedule state with the selected schedule
+            const scheduleItem = scheduleData[selectedScheduleIndex];
+            const startDate = scheduleItem.start_time ? new Date(scheduleItem.start_time) : null;
+            const endDate = scheduleItem.end_time ? new Date(scheduleItem.end_time) : null;
 
             setSchedule({
-                id: scheduleData.id,
-                title: `${scheduleData.first_name} ${scheduleData.last_name}`, // Assuming title is the staff's name
+                id: scheduleItem.id,
+                title: `${scheduleItem.first_name} ${scheduleItem.last_name}`, // Assuming title is the staff's name
                 startDate: startDate ? startDate.toISOString().split('T')[0] : '',
                 startTime: startDate ? startDate.toISOString().split('T')[1].slice(0, 5) : '',
                 endDate: endDate ? endDate.toISOString().split('T')[0] : '',
                 endTime: endDate ? endDate.toISOString().split('T')[1].slice(0, 5) : '',
-                purpose: scheduleData.purpose || '',
+                purpose: scheduleItem.purpose || '',
             });
         } else {
             // Reset the schedule to blank for creating a new schedule
@@ -63,11 +64,15 @@ export default function ScheduleForm({
                 purpose: '',
             });
         }
-    }, [scheduleData]);
+    }, [scheduleData, selectedScheduleIndex]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setSchedule((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleScheduleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedScheduleIndex(Number(e.target.value));
     };
 
     const handleUpdateSchedule = (e: React.FormEvent<HTMLFormElement>) => {
@@ -89,11 +94,44 @@ export default function ScheduleForm({
     };
 
     return (
-        <TabsContent value="schedule">
+        <>
             {scheduleLoading ? (
                 <p>Loading schedule...</p>
             ) : (
-                <form onSubmit={handleUpdateSchedule} className="gap-4 grid grid-col-2 py-4">
+                <form onSubmit={handleUpdateSchedule} className="gap-4 grid grid-cols-2 py-4">
+                    {scheduleData.length > 1 && (
+                        <div className="gap-2 grid col-span-2">
+
+                            <Label htmlFor="scheduleSelection">Select Schedule</Label>
+                            <select
+                                id="scheduleSelection"
+                                onChange={handleScheduleSelectionChange}
+                                value={selectedScheduleIndex}
+                                className="p-2 border rounded"
+                            >
+                                {scheduleData.map((scheduleItem, index) => {
+                                    const date = new Date(scheduleItem.start_time);
+
+                                    // Extract the date components manually
+                                    const year = date.getUTCFullYear();
+                                    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+                                    const day = String(date.getUTCDate()).padStart(2, '0');
+                                    const hours = String(date.getUTCHours()).padStart(2, '0');
+                                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+                                    // Format the date and time as 'yyyy-MM-dd HH:mm'
+                                    const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+                                    return (
+                                        <option key={index} value={index}>
+                                            {scheduleItem.purpose} - {formattedTime}
+                                        </option>
+                                    );
+                                })}
+
+                            </select>
+                        </div>
+                    )}
                     <div className="gap-2 grid col-span-2">
                         <Label htmlFor="purpose">Purpose</Label>
                         <Input
@@ -149,11 +187,11 @@ export default function ScheduleForm({
                             required
                         />
                     </div>
-                    <div className='flex justify-start grid-col-2'>
-                        <Button type="submit">{scheduleData ? 'Update' : 'Create'} Schedule</Button>
+                    <div className="flex justify-start col-span-2">
+                        <Button type="submit">{schedule.id ? 'Update' : 'Create'} Schedule</Button>
                     </div>
                 </form>
             )}
-        </TabsContent>
+        </>
     );
 }

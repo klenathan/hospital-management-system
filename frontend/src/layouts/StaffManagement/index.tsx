@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,10 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MoreHorizontal } from 'lucide-react';
 import { StaffMember, StaffListResponse } from '@/types/staffs';
 import { DepartmentResponse } from '@/types/department';
-import { ScheduleResponse } from '@/types/schedule';
-
 import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
-import ScheduleForm from '@/components/ScheduleForm';
 
 import {
     Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
@@ -27,7 +24,6 @@ export default function StaffManagement() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedDepartment, setSelectedDepartment] = useState<number | 'all'>('all');
-    const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
     // const [scheduleData, setScheduleData] = useState<any[]>([]); // Store multiple schedules
 
     const itemsPerPage = 10;
@@ -42,13 +38,6 @@ export default function StaffManagement() {
             ? '/api/staff/'
             : `/api/staff/department/${selectedDepartment}`
         );
-
-
-
-    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithoutTokenAPI<ScheduleResponse>(
-        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
-    );
-
 
     // Ensure staffList is always an array
     const staffList = Array.isArray(staffListData?.data) ? staffListData.data : [];
@@ -157,7 +146,7 @@ export default function StaffManagement() {
                             <Button
                                 variant='ghost'
                                 className='p-0 w-8 h-8'
-                                onClick={() => setSelectedStaffId(staff.id)}
+                            // onClick={() => setSelectedStaffId(staff.id)}
                             >
                                 <span className='sr-only'>Open menu</span>
                                 <MoreHorizontal className='w-4 h-4' />
@@ -171,7 +160,6 @@ export default function StaffManagement() {
                             <Tabs defaultValue='info' className='w-full'>
                                 <TabsList>
                                     <TabsTrigger value='info'>Personal Info</TabsTrigger>
-                                    <TabsTrigger value='schedule'>Schedule</TabsTrigger>
                                     <TabsTrigger value='custom-objects'>Custom Objects</TabsTrigger> {/* New Tab */}
                                 </TabsList>
 
@@ -206,22 +194,7 @@ export default function StaffManagement() {
                                         <Button type='submit'>Update Info</Button>
                                     </form>
                                 </TabsContent>
-                                <TabsContent value='schedule'>
-                                    {scheduleLoading ? (
-                                        <p>Loading schedules...</p>
-                                    ) : scheduleData?.data && scheduleData.data.length > 0 ? (
-                                        <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
-                                            scheduleData={scheduleData.data[0]}
-                                            scheduleLoading={scheduleLoading}
-                                        />
-                                    ) : (
-                                        <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
-                                            scheduleLoading={scheduleLoading}
-                                        />
-                                    )}
-                                </TabsContent>
+
                                 <TabsContent value='custom-objects'> {/* New Tab Content */}
                                     <form
                                         className='space-y-4'
