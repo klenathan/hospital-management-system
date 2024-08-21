@@ -1,5 +1,10 @@
-import { ProcedureCallPacket, RowDataPacket } from "mysql2/promise";
-import connection from "../db/mysql";
+import {
+  PoolOptions,
+  ProcedureCallPacket,
+  RowDataPacket,
+} from "mysql2/promise";
+
+import { getMySqlConnnection } from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
 export default class ReportService {
@@ -8,9 +13,10 @@ export default class ReportService {
   public async getPatientTreatments(
     patientId: number | undefined,
     startTime: string,
-    endTime: string
+    endTime: string,
+    config: PoolOptions
   ): Promise<GetRequestResult> {
-    const conn = await connection;
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(
@@ -27,10 +33,13 @@ export default class ReportService {
     };
   }
 
-  public async getStaffHistory(props: {
-    staffId: number;
-  }): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async getStaffHistory(
+    props: {
+      staffId: number;
+    },
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL R_ViewOneJobChangeHistoryByID("${props.staffId}")`);
@@ -45,9 +54,10 @@ export default class ReportService {
   public async getDoctorWork(
     staffId: number | undefined,
     startTime: string,
-    endTime: string
+    endTime: string,
+    config: PoolOptions
   ): Promise<GetRequestResult> {
-    const conn = await connection;
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(

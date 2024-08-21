@@ -1,19 +1,22 @@
 import {
+  PoolOptions,
   ProcedureCallPacket,
   ResultSetHeader,
   RowDataPacket,
 } from "mysql2/promise";
-import connection from "../db/mysql";
+
 import { GetRequestResult } from "./queryResult";
+import { getMySqlConnnection } from "../db/mysql";
 
 export default class AppointmentService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
   public constructor() {}
 
   public async getAllAppointments(
-    staffId: number | undefined
+    staffId: number | undefined,
+    config: PoolOptions
   ): Promise<GetRequestResult> {
-    const conn = await connection;
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(
@@ -32,9 +35,10 @@ export default class AppointmentService {
 
   public async getAllDoctorSchedule(
     startTime: string,
-    endTime: string
+    endTime: string,
+    config: PoolOptions
   ): Promise<GetRequestResult> {
-    const conn = await connection;
+    const conn = await getMySqlConnnection(config);
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`call A_ViewDoctorScheduleByDuration("${startTime}", "${endTime}")`);
@@ -47,14 +51,17 @@ export default class AppointmentService {
     };
   }
 
-  public async createNewAppointment(props: {
-    patientId: number;
-    staffId: number;
-    startTime: Date;
-    endTime: Date;
-    purpose: string;
-  }): Promise<any> {
-    const conn = await connection;
+  public async createNewAppointment(
+    props: {
+      patientId: number;
+      staffId: number;
+      startTime: Date;
+      endTime: Date;
+      purpose: string;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const newStartTimeStr = new Date(props.startTime.getTime() - this.tzoffset)
       .toISOString()
@@ -79,8 +86,11 @@ export default class AppointmentService {
     };
   }
 
-  public async cancelAppointment(appointmentId: number): Promise<any> {
-    const conn = await connection;
+  public async cancelAppointment(
+    appointmentId: number,
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<ResultSetHeader>

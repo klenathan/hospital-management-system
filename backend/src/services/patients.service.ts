@@ -2,18 +2,23 @@ import {
   RowDataPacket,
   ProcedureCallPacket,
   ResultSetHeader,
+  PoolOptions,
 } from "mysql2/promise";
-import connection from "../db/mysql";
+
+import { getMySqlConnnection } from "../db/mysql";
 import { GetRequestResult } from "./queryResult";
 
 export default class PatientService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
   public constructor() {}
 
-  public async getAllPatients(props: {
-    order?: "asc" | "desc";
-  }): Promise<GetRequestResult> {
-    const conn = await connection;
+  public async getAllPatients(
+    props: {
+      order?: "asc" | "desc";
+    },
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
     const order = props.order ?? "asc";
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
       `SELECT * FROM patients ORDER BY first_name ${order}, last_name ${order}`
@@ -26,8 +31,11 @@ export default class PatientService {
     };
   }
 
-  public async getPatientByID(props: { id: number }): Promise<any> {
-    const conn = await connection;
+  public async getPatientByID(
+    props: { id: number },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
@@ -41,8 +49,11 @@ export default class PatientService {
     };
   }
 
-  public async getPatientByName(props: { name: string }): Promise<any> {
-    const conn = await connection;
+  public async getPatientByName(
+    props: { name: string },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
@@ -56,15 +67,18 @@ export default class PatientService {
     };
   }
 
-  public async createNewPatient(props: {
-    firstName: string;
-    lastName: string;
-    dob: string;
-    contactInfo: string;
-    address: string;
-    allergies?: string;
-  }): Promise<any> {
-    const conn = await connection;
+  public async createNewPatient(
+    props: {
+      firstName: string;
+      lastName: string;
+      dob: string;
+      contactInfo: string;
+      address: string;
+      allergies?: string;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<ResultSetHeader>
@@ -82,13 +96,16 @@ export default class PatientService {
     };
   }
 
-  public async createNewTreatment(props: {
-    patientId: number;
-    staffId: number;
-    treatmentDate: Date;
-    treatmentDetail?: string;
-  }): Promise<any> {
-    const conn = await connection;
+  public async createNewTreatment(
+    props: {
+      patientId: number;
+      staffId: number;
+      treatmentDate: Date;
+      treatmentDetail?: string;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
 
     const treatmentDateStr = new Date(
       props.treatmentDate.getTime() - this.tzoffset

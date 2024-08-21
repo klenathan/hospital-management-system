@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express";
 import PatientService from "../services/patients.service";
 import { z } from "zod";
 
+import { dbConfigBuilder } from "../db/mysql";
+
 const NewTreatmentDTO = z.object({
   patientId: z.number(),
   staffId: z.number(),
@@ -29,9 +31,12 @@ patientRouter.get("/", async (req: Request, res: Response) => {
         throw new Error("INVALID ORDER");
       }
     }
-    const patients = await patientService.getAllPatients({
-      order: order as "asc" | "desc",
-    });
+    const patients = await patientService.getAllPatients(
+      {
+        order: order as "asc" | "desc",
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(patients);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
@@ -49,9 +54,12 @@ patientRouter.get("/id/:id", async (req: Request, res: Response) => {
       throw new Error("Invalid patient ID: id");
     }
 
-    const patients = await patientService.getPatientByID({
-      id,
-    });
+    const patients = await patientService.getPatientByID(
+      {
+        id,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(patients);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
@@ -70,9 +78,12 @@ patientRouter.get("/name/:name", async (req: Request, res: Response) => {
       throw new Error("Missing `Name` param");
     }
 
-    await patientService.getPatientByName({
-      name,
-    });
+    await patientService.getPatientByName(
+      {
+        name,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).json({ status: "success" });
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
@@ -98,14 +109,17 @@ patientRouter.post("/", async (req: Request, res: Response) => {
     const body = req.body;
     const dobParsed = new Date(body.date_of_birth).toISOString().split("T")[0];
 
-    const result = await patientService.createNewPatient({
-      firstName: body.first_name,
-      lastName: body.last_name,
-      dob: dobParsed,
-      contactInfo: body.contact_info,
-      address: body.address,
-      allergies: body.allergies,
-    });
+    const result = await patientService.createNewPatient(
+      {
+        firstName: body.first_name,
+        lastName: body.last_name,
+        dob: dobParsed,
+        contactInfo: body.contact_info,
+        address: body.address,
+        allergies: body.allergies,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(result);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
@@ -128,7 +142,10 @@ patientRouter.post("/treatment", async (req: Request, res: Response) => {
   try {
     const createNewTreatment = NewTreatmentDTO.parse(req.body);
 
-    const result = await patientService.createNewTreatment(createNewTreatment);
+    const result = await patientService.createNewTreatment(
+      createNewTreatment,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(result);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });

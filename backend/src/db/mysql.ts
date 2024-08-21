@@ -1,13 +1,6 @@
 import mysql, { PoolOptions } from "mysql2/promise";
 import CONFIG from "../config";
 
-const access: PoolOptions = {
-  host: CONFIG.dbHost,
-  user: CONFIG.dbUser,
-  password: CONFIG.dbPwd,
-  database: CONFIG.dbDatabase,
-};
-
 // const configBuilder = (username: string, password: string) => {
 //   return {
 //     host: CONFIG.dbHost,
@@ -19,6 +12,21 @@ const access: PoolOptions = {
 
 // console.log("[CREDENTIAL]", configBuilder("test", "test"));
 
-const connection = mysql.createConnection(access);
+// const connection = mysql.createConnection(access);
 
-export default connection;
+const dbConfigBuilder = (username: string, password: string): PoolOptions => {
+  return {
+    host: CONFIG.dbHost,
+    user: username,
+    password: password,
+    database: CONFIG.dbDatabase,
+  };
+};
+
+const getMySqlConnnection = async (
+  config: PoolOptions
+): Promise<mysql.Connection> => {
+  return await mysql.createConnection(config);
+};
+
+export { getMySqlConnnection, dbConfigBuilder };

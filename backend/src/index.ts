@@ -2,8 +2,8 @@
 
 import "module-alias/register";
 
-import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
+import express, { Express, NextFunction, Request, Response } from "express";
 import path from "path";
 
 import CONFIG from "./config";
@@ -19,8 +19,6 @@ app.disable("x-powered-by");
 
 app.use(cors({}));
 app.use(express.json());
-
-console.log(new Date().toISOString());
 
 // logger middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -42,7 +40,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 //// SERVICE API
 
-// protectedRouteMiddleware -> this is auth middleware
 app.use("/api", router);
 
 //// SWAGGER

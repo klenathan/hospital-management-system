@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express";
 import StaffService from "../services/staff.service";
 import { z } from "zod";
 
+import { dbConfigBuilder } from "../db/mysql";
+
 const NewStaffDTO = z.object({
   firstName: z.string(),
   lastName: z.string(),
@@ -38,9 +40,12 @@ staffRouter.get("/", async (req: Request, res: Response) => {
         throw new Error("INVALID ORDER");
       }
     }
-    const staffs = await staffService.getAllStaffs({
-      order: order as "asc" | "desc",
-    });
+    const staffs = await staffService.getAllStaffs(
+      {
+        order: order as "asc" | "desc",
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     console.log(e);
@@ -53,7 +58,9 @@ staffRouter.get("/doctors", async (_req: Request, res: Response) => {
   
   */
   try {
-    const staffs = await staffService.getAllDoctor();
+    const staffs = await staffService.getAllDoctor(
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     console.log(e);
@@ -85,7 +92,10 @@ staffRouter.post("/", async (req: Request, res: Response) => {
 
     const newStaffProps = NewStaffDTO.parse(req.body);
 
-    const staffs = await staffService.createSingleNewStaff(newStaffProps);
+    const staffs = await staffService.createSingleNewStaff(
+      newStaffProps,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -116,9 +126,12 @@ staffRouter.get("/department/:depId", async (req: Request, res: Response) => {
     if (isNaN(depId)) {
       throw new Error("Invalid department ID: depId");
     }
-    const staffs = await staffService.listStaffByDep({
-      depId,
-    });
+    const staffs = await staffService.listStaffByDep(
+      {
+        depId,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
@@ -135,9 +148,12 @@ staffRouter.get("/schedule/:staffId", async (req: Request, res: Response) => {
     if (isNaN(staffId)) {
       throw new Error("Invalid staff ID: staffId");
     }
-    const staffs = await staffService.getStaffSchedule({
-      staffId,
-    });
+    const staffs = await staffService.getStaffSchedule(
+      {
+        staffId,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
@@ -168,7 +184,11 @@ staffRouter.put("/schedule/:staffId", async (req: Request, res: Response) => {
 
     const params = UpdateStaffScheduleDTO.parse(req.body);
 
-    const staffs = await staffService.updateStaffSchedule(staffId, params);
+    const staffs = await staffService.updateStaffSchedule(
+      staffId,
+      params,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (error) {
     if (error instanceof z.ZodError) {
