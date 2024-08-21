@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StaffMember } from '@/types/staffs';
 import { DepartmentResponse } from '@/types/department';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 
 
 interface StaffTableProps {
@@ -13,7 +13,7 @@ interface StaffTableProps {
 
 const StaffTable: React.FC<StaffTableProps> = ({ staffData, isLoading, children }) => {
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['patient'], '/api/department/');
+        useQueryWithTokenAPI<DepartmentResponse>(['patient'], '/api/department/');
 
     // Create a map of department ID to department name
     const departmentMap = departmentListData?.data.reduce((acc, department) => {

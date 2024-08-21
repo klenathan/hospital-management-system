@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
 import { PatientResponse } from '@/types/patients';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import { PatientTreatmentResponse } from '@/types/report';
 import { format } from "date-fns";
 import TableEmpty from '@/components/TableEmpty';
@@ -22,7 +22,7 @@ export default function PatientTreatmentTab() {
     });
 
     const { data: patientsData, isLoading: patientsLoading } =
-        useQueryWithoutTokenAPI<PatientResponse>(['patients'], '/api/patient/');
+        useQueryWithTokenAPI<PatientResponse>(['patients'], '/api/patient/');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const loadOptions = (inputValue: string, callback: (options: any[]) => void) => {
@@ -55,7 +55,7 @@ export default function PatientTreatmentTab() {
     const patientID = selectedPatient?.value || 'All Patients';
 
     const { data: patientTreatementData, isLoading: patientTreatementDataLoading } =
-        useQueryWithoutTokenAPI<PatientTreatmentResponse>(
+        useQueryWithTokenAPI<PatientTreatmentResponse>(
             ['patientTreatment', patientID, queryStartTime, queryEndTime],
             patientID !== "All Patients"
                 ? `/api/report/patientTreatmentHistory?patientId=${encodeURIComponent(patientID)}&startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`

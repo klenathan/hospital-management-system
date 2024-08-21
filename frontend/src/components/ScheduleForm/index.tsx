@@ -1,196 +1,111 @@
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { CalendarIcon, ClockIcon, Trash2Icon, NotebookPen } from 'lucide-react';
+import { Input } from "@/components/ui/input";
 import { Schedule } from '@/types/schedule';
-
-type ScheduleTest = {
-    id?: number;
-    title: string;
-    startDate: string;
-    startTime: string;
-    endDate: string;
-    endTime: string;
-    purpose: string;
-};
+// import { useDeleteWithTokenAPI } from '@/hooks/API/useDeleteAPI';
 
 interface ScheduleFormProps {
-    selectedStaffId: number | null;
-    scheduleData?: Schedule[]; // Now expecting an array of schedules
+    // selectedStaffId: number | null;
+    scheduleData: Schedule[]; // Now expecting an array of schedules
     scheduleLoading?: boolean; // Loading state for the schedule
+    refetch: () => void;
 }
 
+
 export default function ScheduleForm({
-    selectedStaffId,
+    // selectedStaffId,
     scheduleData = [], // Default to an empty array
     scheduleLoading = false,
 }: ScheduleFormProps) {
-    const [selectedScheduleIndex, setSelectedScheduleIndex] = useState<number>(0); // Track selected schedule index
-    const [schedule, setSchedule] = useState<ScheduleTest>({
-        id: undefined,
-        title: '',
-        startDate: '',
-        startTime: '',
-        endDate: '',
-        endTime: '',
-        purpose: '',
-    });
 
-    useEffect(() => {
-        if (scheduleData.length > 0 && scheduleData[selectedScheduleIndex]) {
-            // Initialize the schedule state with the selected schedule
-            const scheduleItem = scheduleData[selectedScheduleIndex];
-            const startDate = scheduleItem.start_time ? new Date(scheduleItem.start_time) : null;
-            const endDate = scheduleItem.end_time ? new Date(scheduleItem.end_time) : null;
 
-            setSchedule({
-                id: scheduleItem.id,
-                title: `${scheduleItem.first_name} ${scheduleItem.last_name}`, // Assuming title is the staff's name
-                startDate: startDate ? startDate.toISOString().split('T')[0] : '',
-                startTime: startDate ? startDate.toISOString().split('T')[1].slice(0, 5) : '',
-                endDate: endDate ? endDate.toISOString().split('T')[0] : '',
-                endTime: endDate ? endDate.toISOString().split('T')[1].slice(0, 5) : '',
-                purpose: scheduleItem.purpose || '',
-            });
-        } else {
-            // Reset the schedule to blank for creating a new schedule
-            setSchedule({
-                id: undefined,
-                title: '',
-                startDate: '',
-                startTime: '',
-                endDate: '',
-                endTime: '',
-                purpose: '',
-            });
-        }
-    }, [scheduleData, selectedScheduleIndex]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSchedule((prev) => ({ ...prev, [name]: value }));
-    };
 
-    const handleScheduleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedScheduleIndex(Number(e.target.value));
-    };
-
-    const handleUpdateSchedule = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!schedule.purpose || !schedule.startDate || !schedule.startTime || !schedule.endDate || !schedule.endTime) {
-            alert('All fields are required.');
-            return;
-        }
-
-        const updatedSchedule = {
-            purpose: schedule.purpose,
-            start_time: new Date(`${schedule.startDate}T${schedule.startTime}`).toISOString(),
-            end_time: new Date(`${schedule.endDate}T${schedule.endTime}`).toISOString(),
-        };
-
-        // Handle the logic to save the updated schedule
-        console.log('id:', selectedStaffId, 'Updated Schedule:', updatedSchedule);
-        // For example, you could make an API call here to save the updated schedule
-    };
 
     return (
         <>
             {scheduleLoading ? (
                 <p>Loading schedule...</p>
             ) : (
-                <form onSubmit={handleUpdateSchedule} className="gap-4 grid grid-cols-2 py-4">
-                    {scheduleData.length > 1 && (
-                        <div className="gap-2 grid col-span-2">
-
-                            <Label htmlFor="scheduleSelection">Select Schedule</Label>
-                            <select
-                                id="scheduleSelection"
-                                onChange={handleScheduleSelectionChange}
-                                value={selectedScheduleIndex}
-                                className="p-2 border rounded"
-                            >
-                                {scheduleData.map((scheduleItem, index) => {
-                                    const date = new Date(scheduleItem.start_time);
-
-                                    // Extract the date components manually
-                                    const year = date.getUTCFullYear();
-                                    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-                                    const day = String(date.getUTCDate()).padStart(2, '0');
-                                    const hours = String(date.getUTCHours()).padStart(2, '0');
-                                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-
-                                    // Format the date and time as 'yyyy-MM-dd HH:mm'
-                                    const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-                                    return (
-                                        <option key={index} value={index}>
-                                            {scheduleItem.purpose} - {formattedTime}
-                                        </option>
-                                    );
-                                })}
-
-                            </select>
-                        </div>
-                    )}
-                    <div className="gap-2 grid col-span-2">
-                        <Label htmlFor="purpose">Purpose</Label>
-                        <Input
-                            id="purpose"
-                            name="purpose"
-                            value={schedule.purpose}
-                            onChange={handleInputChange}
-                            placeholder="Enter the purpose"
-                            required
-                        />
-                    </div>
+                <div className="-mr-6 pr-6 max-h-[60vh] overflow-y-auto">
                     <div className="gap-2 grid">
-                        <Label htmlFor="startDate">Start Date</Label>
-                        <Input
-                            id="startDate"
-                            name="startDate"
-                            type="date"
-                            value={schedule.startDate}
-                            onChange={handleInputChange}
-                            required
-                        />
+                        {/* {selectedStaffId} */}
+                        {scheduleData.map((schedule) => {
+                            const startDate = new Date(schedule.start_time);
+                            const endDate = new Date(schedule.end_time);
+
+                            return (
+                                <Card key={schedule.appoimentId} className="w-full">
+                                    <CardContent className="p-3">
+                                        {schedule.appoimentId}
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex flex-col flex-1 items-start text-muted-foreground">
+                                                <h3 className="font-semibold text-black">{`${schedule.first_name} ${schedule.last_name}`}</h3>
+                                                <div className='flex items-center'>
+                                                    <CalendarIcon className="mr-1 w-3 h-3" />
+                                                    {startDate.toISOString().split('T')[0]}
+                                                    <ClockIcon className="mr-1 ml-2 w-3 h-3" />
+                                                    {startDate.toISOString().split('T')[1].slice(0, 5)} - {endDate.toISOString().split('T')[1].slice(0, 5)}
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-1">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button variant="outline" size="icon" className="w-10 h-10">
+                                                            <NotebookPen className="w-4 h-4" />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[425px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle>Add Note</DialogTitle>
+                                                        </DialogHeader>
+                                                        <Input
+                                                            placeholder="Enter your note here"
+                                                        />
+                                                        <DialogFooter>
+                                                            <DialogClose asChild>
+                                                                <Button type="button" variant="secondary">
+                                                                    Cancel
+                                                                </Button>
+                                                            </DialogClose>
+                                                            <Button type="button" >
+                                                                Add Note
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="destructive" size="icon" className="w-10 h-10">
+                                                            <Trash2Icon className="w-4 h-4" />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                This will permanently cancel the schedule.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction>
+                                                                Confirm
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
                     </div>
-                    <div className="gap-2 grid">
-                        <Label htmlFor="startTime">Start Time</Label>
-                        <Input
-                            id="startTime"
-                            name="startTime"
-                            type="time"
-                            value={schedule.startTime}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="gap-2 grid">
-                        <Label htmlFor="endDate">End Date</Label>
-                        <Input
-                            id="endDate"
-                            name="endDate"
-                            type="date"
-                            value={schedule.endDate}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="gap-2 grid">
-                        <Label htmlFor="endTime">End Time</Label>
-                        <Input
-                            id="endTime"
-                            name="endTime"
-                            type="time"
-                            value={schedule.endTime}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="flex justify-start col-span-2">
-                        <Button type="submit">{schedule.id ? 'Update' : 'Create'} Schedule</Button>
-                    </div>
-                </form>
+                </div>
             )}
         </>
     );

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import { DateTimePickerWithRange } from '@/components/DateTimePickerWithRange';
 import { DateRange } from 'react-day-picker';
-import { MoreHorizontal } from 'lucide-react';
+import { InboxIcon, MoreHorizontal } from 'lucide-react';
 import AppointmentTable from '@/components/AppointmentTable';
 // import { useDeleteWithoutTokenAPI } from '@/hooks/API/useDeleteAPI';
 import { WorkingSchedule, WorkingScheduleResponse } from '@/types/appointment';
@@ -30,7 +30,7 @@ export default function AppointmentManagement() {
     const queryEndTime = getFormattedDate(dateRange?.to);
 
     const { data: appointmentsData, isLoading: appointmentsDataLoading, refetch } =
-        useQueryWithoutTokenAPI<WorkingScheduleResponse>(
+        useQueryWithTokenAPI<WorkingScheduleResponse>(
             ['appointments', queryStartTime, queryEndTime],
             `/api/appointment/schedule?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
         );
@@ -40,6 +40,9 @@ export default function AppointmentManagement() {
             refetch();
         }
     }, [queryStartTime, queryEndTime, refetch]);
+
+
+    console.log(appointmentsData);
 
 
     // const { mutate: deleteAppointment } = useDeleteWithoutTokenAPI(`/api/appointment`, {
@@ -61,9 +64,10 @@ export default function AppointmentManagement() {
     const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
 
 
-    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithoutTokenAPI<ScheduleResponse>(
+    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithTokenAPI<ScheduleResponse>(
         ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
     );
+
     return (
         <div className="flex-1 p-6">
             <h1 className="mb-6 font-bold text-2xl">Appointment Management</h1>
@@ -114,15 +118,16 @@ export default function AppointmentManagement() {
                                         <p>Loading schedules...</p>
                                     ) : scheduleData?.data && scheduleData.data.length > 0 ? (
                                         <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
+                                            refetch={refetch}
+                                            // selectedStaffId={selectedStaffId}
                                             scheduleData={scheduleData.data}
                                             scheduleLoading={scheduleLoading}
                                         />
                                     ) : (
-                                        <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
-                                            scheduleLoading={scheduleLoading}
-                                        />
+                                        <div className="flex flex-col justify-center items-center">
+                                            <InboxIcon className="w-8 h-8 text-muted-foreground" />
+                                            <p className="mt-2 font-medium text-lg">No results found</p>
+                                        </div>
                                     )}
                                 </DialogContent>
                             </Dialog>

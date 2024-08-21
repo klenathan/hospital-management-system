@@ -1,32 +1,39 @@
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
-SELECT DISTINCT (s.id),
+SELECT s.id,
     s.first_name,
     s.last_name,
     s.job_type,
-    s.qualifications,
-    s.department_id,
-    s.salary,
+    -- s.qualifications,
+    s.department_id, 	
+    -- s.salary,
     s.deleted,
-    s.created_at,
-    s.updated_at,
-    IF (
+     IF (
         (
-            a.start_time <= toDate
-            AND a.end_time >= fromDate
+            COUNT(a.id) > 0
         ),
         TRUE,
         FALSE
     ) AS busy
 FROM staffs s
-    LEFT JOIN appointments a ON s.id = a.staff_id
-    AND a.deleted = 0
+    LEFT JOIN (select * from appointments a where a.deleted = 0
+     and a.start_time <= toDate
+            AND a.end_time >=  fromDate
+    ) a ON s.id = a.staff_id 
 WHERE s.job_type = 'Doctor'
-    AND s.deleted = 0;
+    AND s.deleted = 0 
+    
+group by (s.id);
 
 END $$
-
+CAll `A_BookAppointmentWithDoctor` (
+  1,
+  4,
+  "2024-08-10 07:00:00.",
+  "2024-08-10 09:40:00",
+  "Checkups"
+);
 CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN PatientId int,
     IN Staff_Id int,
@@ -36,19 +43,24 @@ CREATE PROCEDURE A_BookAppointmentWithDoctor (
 ) BEGIN
 DECLARE Appointment_Count int;
 
-SELECT IF (
-        (s.job_type = 'Doctor'),
-        TRUE,
-        FALSE
-    ),
-    COUNT(*) INTO @isDocter,
-    Appointment_Count
+SELECT
+    COUNT (*) into Appointment_Count
 FROM appointments ap
-    JOIN staffs s ON s.id = ap.staff_id
+    JOIN staffs s ON s.id = ap.staff_id and s.deleted = 0
 WHERE ap.staff_id = Staff_Id
     AND ap.start_time < newEndTime
     AND ap.end_time > newStartTime
-    AND s.job_type = 'Doctor';
+    AND s.job_type = 'Doctor' AND ap.deleted = 0;
+
+-- SELECT IF (
+--         (s.job_type = 'Doctor'),
+--         TRUE,
+--         FALSE
+--     ) INTO @isDocter
+-- FROM staffs s WHERE s.id = Staff_Id;
+
+-- SELECT @isDoctor;
+
 
 IF Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'TIME ALREADY BOOKED',
@@ -58,9 +70,9 @@ ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSEIF ! @isDocter THEN SIGNAL SQLSTATE '2201R'
-SET MESSAGE_TEXT = "This is not a doctor's appointment ",
-    MYSQL_ERRNO = 01004;
+-- ELSEIF !@isDocter THEN SIGNAL SQLSTATE '2201R'
+-- SET MESSAGE_TEXT = "This is not a doctor's appointment ",
+--     MYSQL_ERRNO = 01004;
 
 ELSE START transaction;
 
@@ -115,3 +127,52 @@ ROLLBACK;
 END IF;
 
 END $$
+
+
+
+
+
+SELECT s.id,
+    s.first_name,
+    s.last_name,
+    s.job_type,
+    -- s.qualifications,
+    s.department_id, 	
+    -- s.salary,
+    s.deleted,
+     IF (
+        (
+            COUNT(a.id) > 0
+        ),
+        TRUE,
+        FALSE
+    ) AS busy
+FROM staffs s
+    LEFT JOIN (select * from appointments a where a.deleted = 0
+     and a.start_time <= "2024-08-22"
+            AND a.end_time >=  "2024-08-20"
+    ) a ON s.id = a.staff_id 
+WHERE s.job_type = 'Doctor'
+    AND s.deleted = 0 
+    
+group by (s.id);
+
+-> Group aggregate: count(a.id)  (cost=62.4 rows=140) (actual time=0.109..0.166 rows=56 loops=1)
+    -> Nested loop left join  (cost=48.4 rows=140) (actual time=0.0989..0.15 rows=57 loops=1)
+        -> Index lookup on s using staff_del_job_idx (deleted=0, job_type='Doctor'), with index condition: (s.job_type = 'Doctor')  (cost=6.35 rows=56) (actual time=0.0808..0.0878 rows=56 loops=1)
+        -> Filter: ((a.deleted = 0) and (a.start_time <= '2024-08-22') and (a.end_time >= '2024-08-20'))  (cost=0.504 rows=2.5) (actual time=931e-6..956e-6 rows=0.0357 loops=56)
+            -> Index lookup on a using staff_id (staff_id=s.id)  (cost=0.504 rows=2.5) (actual time=726e-6..770e-6 rows=0.107 loops=56)
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+

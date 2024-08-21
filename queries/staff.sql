@@ -236,6 +236,7 @@ END $$
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
+a.id as appoimentId,
     a.purpose,
     a.start_time,
     a.end_time

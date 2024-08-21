@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import { StaffListResponse } from '@/types/staffs';
 import { DoctorWorkHistoryResponse } from '@/types/report';
 import { format } from 'date-fns';
@@ -14,7 +14,7 @@ export default function DoctorWorkloadTab() {
     const [selectedDoctor, setSelectedDoctor] = useState<{ value: string; label: string } | null>(null);
 
     const { data: doctorsListData, isLoading: doctorsLoading } =
-        useQueryWithoutTokenAPI<StaffListResponse>(
+        useQueryWithTokenAPI<StaffListResponse>(
             ['doctor'],
             '/api/staff/doctors/'
         );
@@ -34,7 +34,7 @@ export default function DoctorWorkloadTab() {
 
 
     const { data: doctorWorkHistoryData, isLoading: doctorWorkHistoryDataLoading } =
-        useQueryWithoutTokenAPI<DoctorWorkHistoryResponse>(
+        useQueryWithTokenAPI<DoctorWorkHistoryResponse>(
             ['doctorWorkHistory', selectedDoctor?.value || "", queryStartTime, queryEndTime],
             selectedDoctor?.value !== "All Doctors"
                 ? `/api/report/doctorWorkHistory?staffId=${encodeURIComponent(selectedDoctor?.value || "")}&startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`

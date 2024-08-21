@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MoreHorizontal } from 'lucide-react';
 import { StaffMember, StaffListResponse } from '@/types/staffs';
 import { DepartmentResponse } from '@/types/department';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 
 import {
     Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
@@ -30,10 +30,10 @@ export default function StaffManagement() {
 
 
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['department'], '/api/department/');
+        useQueryWithTokenAPI<DepartmentResponse>(['department'], '/api/department/');
 
     const { data: staffListData, isLoading: staffLoading, refetch } =
-        useQueryWithoutTokenAPI<StaffListResponse>(
+        useQueryWithTokenAPI<StaffListResponse>(
             ['staff', selectedDepartment.toString()], selectedDepartment === 'all'
             ? '/api/staff/'
             : `/api/staff/department/${selectedDepartment}`

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StaffJobChangeHistoryResponse } from '@/types/report';
 import { StaffListResponse } from '@/types/staffs';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import TableEmpty from '@/components/TableEmpty';
 import { DepartmentResponse } from '@/types/department';
 
@@ -12,13 +12,13 @@ export default function StaffJobChangeHistoryTab() {
     const [selectedStaff, setSelectedStaff] = useState<{ value: string; label: string } | null>(null);
 
     const { data: staffListData, isLoading: staffLoading } =
-        useQueryWithoutTokenAPI<StaffListResponse>(
+        useQueryWithTokenAPI<StaffListResponse>(
             ['staff'],
             '/api/staff/'
         );
 
     const { data: staffHistoryData, isLoading: staffHistoryDataLoading } =
-        useQueryWithoutTokenAPI<StaffJobChangeHistoryResponse>(
+        useQueryWithTokenAPI<StaffJobChangeHistoryResponse>(
             ['staffHistory', selectedStaff?.value || ""],
             selectedStaff?.value !== undefined ? `/api/report/jobHistory/${selectedStaff.value}` : ""
         );
@@ -49,7 +49,7 @@ export default function StaffJobChangeHistoryTab() {
 
 
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['patient'], '/api/department/');
+        useQueryWithTokenAPI<DepartmentResponse>(['patient'], '/api/department/');
 
     // Create a map of department ID to department name
     const departmentMap = departmentListData?.data.reduce((acc, department) => {
