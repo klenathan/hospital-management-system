@@ -261,6 +261,8 @@ ELSE COMMIT;
 
 END IF;
 
+SELECT @username as username;
+
 END $$
 
 CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
