@@ -1,0 +1,21 @@
+-- CREATE TABLE staff_blob_metadata (
+--     `id` INT AUTO_INCREMENT PRIMARY KEY,
+--     staff_id INT,
+--     blob_id VARCHAR(50) NOT NULL,
+--     created_by VARCHAR(100),
+--     deleted BOOLEAN DEFAULT 0,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--     FOREIGN KEY (staff_id) REFERENCES staffs (`id`)
+-- );
+
+-- CREATE TABLE blob_metadata (
+--     `id` INT AUTO_INCREMENT PRIMARY KEY,
+--     staff_id INT,
+--     blob_id VARCHAR(50) NOT NULL,
+--     created_by VARCHAR(100),
+--     deleted BOOLEAN DEFAULT 0,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--     FOREIGN KEY (staff_id) REFERENCES staffs (`id`)
+-- );
