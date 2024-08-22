@@ -12,7 +12,7 @@ import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import { StaffListResponse } from '@/types/staffs';
 import { PatientResponse } from '@/types/patients';
 import { useMutationWithTokenAPI } from '@/hooks/API/useMutationAPI';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 
 export default function AppointmentForm() {

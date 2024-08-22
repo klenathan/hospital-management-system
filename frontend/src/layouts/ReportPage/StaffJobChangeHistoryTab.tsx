@@ -20,7 +20,7 @@ export default function StaffJobChangeHistoryTab() {
     const { data: staffHistoryData, isLoading: staffHistoryDataLoading } =
         useQueryWithTokenAPI<StaffJobChangeHistoryResponse>(
             ['staffHistory', selectedStaff?.value || ""],
-            selectedStaff?.value !== undefined ? `/api/report/jobHistory/${selectedStaff.value}` : ""
+            selectedStaff?.value !== undefined ? `/api/report/jobHistory/${selectedStaff.value}` : "/api"
         );
 
     // Load options for AsyncSelect

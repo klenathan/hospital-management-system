@@ -5,25 +5,63 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { CalendarIcon, ClockIcon, Trash2Icon, NotebookPen } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Schedule } from '@/types/schedule';
-// import { useDeleteWithTokenAPI } from '@/hooks/API/useDeleteAPI';
-
+import { useDeleteWithTokenAPI } from '@/hooks/API/useDeleteAPI';
+import { useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 interface ScheduleFormProps {
-    // selectedStaffId: number | null;
-    scheduleData: Schedule[]; // Now expecting an array of schedules
-    scheduleLoading?: boolean; // Loading state for the schedule
+    setSelectedStaffId: (id: number | null) => void;
+    scheduleData: Schedule[];
+    scheduleLoading?: boolean;
     refetch: () => void;
+    setOpenDialogId: (id: number | null) => void;
 }
 
-
 export default function ScheduleForm({
-    // selectedStaffId,
-    scheduleData = [], // Default to an empty array
+    setOpenDialogId,
+    setSelectedStaffId,
+    scheduleData = [],
     scheduleLoading = false,
+    refetch
 }: ScheduleFormProps) {
 
+    const [selectedAppoimentId, setSelectedAppoimentId] = useState<number | null>(null);
 
+    const { toast } = useToast();
 
+    const deleteUserMutation = useDeleteWithTokenAPI<void>(`/api/appointment/${selectedAppoimentId}`, {
+        onSuccess: () => {
+            console.log('Schedule has been deleted.');
+            toast({
+                variant: "success",
+                title: "Schedule has been deleted.",
+                // description: `${response}`,
+            });
+            setSelectedAppoimentId(null); // Reset after successful deletion
+            setOpenDialogId(null);
+            setSelectedStaffId(0);
+            refetch();
+        },
+        onError: (error) => {
+            console.error('Error submitting form:', error);
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+            });
+        },
+    });
 
+    const handleDelete = (appoimentId: number) => {
+        setSelectedAppoimentId(appoimentId);
+        deleteUserMutation.mutate();
+    };
+
+    const [note, setNote] = useState('');
+
+    const handleAddNote = () => {
+        console.log(`Note added: ${note}`);
+        // Implement logic to add note
+    };
 
     return (
         <>
@@ -32,7 +70,6 @@ export default function ScheduleForm({
             ) : (
                 <div className="-mr-6 pr-6 max-h-[60vh] overflow-y-auto">
                     <div className="gap-2 grid">
-                        {/* {selectedStaffId} */}
                         {scheduleData.map((schedule) => {
                             const startDate = new Date(schedule.start_time);
                             const endDate = new Date(schedule.end_time);
@@ -40,7 +77,7 @@ export default function ScheduleForm({
                             return (
                                 <Card key={schedule.appoimentId} className="w-full">
                                     <CardContent className="p-3">
-                                        {schedule.appoimentId}
+                                        {/* {schedule.appoimentId} */}
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col flex-1 items-start text-muted-foreground">
                                                 <h3 className="font-semibold text-black">{`${schedule.first_name} ${schedule.last_name}`}</h3>
@@ -64,6 +101,8 @@ export default function ScheduleForm({
                                                         </DialogHeader>
                                                         <Input
                                                             placeholder="Enter your note here"
+                                                            value={note}
+                                                            onChange={(e) => setNote(e.target.value)}
                                                         />
                                                         <DialogFooter>
                                                             <DialogClose asChild>
@@ -71,7 +110,7 @@ export default function ScheduleForm({
                                                                     Cancel
                                                                 </Button>
                                                             </DialogClose>
-                                                            <Button type="button" >
+                                                            <Button type="button" onClick={handleAddNote}>
                                                                 Add Note
                                                             </Button>
                                                         </DialogFooter>
@@ -92,7 +131,7 @@ export default function ScheduleForm({
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction>
+                                                            <AlertDialogAction onClick={() => handleDelete(schedule.appoimentId)}>
                                                                 Confirm
                                                             </AlertDialogAction>
                                                         </AlertDialogFooter>

@@ -28,6 +28,7 @@ export default function AppointmentManagement() {
 
     const queryStartTime = getFormattedDate(dateRange?.from);
     const queryEndTime = getFormattedDate(dateRange?.to);
+    const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
 
     const { data: appointmentsData, isLoading: appointmentsDataLoading, refetch } =
         useQueryWithTokenAPI<WorkingScheduleResponse>(
@@ -35,38 +36,21 @@ export default function AppointmentManagement() {
             `/api/appointment/schedule?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
         );
 
+    const { data: scheduleData, isLoading: scheduleLoading, refetch: refetchSchedule } = useQueryWithTokenAPI<ScheduleResponse>(
+        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
+    );
+
+
+    const [openDialogId, setOpenDialogId] = useState<number | null>(null);
+
     useEffect(() => {
         if (queryStartTime && queryEndTime) {
             refetch();
         }
-    }, [queryStartTime, queryEndTime, refetch]);
-
-
-    console.log(appointmentsData);
-
-
-    // const { mutate: deleteAppointment } = useDeleteWithoutTokenAPI(`/api/appointment`, {
-    //     onSuccess: () => {
-    //         console.log('Appointment has been canceled.');
-    //         refetch(); // To refresh the appointment data after deletion
-    //     },
-    //     onError: (error) => {
-    //         console.error('Error deleting data', error);
-    //     },
-    // });
-
-    // const cancelAppointment = (id: number | undefined) => {
-    //     if (!id) return;
-    //     deleteAppointment(`${id}`);
-    //     setIsCancelDialogOpen(null);
-    // };
-
-    const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
-
-
-    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithTokenAPI<ScheduleResponse>(
-        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
-    );
+        if (selectedStaffId !== null && openDialogId !== null) {
+            refetchSchedule();
+        }
+    }, [queryStartTime, queryEndTime, refetch, refetchSchedule, selectedStaffId, openDialogId]);
 
     return (
         <div className="flex-1 p-6">
@@ -97,12 +81,15 @@ export default function AppointmentManagement() {
                 <AppointmentTable appointmentData={appointmentsData?.data || []} isLoading={appointmentsDataLoading}>
                     {(appointment: WorkingSchedule) => (
                         <>
-                            <Dialog>
+                            <Dialog open={openDialogId === appointment.id}
+                                onOpenChange={(isOpen) => setOpenDialogId(isOpen ? appointment.id : null)}
+
+                            >
                                 <DialogTrigger asChild>
                                     <Button
                                         variant='ghost'
                                         className='p-0 w-8 h-8'
-                                        onClick={() => setSelectedStaffId(appointment.id)}
+                                        onClick={() => { setSelectedStaffId(appointment.id); setOpenDialogId(appointment.id); }}
                                     >
                                         <span className='sr-only'>Open menu</span>
                                         <MoreHorizontal className='w-4 h-4' />
@@ -111,14 +98,16 @@ export default function AppointmentManagement() {
                                 <DialogContent className='max-w-3xl'>
                                     <DialogHeader>
                                         <DialogTitle>{appointment.first_name + " " + appointment.last_name}'s schedule</DialogTitle>
-                                        <DialogDescription></DialogDescription>
+                                        <DialogDescription className='hidden'>Doctor's schedule</DialogDescription>
                                     </DialogHeader>
 
                                     {scheduleLoading ? (
                                         <p>Loading schedules...</p>
                                     ) : scheduleData?.data && scheduleData.data.length > 0 ? (
                                         <ScheduleForm
-                                            refetch={refetch}
+                                            refetch={refetchSchedule}
+                                            setSelectedStaffId={setSelectedStaffId}
+                                            setOpenDialogId={setOpenDialogId}
                                             // selectedStaffId={selectedStaffId}
                                             scheduleData={scheduleData.data}
                                             scheduleLoading={scheduleLoading}

@@ -239,7 +239,7 @@ SELECT s.*,
 a.id as appoimentId,
     a.purpose,
     a.start_time,
-    a.end_time
+    a.end_time,
 FROM appointments a
     LEFT JOIN staffs s ON s.id = a.staff_id
     AND s.deleted = 0
