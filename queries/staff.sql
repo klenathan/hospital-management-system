@@ -1,6 +1,4 @@
-DELIMITER $$
-
-CREATE FUNCTION S_InsertStaffJobHistory (
+DELIMITER $$ CREATE FUNCTION S_InsertStaffJobHistory (
     userID int,
     j_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
@@ -21,9 +19,7 @@ VALUES (
 
 RETURN TRUE;
 
-END $$
-
-CREATE PROCEDURE S_AddNewStaff(
+END $$ CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
@@ -159,11 +155,9 @@ ELSE COMMIT;
 
 END IF;
 
-SELECT @username as username;
+SELECT @username AS username;
 
-END $$
-
-CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
+END $$ CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
 SELECT *
 FROM staffs s
     JOIN departments d ON d.id = s.department_id
@@ -171,9 +165,7 @@ FROM staffs s
 WHERE s.department_id = departmentID
     AND s.deleted = 0;
 
-END $$
-
-CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
+END $$ CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
 FROM staffs s
 WHERE s.deleted = 0
@@ -189,9 +181,7 @@ ORDER BY s.first_name DESC,
 
 END IF;
 
-END $$
-
-CREATE PROCEDURE S_UpdateStaffInfo (
+END $$ CREATE PROCEDURE S_UpdateStaffInfo (
     IN Staff_Id INT,
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
@@ -232,23 +222,19 @@ ELSE COMMIT;
 
 END IF;
 
-END $$
-
-CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
+END $$ CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
-a.id as appoimentId,
+    a.id AS appoimentId,
     a.purpose,
     a.start_time,
-    a.end_time,
+    a.end_time
 FROM appointments a
     LEFT JOIN staffs s ON s.id = a.staff_id
     AND s.deleted = 0
 WHERE s.id = staff_id
     AND a.deleted = 0;
 
-END $$
-
-CREATE PROCEDURE S_UpdateStaffSchedule (
+END $$ CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
     IN Appointment_Id int,
     IN newStartTime datetime,
@@ -256,7 +242,7 @@ CREATE PROCEDURE S_UpdateStaffSchedule (
 ) BEGIN START transaction;
 
 SELECT COUNT(*) INTO @Appointment_Count
-FROM ppointments
+FROM appointments
 WHERE appointments.staff_id = Staff_Id
     AND appointments.start_time < newEndTime
     AND appointments.end_time > newStartTime
