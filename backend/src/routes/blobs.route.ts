@@ -91,4 +91,33 @@ blobRouter.post(
   }
 );
 
+blobRouter.get("/:id", async (req: Request, res: Response) => {
+  /* #swagger.summary = "Get all blobs"
+  #swagger.parameters['id'] = {
+    in: 'path',
+    name: 'id',
+    description: 'Retrieve blob by `id`',
+    type: 'string'
+    }
+*/
+  try {
+    const id = req.params["id"] as string | undefined;
+
+    if (!id) {
+      return res.status(400).json({ error: "INVALID ID" });
+    }
+
+    // const blobs = await blobService.listFiles("testBucket", {
+    //   domain: req.query["domain"] as string | undefined,
+    //   fileName: req.query["fileName"] as string | undefined,
+    //   parent: req.query["parent"] as string | undefined,
+    // });
+
+    const [file, fileName] = await blobService.getFile("testBucket", id);
+    res.set("Content-disposition", "attachment; filename=" + fileName);
+    return res.status(200).send(file);
+  } catch (error) {
+    return res.status(400).json({ error: (error as Error).message });
+  }
+});
 export default blobRouter;

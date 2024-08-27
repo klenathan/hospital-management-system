@@ -1,4 +1,9 @@
-import { GridFSBucket, GridFSBucketWriteStream, GridFSFile } from "mongodb";
+import {
+  GridFSBucket,
+  GridFSBucketWriteStream,
+  GridFSFile,
+  ObjectId,
+} from "mongodb";
 import { Readable } from "stream";
 import { client } from "../db/mongodb";
 
@@ -92,5 +97,39 @@ export default class BlobService {
       await client.close();
       return { status: false };
     }
+  }
+
+  public async getFile(
+    bucketName: string,
+    id: string
+  ): Promise<[Buffer, string]> {
+    const objId = new ObjectId(id);
+    await client.connect();
+    const db = client.db(this.dbName);
+    const bucket = new GridFSBucket(db, { bucketName: bucketName });
+
+    const downloadStream = bucket.openDownloadStream(objId);
+
+    const filesMetadata = await bucket.find(objId).toArray();
+    let fileMeta;
+    if (filesMetadata.length == 0) {
+      throw new Error("File not found");
+    } else {
+      fileMeta = filesMetadata[0];
+    }
+
+    const downloadPromise: Promise<Buffer> = new Promise((resolve, reject) => {
+      let _buf: Buffer;
+
+      downloadStream.on("data", (chunk) => {
+        _buf = chunk;
+        resolve(_buf);
+      });
+
+      downloadStream.on("error", (e: Error) => reject(e));
+    });
+    const result = await downloadPromise;
+
+    return [result, fileMeta.filename];
   }
 }
