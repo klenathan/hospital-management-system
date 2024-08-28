@@ -1,18 +1,20 @@
 import { Request, Response, Router } from "express";
 
-import BlobService from "../services/blobs.service";
 import multer from "multer";
+import BlobService from "../services/blobs.service";
 
-const MIME: Record<string, string> = {
-  html: "text/html",
-  txt: "text/plain",
-  css: "text/css",
-  gif: "image/gif",
-  jpeg: "image/jpeg",
-  jpg: "image/jpg",
-  png: "image/png",
-  svg: "image/svg+xml",
-  js: "application/javascript",
+const IMAGE_MIME: Record<string, string> = {
+  JPEG: "image/jpeg",
+  PNG: "image/png",
+  GIF: "image/gif",
+  BMP: "image/bmp",
+  TIFF: "image/tiff",
+  WebP: "image/webp",
+  SVG: "image/svg+xml",
+  ICO: "image/x-icon",
+  HEIF: "image/heif",
+  HEIC: "image/heic",
+  AVIF: "image/avif",
 };
 
 const blobRouter = Router();
@@ -126,11 +128,11 @@ blobRouter.get("/image/:id", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Error parsing filename" });
     }
 
-    if (!Object.keys(MIME).includes(ext)) {
+    if (!Object.keys(IMAGE_MIME).includes(ext.toLocaleUpperCase())) {
       return res.status(400).json({ error: "Not an image" });
     }
 
-    const type = MIME[fileName.split(".").at(-1) as string];
+    const type = IMAGE_MIME[ext.toLocaleUpperCase()];
 
     res.set("Content-Type", type);
     return res.status(200).end(file);
