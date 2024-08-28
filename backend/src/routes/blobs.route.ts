@@ -10,6 +10,7 @@ const UploadBlobDTO = z.object({
 });
 
 const IMAGE_MIME: Record<string, string> = {
+  JPG: "image/jpg",
   JPEG: "image/jpeg",
   PNG: "image/png",
   GIF: "image/gif",
@@ -141,7 +142,7 @@ blobRouter.get("/image/:id", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "INVALID ID" });
     }
 
-    const [file, fileName] = await blobService.getFile("testBucket", id);
+    const [file, fileName] = await blobService.getFile("blobBucket", id);
 
     const ext = fileName.split(".").at(-1);
     if (!ext) {
@@ -189,7 +190,7 @@ blobRouter.get(
       //   parent: req.query["parent"] as string | undefined,
       // });
 
-      const [file, fileName] = await blobService.getFile("bucketName", id);
+      const [file, fileName] = await blobService.getFile("blobBucket", id);
       res.set("Content-disposition", "attachment; filename=" + fileName);
       return res.status(200).send(file);
     } catch (error) {
