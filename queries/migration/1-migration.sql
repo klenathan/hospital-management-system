@@ -34,7 +34,7 @@ CREATE TABLE staffs (
     job_type ENUM('Doctor', 'Nurse', 'Admin'),
     qualifications TEXT,
     department_id INT,
-    salary DECIMAL(10, 2),
+    salary BIGINT,
     deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -45,7 +45,7 @@ CREATE TABLE staff_job_history (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     staff_id INT,
     job_type VARCHAR(100),
-    salary DECIMAL(10, 2),
+    salary BIGINT,
     department_id INT,
     deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -298,7 +298,8 @@ CREATE PROCEDURE S_UpdateStaffInfo (
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
     IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
-    IN Salary DECIMAL(10, 2),
+    IN Qualification VARCHAR(50),
+    IN Salary BIGINT,
     IN Department_Id INT
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
@@ -316,6 +317,7 @@ UPDATE staffs s
 SET s.first_name = f_name,
     s.last_name = l_name,
     s.job_type = Job_Type,
+    s.qualifications = Qualification,
     s.salary = Salary,
     s.department_id = Department_Id
 WHERE s.id = Staff_Id;
@@ -481,6 +483,38 @@ ROLLBACK;
 
 END IF;
 
+END $$
+
+CREATE PROCEDURE P_UpdatePatientInfo(
+    IN p_id INT,
+    IN p_first_name VARCHAR(100),
+    IN p_last_name VARCHAR(100),
+    IN p_date_of_birth DATE,
+    IN p_contact_info VARCHAR(255),
+    IN p_address VARCHAR(255),
+    IN p_allergies TEXT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
+    UPDATE patients
+    SET
+        first_name = p_first_name,
+        last_name = p_last_name,
+        date_of_birth = p_date_of_birth,
+        contact_info = p_contact_info,
+        address = p_address,
+        allergies = p_allergies
+    WHERE id = p_id;
+
+    
+    COMMIT;
 END $$
 
 

@@ -197,7 +197,7 @@ CREATE PROCEDURE S_UpdateStaffInfo (
     IN l_name VARCHAR(50),
     IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
     IN Qualification VARCHAR(50),
-    IN Salary DECIMAL(10, 2),
+    IN Salary BIGINT,
     IN Department_Id INT
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
