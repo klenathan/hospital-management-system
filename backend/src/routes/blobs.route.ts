@@ -2,6 +2,12 @@ import { NextFunction, Request, Response, Router } from "express";
 
 import multer from "multer";
 import BlobService from "../services/blobs.service";
+import { z } from "zod";
+
+const UploadBlobDTO = z.object({
+  domain: z.string(),
+  parentId: z.string(),
+});
 
 const IMAGE_MIME: Record<string, string> = {
   JPEG: "image/jpeg",
@@ -43,7 +49,7 @@ blobRouter.get("/", async (req: Request, res: Response) => {
 */
   try {
     //   dbConfigBuilder(res.locals["username"], res.locals["password"])
-    const blobs = await blobService.listFiles("testBucket", {
+    const blobs = await blobService.listFiles("blobBucket", {
       domain: req.query["domain"] as string | undefined,
       fileName: req.query["fileName"] as string | undefined,
       parent: req.query["parent"] as string | undefined,
@@ -88,6 +94,8 @@ blobRouter.post(
     try {
       const file = req.file;
 
+      const body = UploadBlobDTO.parse(req.body);
+
       if (!file) {
         return res.status(400).json({ error: "INVALID FILE" });
       }
@@ -96,14 +104,28 @@ blobRouter.post(
         "blobBucket",
         {
           fileName: file.originalname,
-          domain: req.body.domain,
-          parent: req.body.parentId,
+          domain: body.domain,
+          parent: body.parentId,
         },
         file.buffer
       );
       return res.status(200).send(blobs);
     } catch (error) {
-      return res.status(400).json({ error: (error as Error).message });
+      if (error instanceof z.ZodError) {
+        for (const issue of error.issues) {
+          console.error("Validation failed: ", issue);
+        }
+        return res.status(400).json({
+          message: `Validation error: ${error.issues
+            .map((e) => e.path)
+            .join("; ")}`,
+        });
+      } else {
+        console.error("Error: ", error);
+        return res.status(400).json({
+          message: `Server error: ${error}`,
+        });
+      }
     }
   }
 );
@@ -167,7 +189,7 @@ blobRouter.get(
       //   parent: req.query["parent"] as string | undefined,
       // });
 
-      const [file, fileName] = await blobService.getFile("testBucket", id);
+      const [file, fileName] = await blobService.getFile("bucketName", id);
       res.set("Content-disposition", "attachment; filename=" + fileName);
       return res.status(200).send(file);
     } catch (error) {

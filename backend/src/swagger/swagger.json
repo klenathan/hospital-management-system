@@ -111,21 +111,6 @@
             "in": "formData",
             "description": "Parent Object ID",
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "domain": {
-                  "example": "any"
-                },
-                "parentId": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
