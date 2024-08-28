@@ -111,6 +111,21 @@
             "in": "formData",
             "description": "Parent Object ID",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "domain": {
+                  "example": "any"
+                },
+                "parentId": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -129,12 +144,43 @@
         }
       }
     },
-    "/api/blob/{id}": {
+    "/api/blob/image/{id}": {
       "get": {
         "tags": [
           "Blobs"
         ],
-        "summary": "Get all blobs",
+        "summary": "Serve image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/blob/download/{id}": {
+      "get": {
+        "tags": [
+          "Blobs"
+        ],
+        "summary": "Download blob by ID",
         "description": "",
         "parameters": [
           {
