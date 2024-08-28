@@ -97,6 +97,7 @@ export default class StaffService {
     config: PoolOptions
   ): Promise<any> {
     const conn = await getMySqlConnnection(config);
+
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_AddNewStaff(
@@ -105,8 +106,7 @@ export default class StaffService {
       "${props.jobType}",
       "${props.qualification}",
       "${props.deptId}",
-      "${props.salary}"
-      )`);
+      "${props.salary}")`);
 
     return {
       status: "success",
