@@ -139,16 +139,32 @@ export default class PatientService {
 
   async updatePatientInfo(
     props: {
-      first_name?: string;
-      last_name?: string;
-      date_of_birth?: string;
-      contact_info?: string;
-      address?: string;
+      id: string;
+      first_name: string;
+      last_name: string;
+      date_of_birth: string;
+      contact_info: string;
+      address: string;
       allergies?: string;
     },
     config: PoolOptions
-  ): Promise<boolean> {
-    console.log(props, config);
-    return true;
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL P_UpdatePatientInfo(
+      "${props.id}",
+      "${props.first_name}",
+      "${props.last_name}",
+      "${props.date_of_birth}",
+      "${props.contact_info}",
+      "${props.address}",
+      "${props.allergies ?? ""}"
+      )`);
+
+    return {
+      status: "success",
+    };
   }
 }
