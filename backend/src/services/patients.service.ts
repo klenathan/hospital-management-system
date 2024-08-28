@@ -6,7 +6,7 @@ import {
 } from "mysql2/promise";
 
 import { getMySqlConnnection } from "../db/mysql";
-import { GetPaginatedRequestResult } from "./queryResult";
+import { GetPaginatedRequestResult, GetRequestResult } from "./queryResult";
 
 export default class PatientService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -44,6 +44,25 @@ export default class PatientService {
         pageNumber: props.pageNumber,
         pageSize: props.pageSize,
         totalCount: countRow[0]["total"] as number,
+      },
+      data: rows,
+    };
+  }
+
+  public async getAllTreatmentByPatientId(
+    patientId: number,
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
+
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM treatments WHERE patient_id = ?`,
+      [patientId]
+    );
+
+    return {
+      queryResult: {
+        count: rows.length,
       },
       data: rows,
     };
