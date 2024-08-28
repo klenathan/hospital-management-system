@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 
 import multer from "multer";
 import BlobService from "../services/blobs.service";
@@ -139,8 +139,14 @@ blobRouter.get("/image/:id", async (req: Request, res: Response) => {
   }
 });
 
-blobRouter.get("/download/:id", async (req: Request, res: Response) => {
-  /* #swagger.summary = "Download blob by ID"
+blobRouter.get(
+  "/download/:id",
+  async (_: Request, res: Response, next: NextFunction) => {
+    res.set("Access-Control-Expose-Headers", "*");
+    next();
+  },
+  async (req: Request, res: Response) => {
+    /* #swagger.summary = "Download blob by ID"
   #swagger.parameters['id'] = {
     in: 'path',
     name: 'id',
@@ -148,24 +154,25 @@ blobRouter.get("/download/:id", async (req: Request, res: Response) => {
     type: 'string'
     }
 */
-  try {
-    const id = req.params["id"] as string | undefined;
+    try {
+      const id = req.params["id"] as string | undefined;
 
-    if (!id) {
-      return res.status(400).json({ error: "INVALID ID" });
+      if (!id) {
+        return res.status(400).json({ error: "INVALID ID" });
+      }
+
+      // const blobs = await blobService.listFiles("testBucket", {
+      //   domain: req.query["domain"] as string | undefined,
+      //   fileName: req.query["fileName"] as string | undefined,
+      //   parent: req.query["parent"] as string | undefined,
+      // });
+
+      const [file, fileName] = await blobService.getFile("testBucket", id);
+      res.set("Content-disposition", "attachment; filename=" + fileName);
+      return res.status(200).send(file);
+    } catch (error) {
+      return res.status(400).json({ error: (error as Error).message });
     }
-
-    // const blobs = await blobService.listFiles("testBucket", {
-    //   domain: req.query["domain"] as string | undefined,
-    //   fileName: req.query["fileName"] as string | undefined,
-    //   parent: req.query["parent"] as string | undefined,
-    // });
-
-    const [file, fileName] = await blobService.getFile("testBucket", id);
-    res.set("Content-disposition", "attachment; filename=" + fileName);
-    return res.status(200).send(file);
-  } catch (error) {
-    return res.status(400).json({ error: (error as Error).message });
   }
-});
+);
 export default blobRouter;
