@@ -19,9 +19,6 @@ export default class StaffService {
     config: PoolOptions
   ): Promise<GetRequestResult> {
     const conn = await getMySqlConnnection(config);
-    console.log(config);
-
-    // console.log(conn.);
 
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
@@ -147,8 +144,6 @@ export default class StaffService {
       .toISOString()
       .slice(0, -1);
 
-    console.log(newEndTimeStr);
-
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<ResultSetHeader>
     >(`CALL S_UpdateStaffSchedule(
@@ -161,5 +156,34 @@ export default class StaffService {
     return {
       status: 'success',
     };
+  }
+
+  async updateStaffInfo(
+    staffId: number,
+    props: {
+      firstName: string;
+      lastName: string;
+      jobType: string;
+      qualification: string;
+      salary: number;
+      deptId: number;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL S_UpdateStaffInfo(
+        "${staffId}",
+        "${props.firstName}",
+        "${props.lastName}",
+        "${props.jobType}",
+        "${props.qualification}",
+        "${props.salary}",
+        "${props.deptId}"
+    )`);
+
+    return { status: "success" };
   }
 }

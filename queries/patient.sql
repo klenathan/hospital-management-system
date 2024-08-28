@@ -89,3 +89,35 @@ ROLLBACK;
 END IF;
 
 END $$
+
+CREATE PROCEDURE P_UpdatePatientInfo(
+    IN p_id INT,
+    IN p_first_name VARCHAR(100),
+    IN p_last_name VARCHAR(100),
+    IN p_date_of_birth DATE,
+    IN p_contact_info VARCHAR(255),
+    IN p_address VARCHAR(255),
+    IN p_allergies TEXT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
+    UPDATE patients
+    SET
+        first_name = p_first_name,
+        last_name = p_last_name,
+        date_of_birth = p_date_of_birth,
+        contact_info = p_contact_info,
+        address = p_address,
+        allergies = p_allergies
+    WHERE id = p_id;
+
+    
+    COMMIT;
+END $$
