@@ -19,7 +19,9 @@ VALUES (
 
 RETURN TRUE;
 
-END $$ CREATE PROCEDURE S_AddNewStaff(
+END $$
+
+ CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
@@ -157,15 +159,22 @@ END IF;
 
 SELECT @username AS username;
 
-END $$ CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
-SELECT *
+END $$ 
+ 
+
+
+CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
+SELECT s.*
 FROM staffs s
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
 WHERE s.department_id = departmentID
     AND s.deleted = 0;
 
-END $$ CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
+END $$
+
+
+ CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
 FROM staffs s
 WHERE s.deleted = 0
@@ -224,9 +233,13 @@ ELSE COMMIT;
 
 END IF;
 
-END $$ CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
+END $$ 
+
+DROP Procedure S_ViewStaffScheduleByID;
+
+CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
-    a.id AS appoimentId,
+    a.id AS appointmentId,
     a.purpose,
     a.start_time,
     a.end_time

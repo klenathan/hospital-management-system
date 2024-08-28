@@ -112,7 +112,7 @@ export default function AppointmentForm() {
         // console.log("Form data submitted:", data);
         // console.log("Form data send:", transformedData);
 
-        submitForm.mutate(transformedData, {
+        submitForm.mutate({ data: transformedData }, {
             onSuccess: () => {
                 // console.log(response);
                 form.reset();

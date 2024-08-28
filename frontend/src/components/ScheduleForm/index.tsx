@@ -1,8 +1,7 @@
 // ScheduleForm.tsx
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CalendarIcon, ClockIcon, Trash2Icon, StickyNoteIcon, SquarePenIcon } from 'lucide-react';
 import { Schedule } from '@/types/schedule';
@@ -10,7 +9,7 @@ import { useDeleteWithTokenAPI } from '@/hooks/API/useDeleteAPI';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { UpdateAppointmentForm } from '../UpdateAppointmentForm';
-
+import AddCustomObjectForm from '../AddCustomObjectForm';
 interface ScheduleFormProps {
     setSelectedStaffId: (id: number | null) => void;
     scheduleData: Schedule[];
@@ -56,13 +55,6 @@ export default function ScheduleForm({
         deleteUserMutation.mutate();
     };
 
-    const [note, setNote] = useState('');
-
-    const handleAddNote = () => {
-        console.log(`Note added: ${note}`);
-        // Implement logic to add note
-    };
-
     return (
         <>
             {scheduleLoading ? (
@@ -70,12 +62,12 @@ export default function ScheduleForm({
             ) : (
                 <div className="-mr-6 pr-6 max-h-[60vh] overflow-y-auto">
                     <div className="gap-2 grid">
-                        {scheduleData.map((schedule) => {
+                        {scheduleData.map((schedule, index) => {
                             const startDate = new Date(schedule.start_time);
                             const endDate = new Date(schedule.end_time);
 
                             return (
-                                <Card key={schedule.appointmentId} className="w-full">
+                                <Card key={schedule.appointmentId + index} className="w-full">
                                     <CardContent className="p-3">
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col flex-1 items-start text-muted-foreground">
@@ -130,7 +122,7 @@ export default function ScheduleForm({
                                                         <DialogHeader>
                                                             <DialogTitle>Add Note</DialogTitle>
                                                         </DialogHeader>
-                                                        <Input
+                                                        {/* <Input
                                                             placeholder="Enter your note here"
                                                             value={note}
                                                             onChange={(e) => setNote(e.target.value)}
@@ -144,7 +136,8 @@ export default function ScheduleForm({
                                                             <Button type="button" onClick={handleAddNote}>
                                                                 Add Note
                                                             </Button>
-                                                        </DialogFooter>
+                                                        </DialogFooter> */}
+                                                        <AddCustomObjectForm domain='appointment' parentID={schedule.id.toString()} />
                                                     </DialogContent>
                                                 </Dialog>
 
