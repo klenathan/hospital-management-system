@@ -119,14 +119,13 @@ export default class PatientService {
 
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<ResultSetHeader>
-    >(`CALL SP_RegisterNewPatient(
+    >(`CALL P_RegisterNewPatient(
       "${props.firstName}",
       "${props.lastName}",
       "${props.dob}",
       "${props.contactInfo}",
       "${props.address}",
-      "${props.allergies ?? "None"}",
-      )`);
+      "${props.allergies ?? "None"}")`);
 
     return {
       status: "success",
