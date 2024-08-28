@@ -12,11 +12,11 @@ const NewTreatmentDTO = z.object({
 });
 
 const UpdatePatientDTO = z.object({
-  first_name: z.string().optional(),
-  last_name: z.string().optional(),
-  date_of_birth: z.string().optional(),
-  contact_info: z.string().optional(),
-  address: z.string().optional(),
+  first_name: z.string(),
+  last_name: z.string(),
+  date_of_birth: z.string(),
+  contact_info: z.string(),
+  address: z.string(),
   allergies: z.string().optional(),
 });
 
@@ -193,22 +193,30 @@ patientRouter.put("/:id", async (req: Request, res: Response) => {
             in: 'body',
             description: 'Add new patients.',
             schema: {
-                first_name: 'Van A',
-                last_name: 'Nguyen',
-                date_of_birth: '01-01-2000',
-                contact_info: '0912789JQK',
-                address: 'Nguyen Van Linh',
+                $first_name: 'Van A',
+                $last_name: 'Nguyen',
+                $date_of_birth: '01-01-2000',
+                $contact_info: '0912789JQK',
+                $address: 'Nguyen Van Linh',
                 allergies: 'peanut'
             }
     } */
-  const updateProps = UpdatePatientDTO.parse(req.body);
-  console.log(updateProps);
+  let updateProps = UpdatePatientDTO.parse(req.body);
+  const id = req.params["id"];
 
-  await patientService.updatePatientInfo(
-    updateProps,
+  const dobParsed = new Date(updateProps.date_of_birth)
+    .toISOString()
+    .split("T")[0];
+
+  if (!id) {
+    return res.status(400).json({ error: "INVALID ID" });
+  }
+
+  const result = await patientService.updatePatientInfo(
+    { ...updateProps, id: req.params["id"], date_of_birth: dobParsed },
     dbConfigBuilder(res.locals["username"], res.locals["password"])
   );
-  return res.json({ message: "PUT patients" }).status(200);
+  return res.json(result).status(200);
 });
 
 patientRouter.delete("/:id", (_: Request, res: Response) => {

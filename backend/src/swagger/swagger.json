@@ -197,7 +197,10 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            }
           },
           "500": {
             "schema": {
@@ -481,7 +484,14 @@
                   "type": "string",
                   "example": "peanut"
                 }
-              }
+              },
+              "required": [
+                "first_name",
+                "last_name",
+                "date_of_birth",
+                "contact_info",
+                "address"
+              ]
             }
           }
         ],
@@ -490,9 +500,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
