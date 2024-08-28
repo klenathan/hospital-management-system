@@ -92,6 +92,8 @@ CREATE INDEX appointment_del_idx ON appointments (deleted);
 
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
+CREATE INDEX staff_depIdx_del_idx ON staffs(`department_id`, `deleted`);
+
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
