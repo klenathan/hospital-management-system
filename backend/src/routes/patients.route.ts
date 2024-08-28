@@ -111,13 +111,13 @@ patientRouter.get("/name/:name", async (req: Request, res: Response) => {
       throw new Error("Missing `Name` param");
     }
 
-    await patientService.getPatientByName(
+    const data = await patientService.getPatientByName(
       {
         name,
       },
       dbConfigBuilder(res.locals["username"], res.locals["password"])
     );
-    return res.status(200).json({ status: "success" });
+    return res.status(200).json(data);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }

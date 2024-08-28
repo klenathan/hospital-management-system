@@ -529,6 +529,38 @@
         }
       }
     },
+    "/api/treatment/{patientId}": {
+      "get": {
+        "tags": [
+          "Treatments"
+        ],
+        "summary": "Get treatment by patientID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/staff/": {
       "get": {
         "tags": [
@@ -923,23 +955,6 @@
             "description": "Appointment ID"
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/api/treatment/": {
-      "get": {
-        "tags": [
-          "Treatments"
-        ],
-        "summary": "Get all treatments",
-        "description": "",
         "responses": {
           "200": {
             "description": "OK"
