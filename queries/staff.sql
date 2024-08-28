@@ -236,10 +236,10 @@ END $$
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
-a.id as appoimentId,
+a.id as appointmentId,
     a.purpose,
     a.start_time,
-    a.end_time,
+    a.end_time
 FROM appointments a
     LEFT JOIN staffs s ON s.id = a.staff_id
     AND s.deleted = 0
@@ -256,7 +256,7 @@ CREATE PROCEDURE S_UpdateStaffSchedule (
 ) BEGIN START transaction;
 
 SELECT COUNT(*) INTO @Appointment_Count
-FROM ppointments
+FROM appointments
 WHERE appointments.staff_id = Staff_Id
     AND appointments.start_time < newEndTime
     AND appointments.end_time > newStartTime
@@ -270,7 +270,7 @@ ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSEIF @Appointment_Count = 1 THEN START transaction;
+ELSEIF @Appointment_Count = 0 THEN START transaction;
 
 UPDATE appointments a
 SET a.start_time = newStartTime,
@@ -288,3 +288,18 @@ ROLLBACK;
 END IF;
 
 END $$
+
+call `S_UpdateStaffSchedule`(
+    3, 
+   3, 
+   '2024-08-14 09:31:00', 
+  '2024-08-14 09:32:00'
+)
+
+SELECT COUNT(*)
+FROM appointments
+WHERE appointments.staff_id = 4
+    AND appointments.start_time <'2024-08-14 09:32:00'
+    AND appointments.end_time > '2024-08-14 09:29:00'
+    AND appointments.id  3;
+
