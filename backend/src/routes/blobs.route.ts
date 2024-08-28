@@ -62,7 +62,9 @@ blobRouter.post(
   multer().single("blob"),
   async (req: Request, res: Response) => {
     /* #swagger.summary = "Add new blob"
+
     #swagger.consumes = ['multipart/form-data']
+
     #swagger.parameters['blob'] = {
             in: 'formData',
             name: 'blob',
@@ -85,12 +87,13 @@ blobRouter.post(
 
     try {
       const file = req.file;
+
       if (!file) {
         return res.status(400).json({ error: "INVALID FILE" });
       }
 
       const blobs = await blobService.uploadFile(
-        "testBucket",
+        "blobBucket",
         {
           fileName: file.originalname,
           domain: req.body.domain,
@@ -107,12 +110,7 @@ blobRouter.post(
 
 blobRouter.get("/image/:id", async (req: Request, res: Response) => {
   /* #swagger.summary = "Serve image"
-  #swagger.parameters['id'] = {
-    in: 'path',
-    name: 'id',
-    description: 'Retrieve blob by `id`',
-    type: 'string'
-    }
+     #swagger.parameters['id'] = { description: 'Blob ID' }
 */
   try {
     const id = req.params["id"] as string | undefined;
@@ -146,7 +144,7 @@ blobRouter.get("/download/:id", async (req: Request, res: Response) => {
   #swagger.parameters['id'] = {
     in: 'path',
     name: 'id',
-    description: 'Retrieve blob by `id`',
+    description: 'Retrieve blob by id',
     type: 'string'
     }
 */

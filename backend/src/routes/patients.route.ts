@@ -11,6 +11,15 @@ const NewTreatmentDTO = z.object({
   treatmentDetail: z.string().optional(),
 });
 
+const UpdatePatientDTO = z.object({
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  contact_info: z.string().optional(),
+  address: z.string().optional(),
+  allergies: z.string().optional(),
+});
+
 const patientRouter = Router();
 
 const patientService = new PatientService();
@@ -22,18 +31,42 @@ patientRouter.get("/", async (req: Request, res: Response) => {
   #swagger.parameters['order'] = {
             in: 'query',
             description: 'Query order',
-    } */
+    } 
+    #swagger.parameters['pageSize'] = {
+        in: 'query',
+        description: 'Query pageSize',
+    } 
+   #swagger.parameters['pageNumber'] = {
+            in: 'query',
+            description: 'Query page Number',
+    } 
+
+    */
   try {
-    const order = req.query["order"];
+    let order = req.query["order"];
+    let pageSize = parseInt(req.query["pageSize"] as string);
+    let pageNumber = parseInt(req.query["pageNumber"] as string);
 
     if (order) {
       if (order != "asc" && order != "desc") {
         throw new Error("INVALID ORDER");
       }
+    } else {
+      order = "asc";
+    }
+
+    if (!pageSize) {
+      pageSize = 200;
+    }
+
+    if (!pageNumber) {
+      pageNumber = 1;
     }
     const patients = await patientService.getAllPatients(
       {
         order: order as "asc" | "desc",
+        pageNumber: pageNumber,
+        pageSize: pageSize,
       },
       dbConfigBuilder(res.locals["username"], res.locals["password"])
     );
@@ -152,15 +185,36 @@ patientRouter.post("/treatment", async (req: Request, res: Response) => {
   }
 });
 
-patientRouter.put("/:id", (_: Request, res: Response) => {
+patientRouter.put("/:id", async (req: Request, res: Response) => {
   // #swagger.summary = 'Update Patient info'
   // #swagger.parameters['id'] = { description: 'Patient ID' }
+
+  /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add new patients.',
+            schema: {
+                first_name: 'Van A',
+                last_name: 'Nguyen',
+                date_of_birth: '01-01-2000',
+                contact_info: '0912789JQK',
+                address: 'Nguyen Van Linh',
+                allergies: 'peanut'
+            }
+    } */
+  const updateProps = UpdatePatientDTO.parse(req.body);
+  console.log(updateProps);
+
+  await patientService.updatePatientInfo(
+    updateProps,
+    dbConfigBuilder(res.locals["username"], res.locals["password"])
+  );
   return res.json({ message: "PUT patients" }).status(200);
 });
 
 patientRouter.delete("/:id", (_: Request, res: Response) => {
   // #swagger.summary = '(Soft) Delete patient info'
   // #swagger.parameters['id'] = { description: 'Patient ID' }
+
   return res.json({ message: "DELETE patients" }).status(200);
 });
 
