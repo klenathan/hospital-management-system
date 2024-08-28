@@ -32,11 +32,18 @@ export default class PatientService {
       LIMIT ? OFFSET ?`,
       [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
+
+    const [countRow, _countFields] = await conn.query<RowDataPacket[]>(
+      `SELECT COUNT(*) as total FROM patients`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
+    );
+
     return {
       queryResult: {
         count: rows.length,
         pageNumber: props.pageNumber,
         pageSize: props.pageSize,
+        totalCount: countRow[0]["total"] as number,
       },
       data: rows,
     };

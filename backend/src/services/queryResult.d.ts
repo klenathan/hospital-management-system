@@ -10,6 +10,7 @@ export interface GetPaginatedRequestResult {
     pageNumber: number;
     pageSize: number;
     count: number;
+    totalCount: number;
   };
   data: RowDataPacket;
 }
