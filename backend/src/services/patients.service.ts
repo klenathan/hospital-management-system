@@ -1,12 +1,12 @@
 import {
-  RowDataPacket,
+  PoolOptions,
   ProcedureCallPacket,
   ResultSetHeader,
-  PoolOptions,
+  RowDataPacket,
 } from "mysql2/promise";
 
 import { getMySqlConnnection } from "../db/mysql";
-import { GetRequestResult } from "./queryResult";
+import { GetPaginatedRequestResult, GetRequestResult } from "./queryResult";
 
 export default class PatientService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -14,15 +14,52 @@ export default class PatientService {
 
   public async getAllPatients(
     props: {
-      order?: "asc" | "desc";
+      order: "asc" | "desc";
+      pageSize: number;
+      pageNumber: number;
+    } = {
+      order: "asc",
+      pageSize: 0,
+      pageNumber: 0,
     },
+    config: PoolOptions
+  ): Promise<GetPaginatedRequestResult> {
+    const conn = await getMySqlConnnection(config);
+
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM patients 
+      ORDER BY first_name ${props.order}, last_name ${props.order}
+      LIMIT ? OFFSET ?`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
+    );
+
+    const [countRow, _countFields] = await conn.query<RowDataPacket[]>(
+      `SELECT COUNT(*) as total FROM patients`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
+    );
+
+    return {
+      queryResult: {
+        count: rows.length,
+        pageNumber: props.pageNumber,
+        pageSize: props.pageSize,
+        totalCount: countRow[0]["total"] as number,
+      },
+      data: rows,
+    };
+  }
+
+  public async getAllTreatmentByPatientId(
+    patientId: number,
     config: PoolOptions
   ): Promise<GetRequestResult> {
     const conn = await getMySqlConnnection(config);
-    const order = props.order ?? "asc";
+
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
-      `SELECT * FROM patients ORDER BY first_name ${order}, last_name ${order}`
+      `SELECT * FROM treatments WHERE patient_id = ?`,
+      [patientId]
     );
+
     return {
       queryResult: {
         count: rows.length,
@@ -121,6 +158,37 @@ export default class PatientService {
       "${treatmentDateStr}",
       "${props.treatmentDetail ?? ""}"
       )`);
+    return {
+      status: "success",
+    };
+  }
+
+  async updatePatientInfo(
+    props: {
+      id: string;
+      first_name: string;
+      last_name: string;
+      date_of_birth: string;
+      contact_info: string;
+      address: string;
+      allergies?: string;
+    },
+    config: PoolOptions
+  ): Promise<any> {
+    const conn = await getMySqlConnnection(config);
+
+    const [_rows, _fields] = await conn.query<
+      ProcedureCallPacket<ResultSetHeader>
+    >(`CALL P_UpdatePatientInfo(
+      "${props.id}",
+      "${props.first_name}",
+      "${props.last_name}",
+      "${props.date_of_birth}",
+      "${props.contact_info}",
+      "${props.address}",
+      "${props.allergies ?? ""}"
+      )`);
+
     return {
       status: "success",
     };

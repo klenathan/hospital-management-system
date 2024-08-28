@@ -186,6 +186,7 @@ END $$ CREATE PROCEDURE S_UpdateStaffInfo (
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
     IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
+    IN Qualification VARCHAR(50),
     IN Salary DECIMAL(10, 2),
     IN Department_Id INT
 ) BEGIN
@@ -204,6 +205,7 @@ UPDATE staffs s
 SET s.first_name = f_name,
     s.last_name = l_name,
     s.job_type = Job_Type,
+    s.qualifications = Qualification,
     s.salary = Salary,
     s.department_id = Department_Id
 WHERE s.id = Staff_Id;

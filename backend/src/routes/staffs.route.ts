@@ -209,4 +209,55 @@ staffRouter.put("/schedule/:staffId", async (req: Request, res: Response) => {
   }
 });
 
+staffRouter.put("/:id", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'Update a new staff info'
+
+  #swagger.parameters['id'] = { description: 'ID' }
+  
+  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add new staff body.',
+            schema: {
+                $firstName: "Super",
+                $lastName: "Saiyan",
+                $jobType: "Doctor",
+                $qualification: "MD",
+                $deptId: 1,
+                $salary: 100000000
+            }
+    } */
+  try {
+    const staffId = parseInt(req.params["id"] as string);
+    if (isNaN(staffId)) {
+      throw new Error("Invalid staff ID: id");
+    }
+
+    const newStaffProps = NewStaffDTO.parse(req.body);
+
+    const staffs = await staffService.updateStaffInfo(
+      staffId,
+      newStaffProps,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
+    return res.status(200).send(staffs);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        console.error("Validation failed: ", issue);
+      }
+      return res.status(400).json({
+        message: `Validation error: ${error.issues
+          .map((e) => e.path)
+          .join("; ")}`,
+      });
+    } else {
+      console.error("Error: ", error);
+      return res.status(400).json({
+        message: `Server error: ${error}`,
+      });
+    }
+  }
+});
+
 export default staffRouter;
