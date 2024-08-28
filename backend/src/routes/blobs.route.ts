@@ -1,18 +1,20 @@
 import { Request, Response, Router } from "express";
 
-import BlobService from "../services/blobs.service";
 import multer from "multer";
+import BlobService from "../services/blobs.service";
 
-const MIME: Record<string, string> = {
-  html: "text/html",
-  txt: "text/plain",
-  css: "text/css",
-  gif: "image/gif",
-  jpeg: "image/jpeg",
-  jpg: "image/jpg",
-  png: "image/png",
-  svg: "image/svg+xml",
-  js: "application/javascript",
+const IMAGE_MIME: Record<string, string> = {
+  JPEG: "image/jpeg",
+  PNG: "image/png",
+  GIF: "image/gif",
+  BMP: "image/bmp",
+  TIFF: "image/tiff",
+  WebP: "image/webp",
+  SVG: "image/svg+xml",
+  ICO: "image/x-icon",
+  HEIF: "image/heif",
+  HEIC: "image/heic",
+  AVIF: "image/avif",
 };
 
 const blobRouter = Router();
@@ -60,7 +62,9 @@ blobRouter.post(
   multer().single("blob"),
   async (req: Request, res: Response) => {
     /* #swagger.summary = "Add new blob"
+
     #swagger.consumes = ['multipart/form-data']
+
     #swagger.parameters['blob'] = {
             in: 'formData',
             name: 'blob',
@@ -83,12 +87,13 @@ blobRouter.post(
 
     try {
       const file = req.file;
+
       if (!file) {
         return res.status(400).json({ error: "INVALID FILE" });
       }
 
       const blobs = await blobService.uploadFile(
-        "testBucket",
+        "blobBucket",
         {
           fileName: file.originalname,
           domain: req.body.domain,
@@ -105,12 +110,7 @@ blobRouter.post(
 
 blobRouter.get("/image/:id", async (req: Request, res: Response) => {
   /* #swagger.summary = "Serve image"
-  #swagger.parameters['id'] = {
-    in: 'path',
-    name: 'id',
-    description: 'Retrieve blob by `id`',
-    type: 'string'
-    }
+     #swagger.parameters['id'] = { description: 'Blob ID' }
 */
   try {
     const id = req.params["id"] as string | undefined;
@@ -126,11 +126,11 @@ blobRouter.get("/image/:id", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Error parsing filename" });
     }
 
-    if (!Object.keys(MIME).includes(ext)) {
+    if (!Object.keys(IMAGE_MIME).includes(ext.toLocaleUpperCase())) {
       return res.status(400).json({ error: "Not an image" });
     }
 
-    const type = MIME[fileName.split(".").at(-1) as string];
+    const type = IMAGE_MIME[ext.toLocaleUpperCase()];
 
     res.set("Content-Type", type);
     return res.status(200).end(file);
@@ -144,7 +144,7 @@ blobRouter.get("/download/:id", async (req: Request, res: Response) => {
   #swagger.parameters['id'] = {
     in: 'path',
     name: 'id',
-    description: 'Retrieve blob by `id`',
+    description: 'Retrieve blob by id',
     type: 'string'
     }
 */

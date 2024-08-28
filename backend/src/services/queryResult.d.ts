@@ -4,3 +4,12 @@ export interface GetRequestResult {
   };
   data: RowDataPacket;
 }
+
+export interface GetPaginatedRequestResult {
+  queryResult: {
+    pageNumber: number;
+    pageSize: number;
+    count: number;
+  };
+  data: RowDataPacket;
+}

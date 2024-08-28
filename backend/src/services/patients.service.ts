@@ -1,12 +1,12 @@
 import {
-  RowDataPacket,
+  PoolOptions,
   ProcedureCallPacket,
   ResultSetHeader,
-  PoolOptions,
+  RowDataPacket,
 } from "mysql2/promise";
 
 import { getMySqlConnnection } from "../db/mysql";
-import { GetRequestResult } from "./queryResult";
+import { GetPaginatedRequestResult } from "./queryResult";
 
 export default class PatientService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -14,18 +14,29 @@ export default class PatientService {
 
   public async getAllPatients(
     props: {
-      order?: "asc" | "desc";
+      order: "asc" | "desc";
+      pageSize: number;
+      pageNumber: number;
+    } = {
+      order: "asc",
+      pageSize: 0,
+      pageNumber: 0,
     },
     config: PoolOptions
-  ): Promise<GetRequestResult> {
+  ): Promise<GetPaginatedRequestResult> {
     const conn = await getMySqlConnnection(config);
-    const order = props.order ?? "asc";
+
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
-      `SELECT * FROM patients ORDER BY first_name ${order}, last_name ${order}`
+      `SELECT * FROM patients 
+      ORDER BY first_name ${props.order}, last_name ${props.order}
+      LIMIT ? OFFSET ?`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
     return {
       queryResult: {
         count: rows.length,
+        pageNumber: props.pageNumber,
+        pageSize: props.pageSize,
       },
       data: rows,
     };
@@ -124,5 +135,20 @@ export default class PatientService {
     return {
       status: "success",
     };
+  }
+
+  async updatePatientInfo(
+    props: {
+      first_name?: string;
+      last_name?: string;
+      date_of_birth?: string;
+      contact_info?: string;
+      address?: string;
+      allergies?: string;
+    },
+    config: PoolOptions
+  ): Promise<boolean> {
+    console.log(props, config);
+    return true;
   }
 }

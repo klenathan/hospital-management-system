@@ -156,7 +156,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Blob ID"
           }
         ],
         "responses": {
@@ -187,7 +188,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Retrieve blob by id"
           }
         ],
         "responses": {
@@ -218,6 +220,18 @@
             "name": "order",
             "in": "query",
             "description": "Query order",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Query pageSize",
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Query page Number",
             "type": "string"
           }
         ],
@@ -435,6 +449,40 @@
             "required": true,
             "type": "string",
             "description": "Patient ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new patients.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "Van A"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Nguyen"
+                },
+                "date_of_birth": {
+                  "type": "string",
+                  "example": "01-01-2000"
+                },
+                "contact_info": {
+                  "type": "string",
+                  "example": "0912789JQK"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "Nguyen Van Linh"
+                },
+                "allergies": {
+                  "type": "string",
+                  "example": "peanut"
+                }
+              }
+            }
           }
         ],
         "responses": {
