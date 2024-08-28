@@ -7,12 +7,6 @@ import {
 import { Readable } from "stream";
 import { client } from "../db/mongodb";
 
-// interface IBLobImageMetadata {
-//   fileName: string;
-//   domain: string;
-//   parentId: string;
-// }
-
 export default class BlobService {
   dbName = "blob_storage";
   public constructor() {}
@@ -25,8 +19,6 @@ export default class BlobService {
       parent?: string;
     }
   ): Promise<GridFSFile[]> {
-    console.log(query);
-
     let files: GridFSFile[] = [];
     try {
       await client.connect();
