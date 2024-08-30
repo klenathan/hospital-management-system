@@ -30,7 +30,12 @@ export const useDeleteWithTokenAPI = <T,>(
     const queryClient = useQueryClient();
 
     const deleteData = async (): Promise<T> => {
-        const response = await axiosInstance.delete(url);
+        const authString = `root:root`;
+        const response = await axiosInstance.delete(url, {
+            headers: {
+                'x-auth-string': authString,
+            },
+        });
         return response.data;
     };
 
@@ -44,3 +49,4 @@ export const useDeleteWithTokenAPI = <T,>(
 
     return mutation;
 };
+

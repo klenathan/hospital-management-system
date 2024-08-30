@@ -3,10 +3,10 @@ import {
   ProcedureCallPacket,
   ResultSetHeader,
   RowDataPacket,
-} from "mysql2/promise";
+} from 'mysql2/promise';
 
-import { getMySqlConnnection } from "../db/mysql";
-import { GetRequestResult } from "./queryResult";
+import { getMySqlConnnection } from '../db/mysql';
+import { GetRequestResult } from './queryResult';
 
 export default class StaffService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -14,7 +14,7 @@ export default class StaffService {
 
   public async getAllStaffs(
     props: {
-      order?: "asc" | "desc";
+      order?: 'asc' | 'desc';
     },
     config: PoolOptions
   ): Promise<GetRequestResult> {
@@ -24,7 +24,7 @@ export default class StaffService {
       ProcedureCallPacket<RowDataPacket[]>
     >(
       `CALL S_ListStaffByName("${
-        props.order ? props.order.toLocaleLowerCase() : "asc"
+        props.order ? props.order.toLocaleLowerCase() : 'asc'
       }")`
     );
     await conn.end();
@@ -109,7 +109,7 @@ export default class StaffService {
       "${props.salary}")`);
 
     return {
-      status: "success",
+      status: 'success',
       data: _rows[0],
     };
   }
@@ -145,7 +145,7 @@ export default class StaffService {
       )`);
 
     return {
-      status: "success",
+      status: 'success',
     };
   }
 
@@ -175,6 +175,6 @@ export default class StaffService {
         "${props.deptId}"
     )`);
 
-    return { status: "success" };
+    return { status: 'success' };
   }
 }

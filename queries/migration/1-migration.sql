@@ -1,3 +1,4 @@
+-- Active: 1723691898296@@127.0.0.1@3306@hospital_management
 
 DROP DATABASE IF EXISTS `hospital_management`;
 
@@ -359,7 +360,7 @@ CREATE PROCEDURE S_UpdateStaffSchedule (
 ) BEGIN START transaction;
 
 SELECT COUNT(*) INTO @Appointment_Count
-FROM ppointments
+FROM appointments
 WHERE appointments.staff_id = Staff_Id
     AND appointments.start_time < newEndTime
     AND appointments.end_time > newStartTime

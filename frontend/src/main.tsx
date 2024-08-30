@@ -10,9 +10,10 @@ import StaffManagement from './layouts/StaffManagement'
 import ReportPage from './layouts/ReportPage'
 import App from './App'
 
+
 //Phuong
 import Login from './layouts/Login/index.tsx'
-import Patient from './layouts/Patient/index.tsx'
+import Patient from './layouts/Patient'
 
 const queryClient = new QueryClient()
 
@@ -32,13 +33,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/patient',
-        element: <>
-
-          <div className="flex-1 bg-gray-100 min-h-screen">
-            <Patient />
-          </div>
-
-        </>
+        element: <Patient />
       },
       {
         path: '/patient',

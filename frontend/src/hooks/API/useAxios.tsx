@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { getRefreshToken } from '@/services/refresh-token/api'
 // import { useUserStore } from '@/store/user-store'
 // import { toast } from '@/components/ui/use-toast'

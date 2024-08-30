@@ -1,18 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MoreHorizontal } from 'lucide-react';
 import { StaffMember, StaffListResponse } from '@/types/staffs';
 import { DepartmentResponse } from '@/types/department';
-import { ScheduleResponse } from '@/types/schedule';
-
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
-import ScheduleForm from '@/components/ScheduleForm';
-
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
+import AddCustomObjectForm from '@/components/AddCustomObjectForm';
 import {
     Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
 } from '@/components/ui/pagination';
@@ -20,6 +15,8 @@ import {
 import AddStaffForm from '@/components/AddStaffForm';
 
 import StaffTable from '@/components/StaffTable';
+import BlobList from '@/components/BlobList';
+import { UpdateStaffInfoForm } from '@/components/UpdateStaffInfoForm';
 
 
 export default function StaffManagement() {
@@ -27,28 +24,21 @@ export default function StaffManagement() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedDepartment, setSelectedDepartment] = useState<number | 'all'>('all');
-    const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
     // const [scheduleData, setScheduleData] = useState<any[]>([]); // Store multiple schedules
+    const [openDialogId, setOpenDialogId] = useState<number | null>(null);
 
     const itemsPerPage = 10;
 
 
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['department'], '/api/department/');
+        useQueryWithTokenAPI<DepartmentResponse>(['department'], '/api/department/');
 
     const { data: staffListData, isLoading: staffLoading, refetch } =
-        useQueryWithoutTokenAPI<StaffListResponse>(
+        useQueryWithTokenAPI<StaffListResponse>(
             ['staff', selectedDepartment.toString()], selectedDepartment === 'all'
             ? '/api/staff/'
             : `/api/staff/department/${selectedDepartment}`
         );
-
-
-
-    const { data: scheduleData, isLoading: scheduleLoading } = useQueryWithoutTokenAPI<ScheduleResponse>(
-        ['schedule', selectedStaffId?.toString() || ''], selectedStaffId ? `/api/staff/schedule/${selectedStaffId}` : '/api/'
-    );
-
 
     // Ensure staffList is always an array
     const staffList = Array.isArray(staffListData?.data) ? staffListData.data : [];
@@ -84,6 +74,7 @@ export default function StaffManagement() {
     if (staffLoading || departmentLoading) {
         return <div>Loading...</div>;
     }
+
 
     return (
         <div className='flex-1 p-6'>
@@ -152,110 +143,56 @@ export default function StaffManagement() {
 
             <StaffTable staffData={paginatedStaff}>
                 {(staff) => (
-                    <Dialog>
+                    <Dialog
+                        open={openDialogId === staff.id}
+                        onOpenChange={(open) => setOpenDialogId(open ? staff.id : null)}
+                    >
                         <DialogTrigger asChild>
                             <Button
                                 variant='ghost'
                                 className='p-0 w-8 h-8'
-                                onClick={() => setSelectedStaffId(staff.id)}
+                            // onClick={() => setSelectedStaffId(staff.id)}
                             >
                                 <span className='sr-only'>Open menu</span>
                                 <MoreHorizontal className='w-4 h-4' />
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className='max-w-3xl'>
+                        <DialogContent className='w-max max-w-3xl'>
                             <DialogHeader>
                                 <DialogTitle>{staff.first_name + " " + staff.last_name}</DialogTitle>
                                 <DialogDescription></DialogDescription>
                             </DialogHeader>
-                            <Tabs defaultValue='info' className='w-full'>
+                            <Tabs defaultValue='info' className='w-max min-w-96'>
                                 <TabsList>
                                     <TabsTrigger value='info'>Personal Info</TabsTrigger>
-                                    <TabsTrigger value='schedule'>Schedule</TabsTrigger>
                                     <TabsTrigger value='custom-objects'>Custom Objects</TabsTrigger> {/* New Tab */}
                                 </TabsList>
 
                                 <TabsContent value='info'>
-                                    <form
-                                        className='space-y-4'
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            const form = e.target as HTMLFormElement;
-                                            const firstName = (form.elements.namedItem('staff-first_name') as HTMLInputElement).value;
-                                            const LastName = (form.elements.namedItem('staff-last_name') as HTMLInputElement).files?.[0]?.name;
-                                            console.log("Form: " + firstName + " " + LastName);
-                                            // Update staff info logic here
+                                    <UpdateStaffInfoForm
+                                        departments={departmentListData?.data || []}
+                                        staffId={staff.id.toString()}
+                                        defaultValues={{
+                                            firstName: staff.first_name,
+                                            lastName: staff.last_name,
+                                            jobType: staff.job_type,
+                                            qualification: staff.qualifications,
+                                            deptId: staff.department_id,
+                                            salary: Number(staff.salary),
                                         }}
-                                    >
-                                        <div className='space-y-2'>
-                                            <Label htmlFor='staff-first_name'>First Name</Label>
-                                            <Input
-                                                id='staff-first_name'
-                                                name='first_name'
-                                                defaultValue={staff.first_name}
-                                            />
-                                        </div>
-                                        <div className='space-y-2'>
-                                            <Label htmlFor='staff-last_name'>Last Name</Label>
-                                            <Input
-                                                id='staff-last_name'
-                                                name='last_name'
-                                                defaultValue={staff.last_name}
-                                            />
-                                        </div>
-                                        <Button type='submit'>Update Info</Button>
-                                    </form>
-                                </TabsContent>
-                                <TabsContent value='schedule'>
-                                    {scheduleLoading ? (
-                                        <p>Loading schedules...</p>
-                                    ) : scheduleData?.data && scheduleData.data.length > 0 ? (
-                                        <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
-                                            scheduleData={scheduleData.data[0]}
-                                            scheduleLoading={scheduleLoading}
-                                        />
-                                    ) : (
-                                        <ScheduleForm
-                                            selectedStaffId={selectedStaffId}
-                                            scheduleLoading={scheduleLoading}
-                                        />
-                                    )}
-                                </TabsContent>
-                                <TabsContent value='custom-objects'> {/* New Tab Content */}
-                                    <form
-                                        className='space-y-4'
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            const form = e.target as HTMLFormElement;
-                                            const note = (form.elements.namedItem('custom_note') as HTMLInputElement).value;
-                                            const image = (form.elements.namedItem('custom_image') as HTMLInputElement).files?.[0]?.name;
-
-                                            console.log("Note: " + note);
-                                            console.log("Image: " + image);
-
-                                            // Logic to add custom objects (e.g., notes, images)
+                                        onSuccess={() => {
+                                            setOpenDialogId(null);
+                                            refetch();
                                         }}
-                                    >
-                                        <div className='space-y-2'>
-                                            <Label htmlFor='custom_note'>Add a Note</Label>
-                                            <Input
-                                                id='custom_note'
-                                                name='custom_note'
-                                                placeholder='Enter your note here'
-                                            />
-                                        </div>
-                                        <div className='space-y-2'>
-                                            <Label htmlFor='custom_image'>Upload an Image</Label>
-                                            <Input
-                                                id='custom_image'
-                                                name='custom_image'
-                                                type='file'
-                                                accept='image/*'
-                                            />
-                                        </div>
-                                        <Button type='submit'>Add Custom Object</Button>
-                                    </form>
+                                        onCancel={() => {
+                                            setOpenDialogId(null);
+                                        }}
+                                    />
+                                </TabsContent>
+
+                                <TabsContent value='custom-objects' className='gap-5 grid'> {/* New Tab Content */}
+                                    <BlobList domain='staff' parent={staff.id.toString()} />
+                                    <AddCustomObjectForm domain='staff' parentID={staff.id.toString()} />
                                 </TabsContent>
                             </Tabs>
 
@@ -343,6 +280,6 @@ export default function StaffManagement() {
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-        </div>
+        </div >
     );
 }

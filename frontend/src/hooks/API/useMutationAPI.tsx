@@ -4,7 +4,7 @@ import { useAxios, useAxiosWithToken } from './useAxios'
 
 export const useMutationWithoutTokenAPI = (url: string, options?: QueryOptions<unknown>) => {
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return await useAxios.post(url, data)
     },
     onSuccess: (res: AxiosResponse) => {
@@ -23,8 +23,13 @@ export const useMutationWithTokenAPI = (url: string, options?: QueryOptions<unkn
   const axiosInstance = useAxiosWithToken()
 
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await axiosInstance.post(url, data)
+    mutationFn: async (data: unknown) => {
+      const authString = `root:root`
+      return await axiosInstance.post(url, data, {
+        headers: {
+          'x-auth-string': authString
+        }
+      })
     },
     onSuccess: (res: AxiosResponse) => {
       return res.data
@@ -37,3 +42,4 @@ export const useMutationWithTokenAPI = (url: string, options?: QueryOptions<unkn
 
   return mutation
 }
+
