@@ -41,22 +41,6 @@ export default function DoctorWorkloadTab() {
                 : `/api/report/doctorWorkHistory?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
         );
 
-    // Load options for AsyncSelect, filtering out only doctors
-    // const loadDoctorOptions = (inputValue: string, callback: (options: { value: string, label: string }[]) => void) => {
-    //     if (doctorLoading || !doctorListData) return;
-
-    //     const filteredDoctors = doctorListData.data
-    //         .filter(doctor => doctor.job_type === "Doctor")
-    //         .filter(doctor =>
-    //             `${doctor.first_name} ${doctor.last_name}`.toLowerCase().includes(inputValue.toLowerCase())
-    //         )
-    //         .map(doctor => ({
-    //             value: doctor.id.toString(),
-    //             label: `${doctor.first_name} ${doctor.last_name}`,
-    //         }));
-
-    //     callback(filteredDoctors);
-    // };
 
 
     const loadDoctorOptions = (inputValue: string, callback: (options: { value: string, label: string }[]) => void) => {
@@ -78,9 +62,6 @@ export default function DoctorWorkloadTab() {
     const handleDoctorChange = (selectedOption: { value: string; label: string } | null) => {
         setSelectedDoctor(selectedOption);
     };
-
-    console.log(selectedDoctor?.value);
-
 
     return (
         <div className="space-y-4">

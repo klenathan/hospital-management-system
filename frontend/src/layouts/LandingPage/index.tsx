@@ -18,8 +18,7 @@ export default function LandingPage() {
           <div className="space-y-2 mx-auto w-full max-w-sm">
             <Button
               // href="#"
-              // onClick={() => console.log('hello')}
-              onClick={() => window.location.href = '/'}
+              onClick={() => window.location.href = '/login'}
               className="inline-flex justify-center items-center bg-primary hover:bg-primary/90 disabled:opacity-50 shadow px-4 rounded-md w-full h-10 font-medium text-primary-foreground text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none"
             >
               Login

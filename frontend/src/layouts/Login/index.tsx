@@ -72,7 +72,7 @@ export default function Component() {
   };
 
   return (
-    <div className="flex md:flex-row flex-col min-h-screen">
+    <div className="flex md:flex-row flex-col min-h-screen max-h-screen">
       <div className="md:block relative flex-1 hidden bg-muted">
         <div className='absolute bg-black/60 w-full h-full'></div>
         <img

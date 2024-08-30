@@ -34,6 +34,7 @@ import RegisterPatientForm from '@/components/RegisterPatientForm';
 import BlobList from '@/components/BlobList';
 import AddCustomObjectForm from '@/components/AddCustomObjectForm';
 import { UpdatePatientInfoForm } from '@/components/UpdatePatientInfo';
+import { AddTreatmentForm } from '@/components/AddTreatmentForm';
 
 export default function Patient() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -102,7 +103,7 @@ export default function Patient() {
 
   return (
     <div className="flex-1 p-6">
-      <h1 className="mb-6 font-bold text-2xl">Appointment Management</h1>
+      <h1 className="mb-6 font-bold text-2xl">Patient Management</h1>
 
       <div className="flex space-x-2 mb-4 w-full">
         <form
@@ -164,24 +165,27 @@ export default function Patient() {
                 <TableCell>{patient.contact_info}</TableCell>
                 <TableCell>{patient.address}</TableCell>
                 <TableCell>{patient.allergies}</TableCell>
-                <TableCell>
-                  <Dialog open={openDialogId === patient.id.toString()} onOpenChange={(open) => setOpenDialogId(open ? patient.id.toString() : null)}>
+                <TableCell className=''>
+                  <Dialog
+                    open={openDialogId === patient.id.toString()}
+                    onOpenChange={(open) => setOpenDialogId(open ? patient.id.toString() : null)}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="ghost" className="p-0 w-8 h-8">
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className='lg:w-[80%] 2lg:w-[50%] max-w-full max-h-[80%] flex flex-col'>
                       <DialogHeader>
                         <DialogTitle>Patient Details</DialogTitle>
                       </DialogHeader>
-                      <Tabs defaultValue="info">
+                      <Tabs defaultValue="info" className='overflow-auto h-full'>
                         <TabsList>
                           <TabsTrigger value="info">Info</TabsTrigger>
                           <TabsTrigger value="treatments">Treatments</TabsTrigger>
                           <TabsTrigger value="customObjects">Custom Objects</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="info">
+                        <TabsContent value="info" className=''>
                           <Card>
                             <CardHeader>
                               <CardTitle>Patient Information</CardTitle>
@@ -211,6 +215,11 @@ export default function Patient() {
                           </Card>
                         </TabsContent>
 
+                        <TabsContent value="treatments">
+                          <AddTreatmentForm
+                            patientId={1} // Example patient ID
+                          />
+                        </TabsContent>
                         <TabsContent value="customObjects">
                           <BlobList domain='patient' parent={patient.id.toString()} />
                           <AddCustomObjectForm domain='patient' parentID={patient.id.toString()} />

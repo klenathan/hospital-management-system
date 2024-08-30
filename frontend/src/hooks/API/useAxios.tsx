@@ -60,7 +60,6 @@ export const useAxiosWithToken = () => {
 
   const resErrInterceptor = async (error: any) => {
     const originalRequest = error.config
-    console.log(originalRequest)
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = false

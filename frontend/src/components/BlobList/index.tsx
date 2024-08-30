@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useDownloadBlob, useFetchBlobs, useFetchImage } from '@/hooks/API/useBlobAPI';
-import { Card, CardContent } from '../ui/card';
-import { Label } from '../ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { FileTextIcon, ArrowDownToLine, FileImageIcon } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function BlobList({ domain, parent }: { domain: string; parent: string }) {
     const { data, isLoading, isError, error } = useFetchBlobs({ domain, parent });
@@ -32,35 +32,37 @@ export default function BlobList({ domain, parent }: { domain: string; parent: s
     return (
         <div>
             {data?.count !== 0 && <Label htmlFor="custom_blob">File</Label>}
-            <ul className='gap-2 grid'>
+            <ul className='gap-2 grid pb-2'>
                 {data?.data.map(blob => {
                     const uploadDate = new Date(blob.uploadDate);
                     return (
                         <Card key={blob._id} className="w-full">
                             <CardContent className="p-3">
                                 <div className="flex justify-between items-center">
-                                    <div className="flex flex-1 justify-start items-center gap-2 text-muted-foreground">
+                                    <div className="relative flex flex-1 justify-between items-center gap-2 w-full text-muted-foreground">
                                         {isImage(blob.metadata.fileName) ?
-                                            <>
-                                                <FileImageIcon className='w-4 h-4' />
+                                            <div className='flex flex-1 justify-start items-center gap-2'>
+                                                <FileImageIcon className='w-5 h-5' />
                                                 <h3
                                                     onClick={() => setSelectedBlob(blob._id)}
-                                                    className="font-semibold text-primary hover:underline cursor-pointer"
+                                                    className="max-w-56 font-semibold text-primary hover:underline truncate cursor-pointer"
                                                 >
                                                     {blob.metadata.fileName}
                                                 </h3>
-                                            </>
+                                            </div>
 
                                             :
-                                            <>
-                                                <FileTextIcon className='w-4 h-4' />
-                                                <h3 className="font-semibold text-black">
+                                            <div className='flex flex-1 justify-start items-center gap-2'>
+                                                <FileTextIcon className='w-5 h-5' />
+                                                <h3 className="max-w-56 font-semibold text-black truncate">
                                                     {blob.metadata.fileName}
                                                 </h3>
-                                            </>
+                                            </div>
                                         }
 
-                                        {uploadDate.toISOString().split('T')[0]}
+                                        <div className='mr-2 w-max'>
+                                            {uploadDate.toISOString().split('T')[0]}
+                                        </div>
                                     </div>
                                     <div>
                                         <Button variant="outline" size="icon" onClick={() => downloadBlob.mutate(blob._id)}>

@@ -107,7 +107,6 @@ export const useFetchImage = (id: string) => {
 
 export const useDownloadBlob = () => {
     const axiosInstance = useAxiosWithToken();
-    const client = new XMLHttpRequest();
 
     const downloadBlob = async (id: string): Promise<void> => {
         const response: AxiosResponse<Blob> = await axiosInstance.get(`/api/blob/download/${id}`, {
@@ -124,10 +123,6 @@ export const useDownloadBlob = () => {
         const link = document.createElement('a');
         link.href = url;
 
-        console.log(response.headers);
-        console.log(response.headers['content-disposition']);
-        console.log(response.headers['Content-Disposition']);
-        console.log(client.getResponseHeader("Content-Type"));
 
         // Extract file name from the Content-Disposition header if available
         const contentDisposition = response.headers['content-disposition'];
