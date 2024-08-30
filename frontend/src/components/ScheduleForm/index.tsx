@@ -1,13 +1,15 @@
+// ScheduleForm.tsx
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { CalendarIcon, ClockIcon, Trash2Icon, NotebookPen } from 'lucide-react';
-import { Input } from "@/components/ui/input";
+import { CalendarIcon, ClockIcon, Trash2Icon, StickyNoteIcon, SquarePenIcon } from 'lucide-react';
 import { Schedule } from '@/types/schedule';
 import { useDeleteWithTokenAPI } from '@/hooks/API/useDeleteAPI';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { UpdateAppointmentForm } from '../UpdateAppointmentForm';
+import AddCustomObjectForm from '../AddCustomObjectForm';
 interface ScheduleFormProps {
     setSelectedStaffId: (id: number | null) => void;
     scheduleData: Schedule[];
@@ -24,19 +26,16 @@ export default function ScheduleForm({
     refetch
 }: ScheduleFormProps) {
 
-    const [selectedAppoimentId, setSelectedAppoimentId] = useState<number | null>(null);
-
+    const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
     const { toast } = useToast();
 
-    const deleteUserMutation = useDeleteWithTokenAPI<void>(`/api/appointment/${selectedAppoimentId}`, {
+    const deleteUserMutation = useDeleteWithTokenAPI<void>(`/api/appointment/${selectedAppointmentId}`, {
         onSuccess: () => {
-            console.log('Schedule has been deleted.');
             toast({
                 variant: "success",
                 title: "Schedule has been deleted.",
-                // description: `${response}`,
             });
-            setSelectedAppoimentId(null); // Reset after successful deletion
+            setSelectedAppointmentId(null); // Reset after successful deletion
             setOpenDialogId(null);
             setSelectedStaffId(0);
             refetch();
@@ -51,16 +50,9 @@ export default function ScheduleForm({
         },
     });
 
-    const handleDelete = (appoimentId: number) => {
-        setSelectedAppoimentId(appoimentId);
+    const handleDelete = (appointmentId: number) => {
+        setSelectedAppointmentId(appointmentId);
         deleteUserMutation.mutate();
-    };
-
-    const [note, setNote] = useState('');
-
-    const handleAddNote = () => {
-        console.log(`Note added: ${note}`);
-        // Implement logic to add note
     };
 
     return (
@@ -70,14 +62,13 @@ export default function ScheduleForm({
             ) : (
                 <div className="-mr-6 pr-6 max-h-[60vh] overflow-y-auto">
                     <div className="gap-2 grid">
-                        {scheduleData.map((schedule) => {
+                        {scheduleData.map((schedule, index) => {
                             const startDate = new Date(schedule.start_time);
                             const endDate = new Date(schedule.end_time);
 
                             return (
-                                <Card key={schedule.appoimentId} className="w-full">
+                                <Card key={schedule.appointmentId + index} className="w-full">
                                     <CardContent className="p-3">
-                                        {/* {schedule.appoimentId} */}
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col flex-1 items-start text-muted-foreground">
                                                 <h3 className="font-semibold text-black">{`${schedule.first_name} ${schedule.last_name}`}</h3>
@@ -89,17 +80,49 @@ export default function ScheduleForm({
                                                 </div>
                                             </div>
                                             <div className="flex gap-1">
+
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button size="icon" className="w-10 h-10" onClick={() => setSelectedAppointmentId(schedule.appointmentId)}>
+                                                            <SquarePenIcon className="w-4 h-4" />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[425px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle>Update Appointment</DialogTitle>
+                                                        </DialogHeader>
+                                                        <DialogDescription>
+                                                            Fill out the form below to update the appointment.
+                                                        </DialogDescription>
+                                                        <UpdateAppointmentForm
+                                                            appointmentId={schedule.appointmentId}
+                                                            startDate={startDate}
+                                                            endDate={endDate}
+                                                            onSuccess={() => {
+                                                                setSelectedAppointmentId(null);
+                                                                setOpenDialogId(null);
+                                                                refetch();
+                                                            }}
+                                                            onCancel={() => {
+                                                                setSelectedAppointmentId(null);
+                                                                setOpenDialogId(null);
+                                                            }}
+                                                            staffId={schedule.id}
+                                                        />
+                                                    </DialogContent>
+                                                </Dialog>
+
                                                 <Dialog>
                                                     <DialogTrigger asChild>
                                                         <Button variant="outline" size="icon" className="w-10 h-10">
-                                                            <NotebookPen className="w-4 h-4" />
+                                                            <StickyNoteIcon className="w-4 h-4" />
                                                         </Button>
                                                     </DialogTrigger>
                                                     <DialogContent className="sm:max-w-[425px]">
                                                         <DialogHeader>
                                                             <DialogTitle>Add Note</DialogTitle>
                                                         </DialogHeader>
-                                                        <Input
+                                                        {/* <Input
                                                             placeholder="Enter your note here"
                                                             value={note}
                                                             onChange={(e) => setNote(e.target.value)}
@@ -113,9 +136,11 @@ export default function ScheduleForm({
                                                             <Button type="button" onClick={handleAddNote}>
                                                                 Add Note
                                                             </Button>
-                                                        </DialogFooter>
+                                                        </DialogFooter> */}
+                                                        <AddCustomObjectForm domain='appointment' parentID={schedule.id.toString()} />
                                                     </DialogContent>
                                                 </Dialog>
+
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
                                                         <Button variant="destructive" size="icon" className="w-10 h-10">
@@ -131,7 +156,7 @@ export default function ScheduleForm({
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={() => handleDelete(schedule.appoimentId)}>
+                                                            <AlertDialogAction onClick={() => handleDelete(schedule.appointmentId)}>
                                                                 Confirm
                                                             </AlertDialogAction>
                                                         </AlertDialogFooter>

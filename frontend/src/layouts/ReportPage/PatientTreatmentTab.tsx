@@ -62,12 +62,6 @@ export default function PatientTreatmentTab() {
                 : `/api/report/patientTreatmentHistory?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
         );
 
-    // const generateReport = () => {
-    //     refetch();  // Refetch the data when the user clicks "Generate Report"
-    // };
-
-    // console.log(patientTreatementData);
-
 
     return (
         <div className="space-y-4">

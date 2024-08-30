@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { getRefreshToken } from '@/services/refresh-token/api'
 // import { useUserStore } from '@/store/user-store'
 // import { toast } from '@/components/ui/use-toast'
@@ -59,7 +60,6 @@ export const useAxiosWithToken = () => {
 
   const resErrInterceptor = async (error: any) => {
     const originalRequest = error.config
-    console.log(originalRequest)
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = false

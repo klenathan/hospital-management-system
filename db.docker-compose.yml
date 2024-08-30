@@ -26,3 +26,4 @@ services:
       - '3306:3306'
     volumes:
       - ./database/sql-data:/var/lib/mysql
+      - ./queries/migration/:/docker-entrypoint-initdb.d/

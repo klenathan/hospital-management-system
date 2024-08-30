@@ -44,9 +44,6 @@ export default function StaffJobChangeHistoryTab() {
         setSelectedStaff(selectedOption);
     };
 
-    console.log('staff' + selectedStaff?.value);
-    console.log(staffHistoryData);
-
 
     const { data: departmentListData, isLoading: departmentLoading } =
         useQueryWithTokenAPI<DepartmentResponse>(['patient'], '/api/department/');

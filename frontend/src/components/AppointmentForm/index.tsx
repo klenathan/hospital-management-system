@@ -109,12 +109,9 @@ export default function AppointmentForm() {
             endTime: `${data.date}T${data.endTime}:00.000Z`,   // ISO 8601 format
             purpose: data.purpose,
         };
-        // console.log("Form data submitted:", data);
-        // console.log("Form data send:", transformedData);
 
-        submitForm.mutate(transformedData, {
+        submitForm.mutate({ data: transformedData }, {
             onSuccess: () => {
-                // console.log(response);
                 form.reset();
                 toast({
                     variant: "success",

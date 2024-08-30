@@ -9,7 +9,7 @@ export interface Schedule {
   deleted: boolean
   created_at: string
   updated_at: string
-  appoimentId: number
+  appointmentId: number
   purpose: string
   start_time: string
   end_time: string

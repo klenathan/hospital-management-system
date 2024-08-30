@@ -1,4 +1,6 @@
-DELIMITER $$ CREATE FUNCTION S_InsertStaffJobHistory (
+DELIMITER $$
+
+CREATE FUNCTION S_InsertStaffJobHistory (
     userID int,
     j_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
@@ -19,7 +21,9 @@ VALUES (
 
 RETURN TRUE;
 
-END $$ CREATE PROCEDURE S_AddNewStaff(
+END $$
+
+CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
@@ -157,15 +161,19 @@ END IF;
 
 SELECT @username AS username;
 
-END $$ CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
-SELECT *
+END $$
+
+CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
+SELECT s.*
 FROM staffs s
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
 WHERE s.department_id = departmentID
     AND s.deleted = 0;
 
-END $$ CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
+END $$
+
+CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
 FROM staffs s
 WHERE s.deleted = 0
@@ -181,7 +189,9 @@ ORDER BY s.first_name DESC,
 
 END IF;
 
-END $$ CREATE PROCEDURE S_UpdateStaffInfo (
+END $$
+
+CREATE PROCEDURE S_UpdateStaffInfo (
     IN Staff_Id INT,
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
@@ -224,9 +234,11 @@ ELSE COMMIT;
 
 END IF;
 
-END $$ CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
+END $$
+
+CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
-    a.id AS appoimentId,
+    a.id AS appointmentId,
     a.purpose,
     a.start_time,
     a.end_time
@@ -236,7 +248,9 @@ FROM appointments a
 WHERE s.id = staff_id
     AND a.deleted = 0;
 
-END $$ CREATE PROCEDURE S_UpdateStaffSchedule (
+END $$
+
+CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
     IN Appointment_Id int,
     IN newStartTime datetime,
@@ -258,7 +272,7 @@ ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSEIF @Appointment_Count = 1 THEN START transaction;
+ELSEIF @Appointment_Count = 0 THEN START transaction;
 
 UPDATE appointments a
 SET a.start_time = newStartTime,
