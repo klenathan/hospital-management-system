@@ -39,6 +39,54 @@
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Login param",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "SuperSaiyan200"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     },
