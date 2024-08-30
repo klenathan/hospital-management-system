@@ -1,4 +1,6 @@
-DELIMITER $$ CREATE FUNCTION S_InsertStaffJobHistory (
+DELIMITER $$
+
+CREATE FUNCTION S_InsertStaffJobHistory (
     userID int,
     j_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
@@ -21,7 +23,7 @@ RETURN TRUE;
 
 END $$
 
- CREATE PROCEDURE S_AddNewStaff(
+CREATE PROCEDURE S_AddNewStaff(
     IN f_name varchar(50),
     IN l_name VARCHAR (50),
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
@@ -159,9 +161,7 @@ END IF;
 
 SELECT @username AS username;
 
-END $$ 
- 
-
+END $$
 
 CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
 SELECT s.*
@@ -173,8 +173,7 @@ WHERE s.department_id = departmentID
 
 END $$
 
-
- CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
+CREATE PROCEDURE S_ListStaffByName (IN listOrder ENUM ('asc', 'desc')) BEGIN IF listOrder = 'asc' THEN
 SELECT *
 FROM staffs s
 WHERE s.deleted = 0
@@ -190,7 +189,9 @@ ORDER BY s.first_name DESC,
 
 END IF;
 
-END $$ CREATE PROCEDURE S_UpdateStaffInfo (
+END $$
+
+CREATE PROCEDURE S_UpdateStaffInfo (
     IN Staff_Id INT,
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
@@ -233,9 +234,7 @@ ELSE COMMIT;
 
 END IF;
 
-END $$ 
-
-DROP Procedure S_ViewStaffScheduleByID;
+END $$
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
@@ -249,7 +248,9 @@ FROM appointments a
 WHERE s.id = staff_id
     AND a.deleted = 0;
 
-END $$ CREATE PROCEDURE S_UpdateStaffSchedule (
+END $$
+
+CREATE PROCEDURE S_UpdateStaffSchedule (
     IN Staff_Id int,
     IN Appointment_Id int,
     IN newStartTime datetime,
@@ -289,18 +290,3 @@ ROLLBACK;
 END IF;
 
 END $$
-
-call `S_UpdateStaffSchedule`(
-    3, 
-   3, 
-   '2024-08-14 09:31:00', 
-  '2024-08-14 09:32:00'
-)
-
-SELECT COUNT(*)
-FROM appointments
-WHERE appointments.staff_id = 4
-    AND appointments.start_time <'2024-08-14 09:32:00'
-    AND appointments.end_time > '2024-08-14 09:29:00'
-    AND appointments.id  3;
-

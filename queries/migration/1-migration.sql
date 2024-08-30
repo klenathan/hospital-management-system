@@ -1,4 +1,3 @@
--- Active: 1723691898296@@127.0.0.1@3306@hospital_management
 
 DROP DATABASE IF EXISTS `hospital_management`;
 
@@ -93,6 +92,8 @@ CREATE FULLTEXT INDEX fx_name ON patients (first_name, last_name);
 CREATE INDEX appointment_del_idx ON appointments (deleted);
 
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
+
+CREATE INDEX staff_depIdx_del_idx ON staffs(`department_id`, `deleted`);
 
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
@@ -262,12 +263,12 @@ ELSE COMMIT;
 
 END IF;
 
-SELECT @username as username;
+SELECT @username AS username;
 
 END $$
 
 CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
-SELECT *
+SELECT s.*
 FROM staffs s
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
@@ -341,6 +342,7 @@ END $$
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
+    a.id AS appointmentId,
     a.purpose,
     a.start_time,
     a.end_time
@@ -374,7 +376,7 @@ ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSEIF @Appointment_Count = 1 THEN START transaction;
+ELSEIF @Appointment_Count = 0 THEN START transaction;
 
 UPDATE appointments a
 SET a.start_time = newStartTime,
@@ -522,29 +524,30 @@ END $$
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
-SELECT DISTINCT (s.id),
+SELECT s.id,
     s.first_name,
     s.last_name,
     s.job_type,
-    s.qualifications,
+    -- s.qualifications,
     s.department_id,
-    s.salary,
+    -- s.salary,
     s.deleted,
-    s.created_at,
-    s.updated_at,
     IF (
-        (
-            a.start_time <= toDate
-            AND a.end_time >= fromDate
-        ),
+        (COUNT(a.id) > 0),
         TRUE,
         FALSE
     ) AS busy
 FROM staffs s
-    LEFT JOIN appointments a ON s.id = a.staff_id
-    AND a.deleted = 0
+    LEFT JOIN (
+        SELECT *
+        FROM appointments a
+        WHERE a.deleted = 0
+            AND a.start_time <= toDate
+            AND a.end_time >= fromDate
+    ) a ON s.id = a.staff_id
 WHERE s.job_type = 'Doctor'
-    AND s.deleted = 0;
+    AND s.deleted = 0
+GROUP BY (s.id);
 
 END $$
 
@@ -555,33 +558,24 @@ CREATE PROCEDURE A_BookAppointmentWithDoctor (
     IN newEndTime datetime,
     IN purpose text
 ) BEGIN
-DECLARE Appointment_Count int;
 
-SELECT IF (
-        (s.job_type = 'Doctor'),
-        TRUE,
-        FALSE
-    ),
-    COUNT(*) INTO @isDocter,
-    Appointment_Count
+SELECT COUNT(*) INTO @Appointment_Count
 FROM appointments ap
     JOIN staffs s ON s.id = ap.staff_id
 WHERE ap.staff_id = Staff_Id
     AND ap.start_time < newEndTime
     AND ap.end_time > newStartTime
-    AND s.job_type = 'Doctor';
+    AND s.job_type = 'Doctor'
+    AND ap.deleted = 0
+    AND s.deleted = 0;
 
-IF Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
+IF @Appointment_Count > 0 THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'TIME ALREADY BOOKED',
     MYSQL_ERRNO = 1001;
 
 ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
-
-ELSEIF ! @isDocter THEN SIGNAL SQLSTATE '2201R'
-SET MESSAGE_TEXT = "This is not a doctor's appointment ",
-    MYSQL_ERRNO = 01004;
 
 ELSE START transaction;
 

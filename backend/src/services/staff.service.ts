@@ -135,6 +135,8 @@ export default class StaffService {
       .toISOString()
       .slice(0, -1);
 
+    console.log(newStartTimeStr, newEndTimeStr);
+
     const [_rows, _fields] = await conn.query<
       ProcedureCallPacket<ResultSetHeader>
     >(`CALL S_UpdateStaffSchedule(
