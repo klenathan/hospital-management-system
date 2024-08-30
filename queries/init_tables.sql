@@ -34,6 +34,7 @@ CREATE TABLE staffs (
     qualifications TEXT,
     department_id INT,
     salary BIGINT,
+    username VARCHAR(100) UNIQUE,
     deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -92,7 +93,7 @@ CREATE INDEX appointment_del_idx ON appointments (deleted);
 
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
-CREATE INDEX staff_depIdx_del_idx ON staffs(`department_id`, `deleted`);
+CREATE INDEX staff_depIdx_del_idx ON staffs (`department_id`, `deleted`);
 
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
