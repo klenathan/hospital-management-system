@@ -1,5 +1,5 @@
 import { InboxIcon } from "lucide-react";
-import { TableRow, TableCell } from "../ui/table";
+import { TableRow, TableCell } from "@/components/ui/table";
 
 type TableEmptyProps = {
     colSpan: number;

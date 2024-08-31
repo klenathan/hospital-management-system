@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Department } from '@/types/department';
 import { LoaderCircle } from 'lucide-react';
@@ -92,7 +92,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                     Fill out the form below to add a new staff member.
                 </DialogDescription>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="gap-5 grid grid-cols-2">
                         <FormField
                             control={form.control}
                             name="firstName"
@@ -110,7 +110,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="lastName"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem >
                                     <FormLabel>Last Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
@@ -123,7 +123,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="deptId"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Department</FormLabel>
                                     <FormControl>
                                         <Select onValueChange={(value) => field.onChange(Number(value))}>
@@ -147,7 +147,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="jobType"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Job Type</FormLabel>
                                     <FormControl>
                                         <Select onValueChange={field.onChange}>
@@ -171,7 +171,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="qualification"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Qualifications</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
@@ -184,7 +184,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="salary"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Salary</FormLabel>
                                     <FormControl>
                                         <Input type="number" {...field} />
@@ -193,9 +193,16 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full text-background" disabled={submitForm.isPending}>
-                            {submitForm.isPending ? <LoaderCircle className="animate-spin" /> : <span>Add Staff</span>}
-                        </Button>
+                        <DialogFooter className="col-span-2">
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+                            <Button type="submit" className="text-background" disabled={submitForm.isPending}>
+                                {submitForm.isPending ? <LoaderCircle className="animate-spin" /> : <span>Add Staff</span>}
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>

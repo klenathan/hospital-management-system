@@ -8,7 +8,7 @@ import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { useToast } from '@/components/ui/use-toast';
 import { Department } from '@/types/department';
 import { usePutWithTokenAPI } from '@/hooks/API/useEditAPI';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Define the validation schema using Zod
 const updateStaffSchema = z.object({
@@ -60,7 +60,6 @@ export function UpdateStaffInfoForm({
         defaultValues,
     });
 
-    console.log(form);
 
 
     // Initialize the PUT mutation using the hook
@@ -106,7 +105,7 @@ export function UpdateStaffInfoForm({
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="gap-5 grid grid-cols-2">
                 <FormField
                     control={form.control}
                     name="firstName"
@@ -143,7 +142,7 @@ export function UpdateStaffInfoForm({
                     control={form.control}
                     name="jobType"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='col-span-2'>
                             <FormLabel>Job Type</FormLabel>
                             <FormControl>
                                 <Input
@@ -159,7 +158,7 @@ export function UpdateStaffInfoForm({
                     control={form.control}
                     name="qualification"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='col-span-2'>
                             <FormLabel>Qualification</FormLabel>
                             <FormControl>
                                 <Input
@@ -175,7 +174,7 @@ export function UpdateStaffInfoForm({
                     control={form.control}
                     name="deptId"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='col-span-2'>
                             <FormLabel>Department</FormLabel>
                             <FormControl>
                                 <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
@@ -199,7 +198,7 @@ export function UpdateStaffInfoForm({
                     control={form.control}
                     name="salary"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='col-span-2'>
                             <FormLabel>Salary</FormLabel>
                             <FormControl>
                                 <Input
@@ -213,7 +212,7 @@ export function UpdateStaffInfoForm({
                         </FormItem>
                     )}
                 />
-                <DialogFooter>
+                <DialogFooter className='col-span-2'>
                     <DialogClose asChild>
                         <Button type="button" variant="secondary" onClick={onCancel}>
                             Cancel

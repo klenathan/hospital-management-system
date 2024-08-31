@@ -105,7 +105,7 @@ export function UpdatePatientInfoForm({
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="gap-5 grid grid-cols-2">
                 <FormField
                     control={form.control}
                     name="first_name"
@@ -174,7 +174,8 @@ export function UpdatePatientInfoForm({
                     control={form.control}
                     name="address"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="col-span-2"
+                        >
                             <FormLabel>Address</FormLabel>
                             <FormControl>
                                 <Input
@@ -190,7 +191,8 @@ export function UpdatePatientInfoForm({
                     control={form.control}
                     name="allergies"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="col-span-2"
+                        >
                             <FormLabel>Allergies</FormLabel>
                             <FormControl>
                                 <Input
@@ -202,7 +204,7 @@ export function UpdatePatientInfoForm({
                         </FormItem>
                     )}
                 />
-                <DialogFooter>
+                <DialogFooter className="col-span-2">
                     <DialogClose asChild>
                         <Button type="button" variant="secondary" onClick={onCancel}>
                             Cancel

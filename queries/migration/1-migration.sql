@@ -35,6 +35,7 @@ CREATE TABLE staffs (
     qualifications TEXT,
     department_id INT,
     salary BIGINT,
+    username VARCHAR(100) UNIQUE,
     deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -93,23 +94,18 @@ CREATE INDEX appointment_del_idx ON appointments (deleted);
 
 CREATE INDEX staff_del_job_idx ON staffs (deleted, job_type);
 
-CREATE INDEX staff_depIdx_del_idx ON staffs(`department_id`, `deleted`);
+CREATE INDEX staff_depIdx_del_idx ON staffs (`department_id`, `deleted`);
 
 CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
 
-CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
-
-
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);\n\n
 DELIMITER $$
 
-CREATE FUNCTION S_InsertStaffJobHistory (
-    userID int,
-    j_type ENUM('Doctor', 'Nurse', 'Admin'),
-    salary BIGINT,
-    department_id INT
-) RETURNS BOOL DETERMINISTIC BEGIN
+CREATE TRIGGER insert_staff_into_history
+AFTER
+INSERT ON staffs FOR EACH ROW BEGIN
 INSERT INTO staff_job_history (
         staff_id,
         job_type,
@@ -117,13 +113,29 @@ INSERT INTO staff_job_history (
         department_id
     )
 VALUES (
-        userID,
-        j_type,
-        salary,
-        department_id
+        new.id,
+        new.job_type,
+        new.salary,
+        new.department_id
     );
 
-RETURN TRUE;
+END $$
+
+CREATE TRIGGER update_staff_insert_into_history
+AFTER
+UPDATE ON staffs FOR EACH ROW BEGIN
+INSERT INTO staff_job_history (
+        staff_id,
+        job_type,
+        salary,
+        department_id
+    )
+VALUES (
+        new.id,
+        new.job_type,
+        new.salary,
+        new.department_id
+    );
 
 END $$
 
@@ -133,18 +145,25 @@ CREATE PROCEDURE S_AddNewStaff(
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
     IN qualifications VARCHAR(50),
     IN department_id int,
-    IN salary BIGINT
+    IN salary BIGINT,
+    IN username VARCHAR(100)
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
 
-DECLARE CONTINUE HANDLER FOR SQLWARNING
-SET `_rollback` = 1;
+DECLARE EXIT HANDLER FOR SQLWARNING BEGIN -- Rollback the transaction if something goes wrong
+    ROLLBACK;
+
+-- Log the error or set a custom message
+SET @error_message = 'Error occurred while creating the user';
+
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = @error_message;
+
+END;
 
 SET AUTOCOMMIT = 0;
 
 START TRANSACTION;
-
-SAVEPOINT start_sp;
 
 INSERT INTO staffs (
         first_name,
@@ -152,7 +171,8 @@ INSERT INTO staffs (
         job_type,
         qualifications,
         department_id,
-        salary
+        salary,
+        username
     )
 VALUES (
         f_name,
@@ -160,16 +180,12 @@ VALUES (
         j_type,
         qualifications,
         department_id,
-        salary
+        salary,
+        username
     );
 
-SET @userID = LAST_INSERT_ID();
-
--- Insert into staff job history
-SET @addStaffJobHis = S_InsertStaffJobHistory(@userID, j_type, salary, department_id);
-
 -- Create a username by concatenating first name, last name, and user ID
-SET @username = CONCAT(f_name, l_name, @userID);
+SET @username = username;
 
 -- Create the user
 SET @query1 = CONCAT(
@@ -257,12 +273,6 @@ DEALLOCATE PREPARE stmt;
 
 END IF;
 
-IF `_rollback` THEN ROLLBACK TO SAVEPOINT start_sp;
-
-ELSE COMMIT;
-
-END IF;
-
 SELECT @username AS username;
 
 END $$
@@ -323,14 +333,6 @@ SET s.first_name = f_name,
     s.salary = Salary,
     s.department_id = Department_Id
 WHERE s.id = Staff_Id;
-
--- Insert into staff job history
-SET @addStaffJobHis = S_InsertStaffJobHistory (
-        @userID,
-        Job_Type,
-        salary,
-        department_id
-    );
 
 IF `_rollback` THEN ROLLBACK TO SAVEPOINT start_sp;
 
@@ -393,9 +395,7 @@ ROLLBACK;
 
 END IF;
 
-END $$
-
-
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE P_RegisterNewPatient (
@@ -518,9 +518,7 @@ BEGIN
 
     
     COMMIT;
-END $$
-
-
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
@@ -629,9 +627,7 @@ ROLLBACK;
 
 END IF;
 
-END $$
-
-
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
@@ -694,9 +690,7 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END $$
-
-
+END $$\n\n
 DELIMITER ;
 
 CREATE ROLE doctor, nurse, adminStaff;
@@ -774,6 +768,4 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO adminStaff;
 
 GRANT
-EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO adminStaff;
-
-
+EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO adminStaff;\n\n
