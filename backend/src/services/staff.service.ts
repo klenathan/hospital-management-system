@@ -93,6 +93,7 @@ export default class StaffService {
       qualification: string;
       deptId: number;
       salary: number;
+      username: string;
     },
     config: PoolOptions
   ): Promise<any> {
@@ -106,7 +107,8 @@ export default class StaffService {
       "${props.jobType}",
       "${props.qualification}",
       "${props.deptId}",
-      "${props.salary}")`);
+      "${props.salary}",
+      "${props.username}")`);
 
     return {
       status: "success",
@@ -177,6 +179,6 @@ export default class StaffService {
         "${props.deptId}"
     )`);
 
-    return { status: 'success' };
+    return { status: "success" };
   }
 }

@@ -670,6 +670,10 @@
                 "salary": {
                   "type": "number",
                   "example": 100000000
+                },
+                "username": {
+                  "type": "string",
+                  "example": "SuperSaiyan123"
                 }
               },
               "required": [
@@ -678,7 +682,8 @@
                 "jobType",
                 "qualification",
                 "deptId",
-                "salary"
+                "salary",
+                "username"
               ]
             }
           }

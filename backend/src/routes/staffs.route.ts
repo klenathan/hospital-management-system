@@ -11,6 +11,15 @@ const NewStaffDTO = z.object({
   qualification: z.string(),
   deptId: z.number(),
   salary: z.number(),
+  username: z.string(),
+});
+const UpdateStaffDTO = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  jobType: z.string(),
+  qualification: z.string(),
+  deptId: z.number(),
+  salary: z.number(),
 });
 
 const UpdateStaffScheduleDTO = z.object({
@@ -81,7 +90,8 @@ staffRouter.post("/", async (req: Request, res: Response) => {
                 $jobType: "Doctor",
                 $qualification: "MD",
                 $deptId: 1,
-                $salary: 100000000
+                $salary: 100000000,
+                $username: 'SuperSaiyan123'
             }
     } */
   try {
@@ -224,7 +234,7 @@ staffRouter.put("/:id", async (req: Request, res: Response) => {
                 $jobType: "Doctor",
                 $qualification: "MD",
                 $deptId: 1,
-                $salary: 100000000
+                $salary: 100000000,
             }
     } */
   try {
@@ -233,7 +243,7 @@ staffRouter.put("/:id", async (req: Request, res: Response) => {
       throw new Error("Invalid staff ID: id");
     }
 
-    const newStaffProps = NewStaffDTO.parse(req.body);
+    const newStaffProps = UpdateStaffDTO.parse(req.body);
 
     const staffs = await staffService.updateStaffInfo(
       staffId,
