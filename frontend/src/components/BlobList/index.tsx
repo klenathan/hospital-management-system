@@ -35,6 +35,7 @@ export default function BlobList({ domain, parent }: { domain: string; parent: s
             <ul className='gap-2 grid pb-2'>
                 {data?.data.map(blob => {
                     const uploadDate = new Date(blob.uploadDate);
+                    const formattedDate = uploadDate.toLocaleDateString('en-GB')
                     return (
                         <Card key={blob._id} className="w-full">
                             <CardContent className="p-3">
@@ -61,7 +62,7 @@ export default function BlobList({ domain, parent }: { domain: string; parent: s
                                         }
 
                                         <div className='mr-2 w-max'>
-                                            {uploadDate.toISOString().split('T')[0]}
+                                            {formattedDate}
                                         </div>
                                     </div>
                                     <div>
@@ -91,7 +92,7 @@ export default function BlobList({ domain, parent }: { domain: string; parent: s
                                 <img
                                     src={imageUrl}
                                     alt={imageUrl}
-                                    className="border-8 border-gray-200 rounded-lg max-w-full h-auto"
+                                    className="border-8 border-gray-200 rounded-lg max-w-96 h-auto object-scale-down"
                                 />
                             )}
                         </div>

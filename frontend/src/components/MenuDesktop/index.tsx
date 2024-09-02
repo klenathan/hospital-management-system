@@ -48,6 +48,8 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
     }
   }, [])
 
+
+
   return (
     <aside className='lg:block top-0 left-0 z-10 sticky hidden py-6 pl-2 h-screen select-none'>
       <nav className='relative flex flex-col bg-card shadow-sm pb-3 border rounded-2xl h-full'>
@@ -67,7 +69,7 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
         </button>
         <div className='z-10 flex justify-between items-center p-4 !pb-2'>
           <NavLink
-            to='/'
+            to='/patient'
             className={` relative flex  items-center h-16 w-full ${expanded ? 'justify-start gap-5' : 'justify-between'
               }`}
           >

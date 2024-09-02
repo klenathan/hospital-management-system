@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { UpdateAppointmentForm } from '../UpdateAppointmentForm';
 import AddCustomObjectForm from '../AddCustomObjectForm';
+import BlobList from '../BlobList';
 interface ScheduleFormProps {
     setSelectedStaffId: (id: number | null) => void;
     scheduleData: Schedule[];
@@ -137,6 +138,7 @@ export default function ScheduleForm({
                                                                 Add Note
                                                             </Button>
                                                         </DialogFooter> */}
+                                                        <BlobList domain='appointment' parent={schedule.id.toString()} />
                                                         <AddCustomObjectForm domain='appointment' parentID={schedule.id.toString()} />
                                                     </DialogContent>
                                                 </Dialog>

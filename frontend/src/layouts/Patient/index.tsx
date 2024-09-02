@@ -217,7 +217,11 @@ export default function Patient() {
 
                         <TabsContent value="treatments">
                           <AddTreatmentForm
-                            patientId={1} // Example patient ID
+                            patientId={patient.id}
+                            onSuccess={() => {
+                              setOpenDialogId(null);
+                              refetch();
+                            }}
                           />
                         </TabsContent>
                         <TabsContent value="customObjects">

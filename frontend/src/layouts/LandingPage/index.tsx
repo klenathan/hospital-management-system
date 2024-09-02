@@ -2,8 +2,7 @@ import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col bg-background min-h-screen">
-
+    <div className="flex flex-col bg-background h-screen min-h-screen">
       <div className="flex flex-1 justify-center items-center bg-muted *:w-full h-full">
         <div className="justify-center items-center gap-4 grid mx-auto px-4 md:px-6 text-center container">
           <div className="space-y-3">
@@ -26,10 +25,10 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <footer className="bg-background md:py-12 p-6 w-full">
-        <div className="gap-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 max-w-7xl text-sm container">
+      {/* <footer className="bg-background md:py-12 p-6 w-full">
+        <div className="gap-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 max-w-7xl text-sm container">\
         </div>
-      </footer>
+      </footer> */}
     </div >
   )
 }

@@ -1,29 +1,23 @@
-import { useMutation, QueryOptions } from '@tanstack/react-query';
+import { useContext } from 'react';
+import { useMutation, useQuery, QueryOptions } from '@tanstack/react-query';
 import { useAxiosWithToken } from './useAxios';
 import { AxiosResponse, AxiosError } from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import {
-    // BlobMetadata,
-    // Blob,
-    GetBlobResponse,
-    UseFetchBlobsParams,
-} from '@/types/blobs';
-
+import { GetBlobResponse, UseFetchBlobsParams } from '@/types/blobs';
+import { UserContext } from '@/hooks/Auth/UserContext';
 
 export const useFileBlobsWithTokenAPI = (
     url: string,
     options?: QueryOptions<unknown>
 ) => {
     const axiosInstance = useAxiosWithToken();
+    const { user } = useContext(UserContext);
 
     const mutation = useMutation({
         mutationFn: async (formData: FormData) => {
-            const authString = `root:root`;
-
             return await axiosInstance.post(url, formData, {
                 headers: {
-                    'x-auth-string': authString,
-                    'Content-Type': 'multipart/form-data', // Ensure correct content type for file upload
+                    'x-auth-string': `${user.username}:${user.password}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
         },
@@ -39,9 +33,9 @@ export const useFileBlobsWithTokenAPI = (
     return mutation;
 };
 
-
 export const useFetchBlobs = ({ domain, parent, fileName }: UseFetchBlobsParams, options?: QueryOptions<GetBlobResponse, AxiosError>) => {
     const axiosInstance = useAxiosWithToken();
+    const { user } = useContext(UserContext);
 
     const fetchBlobs = async (): Promise<GetBlobResponse> => {
         const params = new URLSearchParams();
@@ -52,7 +46,7 @@ export const useFetchBlobs = ({ domain, parent, fileName }: UseFetchBlobsParams,
 
         const response = await axiosInstance.get<GetBlobResponse>('/api/blob/', {
             headers: {
-                'x-auth-string': `root:root`,
+                'x-auth-string': `${user.username}:${user.password}`,
             },
             params,
             timeout: 5000,
@@ -74,22 +68,20 @@ export const useFetchBlobs = ({ domain, parent, fileName }: UseFetchBlobsParams,
     });
 };
 
-
-
 export const useFetchImage = (id: string) => {
     const axiosInstance = useAxiosWithToken();
+    const { user } = useContext(UserContext);
 
     const fetchImage = async (): Promise<string> => {
         const response: AxiosResponse<Blob> = await axiosInstance.get(`/api/blob/image/${id}`, {
             headers: {
-                'x-auth-string': `root:root`,
+                'x-auth-string': `${user.username}:${user.password}`,
                 'accept': 'image/*',
             },
-            responseType: 'blob', // Important for handling binary data
-            timeout: 5000, // Timeout after 5 seconds
+            responseType: 'blob',
+            timeout: 5000,
         });
 
-        // Convert the blob into a URL that can be used as a src for an img tag
         const imageUrl = URL.createObjectURL(response.data);
         return imageUrl;
     };
@@ -97,34 +89,31 @@ export const useFetchImage = (id: string) => {
     return useQuery<string, AxiosError>({
         queryKey: ['image', id],
         queryFn: fetchImage,
-        staleTime: Infinity, // Data is considered fresh forever
+        staleTime: Infinity,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
     });
 };
 
-
 export const useDownloadBlob = () => {
     const axiosInstance = useAxiosWithToken();
+    const { user } = useContext(UserContext);
 
     const downloadBlob = async (id: string): Promise<void> => {
         const response: AxiosResponse<Blob> = await axiosInstance.get(`/api/blob/download/${id}`, {
             headers: {
-                'x-auth-string': `root:root`,
+                'x-auth-string': `${user.username}:${user.password}`,
                 'accept': 'application/octet-stream',
             },
-            responseType: 'blob', // Important for handling binary data
-            timeout: 5000, // Timeout after 5 seconds
+            responseType: 'blob',
+            timeout: 5000,
         });
 
-        // Create a URL for the blob object
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
 
-
-        // Extract file name from the Content-Disposition header if available
         const contentDisposition = response.headers['content-disposition'];
         const fileName = contentDisposition ? contentDisposition.split('filename=')[1].replace(/"/g, '') : `downloaded-file-${id}`;
 
@@ -132,7 +121,6 @@ export const useDownloadBlob = () => {
         document.body.appendChild(link);
         link.click();
 
-        // Clean up
         link.parentNode?.removeChild(link);
         window.URL.revokeObjectURL(url);
     };
