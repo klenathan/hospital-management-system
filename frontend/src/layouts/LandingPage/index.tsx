@@ -1,6 +1,19 @@
 import { Button } from "@/components/ui/button"
+import { UserContext } from "@/hooks/Auth/UserContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+
 
 export default function LandingPage() {
+  const { user } = useContext(UserContext);
+
+  if (user.job_type === 'Doctor' || user.job_type === 'Nurse') {
+    return <Navigate to="/patient" replace />;
+  }
+  if (user.job_type === 'Admin') {
+    return <Navigate to="/staff" replace />;
+  }
+
   return (
     <div className="flex flex-col bg-background h-screen min-h-screen">
       <div className="flex flex-1 justify-center items-center bg-muted *:w-full h-full">
@@ -16,7 +29,7 @@ export default function LandingPage() {
           </div>
           <div className="space-y-2 mx-auto w-full max-w-sm">
             <Button
-              // href="#"
+              // 
               onClick={() => window.location.href = '/login'}
               className="inline-flex justify-center items-center bg-primary hover:bg-primary/90 disabled:opacity-50 shadow px-4 rounded-md w-full h-10 font-medium text-primary-foreground text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none"
             >

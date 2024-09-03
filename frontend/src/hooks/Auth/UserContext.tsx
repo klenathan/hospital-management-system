@@ -1,9 +1,10 @@
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 
 interface User {
   username: string;
   password: string;
+  job_type: string;
 }
 
 interface UserContextType {
@@ -11,13 +12,16 @@ interface UserContextType {
   user: User;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
+  isUserLoggedIn: boolean;
 }
 
 const DefaultUserContext: UserContextType = {
+  isUserLoggedIn: false,
   loggedIn: false,
   user: {
     username: '',
     password: '',
+    job_type: '',
   },
   login: async () => { },
   logout: () => { },
@@ -29,12 +33,12 @@ export function UserProvider({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<User>({
     username: '',
     password: '',
+    job_type: '',
   });
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-
     if (savedUser) {
       const decodedUser = JSON.parse(atob(savedUser));
       setUser(decodedUser);
@@ -42,16 +46,20 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     }
   }, []);
 
+
   const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BE_ENDPOINT}api/auth/login`, {
         username,
         password,
       });
-      console.log(response.data.status);
 
-      if (response.data.status === 'success') {
-        const userData: User = { username, password };
+      if (response.data.status === 'success' && response.data.user.length > 0) {
+        const userData: User = {
+          username,
+          password, // You are saving the password here (not recommended for security reasons)
+          job_type: response.data.user[0].job_type,
+        };
         const encodedUser = btoa(JSON.stringify(userData));
         localStorage.setItem('user', encodedUser);
         setUser(userData);
@@ -67,12 +75,20 @@ export function UserProvider({ children }: { children?: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('user');
-    setUser({ username: '', password: '' });
+    setUser({
+      username: '',
+      password: '',
+      job_type: '',
+    });
     setLoggedIn(false);
   };
 
+  const isUserLoggedIn = useMemo(() => {
+    return !!user.username && !!user.password && !!user.job_type;
+  }, [user]);
+
   return (
-    <UserContext.Provider value={{ loggedIn, user, login, logout }}>
+    <UserContext.Provider value={{ loggedIn, user, login, logout, isUserLoggedIn }}>
       {children}
     </UserContext.Provider>
   );

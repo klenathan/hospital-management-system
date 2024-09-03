@@ -13,7 +13,7 @@ import Login from './layouts/Login';
 import Patient from './layouts/Patient';
 
 
-import { RedirectIfUnAuthenticated, RedirectIfAuthenticated } from './components/Redirect';
+// import { RedirectIfUnAuthenticated, RedirectIfAuthenticated } from './components/Redirect';
 
 const queryClient = new QueryClient();
 
@@ -21,18 +21,14 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <RedirectIfAuthenticated>
-        <LandingPage />
-      </RedirectIfAuthenticated>
+      <LandingPage />
     ),
     errorElement: <ErrorPage />,
   },
   {
     path: '/login',
     element: (
-      <RedirectIfAuthenticated>
-        <Login />
-      </RedirectIfAuthenticated>
+      <Login />
     ),
     errorElement: <ErrorPage />,
   },
@@ -41,15 +37,10 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        element: <RedirectIfUnAuthenticated />,
         children: [
           {
             path: '/patient',
             element: <Patient />,
-          },
-          {
-            path: '/djtmecuocdoi',
-            element: <div className='bg-red-300 w-screen h-screen'>Hello</div>,
           },
           {
             path: '/appointment',
@@ -76,3 +67,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </UserProvider>
 );
+

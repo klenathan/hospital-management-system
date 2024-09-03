@@ -2,24 +2,44 @@ import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { UserContext } from '@/hooks/Auth/UserContext';
 
-export function RedirectIfUnAuthenticated() {
-    const { loggedIn } = useContext(UserContext);
+interface RedirectIfUnAuthenticatedProps {
+    requiredRoles?: string[];
+}
+
+export function RedirectIfUnAuthenticated({ requiredRoles }: RedirectIfUnAuthenticatedProps) {
+    const { loggedIn, user } = useContext(UserContext);
 
     if (!loggedIn) {
-        // If the user is not logged in, redirect to the landing page
-        return <Navigate to="/" />;
+        // Redirect to login if the user is not authenticated
+        return <Navigate to="/login" replace />;
     }
 
-    // If the user is logged in, render the children (the protected content)
+    console.log(requiredRoles);
+    console.log(user.job_type);
+    console.log(requiredRoles?.includes(user.job_type));
+
+
+    if (requiredRoles && !requiredRoles.includes(user.job_type)) {
+        // Redirect to a "Not Authorized" page or similar if the user's job_type doesn't match
+        return <Navigate to="/not-authorized" replace />;
+    }
+
     return <Outlet />;
 }
 
+interface RedirectIfAuthenticatedProps {
+    route: string;
+    children: JSX.Element;
+}
 
-
-export const RedirectIfAuthenticated = ({ children }: { children: React.ReactNode }) => {
+export function RedirectIfAuthenticated({ children, route }: RedirectIfAuthenticatedProps) {
     const { loggedIn } = useContext(UserContext);
+
     if (loggedIn) {
-        return <Navigate to="/patient" />;
+        return <Navigate to={route} replace />;
     }
+
     return children;
-};
+}
+
+

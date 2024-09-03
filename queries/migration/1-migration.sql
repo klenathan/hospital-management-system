@@ -718,6 +718,11 @@ END $$
 
 DELIMITER;
 
+DROP ROLE IF EXISTS doctor;
+DROP ROLE IF EXISTS nurse;
+DROP ROLE IF EXISTS adminStaff;
+
+
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT
@@ -812,5 +817,11 @@ EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.R_ViewOneJobChangeHistoryByID TO adminStaff;
+
+
+
 
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,6 +17,7 @@ import AddStaffForm from '@/components/AddStaffForm';
 import StaffTable from '@/components/StaffTable';
 import BlobList from '@/components/BlobList';
 import { UpdateStaffInfoForm } from '@/components/UpdateStaffInfoForm';
+import { UserContext } from '@/hooks/Auth/UserContext';
 
 
 export default function StaffManagement() {
@@ -71,9 +72,7 @@ export default function StaffManagement() {
         refetch(); // Refetch data when department is changed
     }, [selectedDepartment, sortField, sortOrder, refetch]);
 
-    if (staffLoading || departmentLoading) {
-        return <div>Loading...</div>;
-    }
+    const { user } = useContext(UserContext);
 
 
     return (
@@ -91,7 +90,8 @@ export default function StaffManagement() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value='all'>All Departments</SelectItem>
-                            {departmentListData?.data.map(department => (
+
+                            {!departmentLoading && departmentListData?.data.map(department => (
                                 <SelectItem
                                     key={department.id}
                                     value={department.id.toString()}
@@ -137,11 +137,13 @@ export default function StaffManagement() {
                         </SelectContent>
                     </Select>
                 </div>
-                <AddStaffForm departments={departmentListData?.data || []} />
+                {user.job_type === 'Admin' &&
+                    <AddStaffForm departments={departmentListData?.data || []} />
+                }
 
             </div>
 
-            <StaffTable staffData={paginatedStaff}>
+            <StaffTable staffData={paginatedStaff} isLoading={staffLoading}>
                 {(staff) => (
                     <Dialog
                         open={openDialogId === staff.id}
@@ -208,7 +210,6 @@ export default function StaffManagement() {
                 <PaginationContent>
                     <PaginationItem>
                         <PaginationPrevious
-                            href="#"
                             onClick={currentPage !== 1 ? () => setCurrentPage((prev) => Math.max(prev - 1, 1)) : () => { }}
                         />
                     </PaginationItem>
@@ -218,7 +219,6 @@ export default function StaffManagement() {
                         <>
                             <PaginationItem>
                                 <PaginationLink
-                                    href="#"
                                     onClick={() => setCurrentPage(1)}
                                 >
                                     1
@@ -241,7 +241,7 @@ export default function StaffManagement() {
                             return (
                                 <PaginationItem key={pageNumber}>
                                     <PaginationLink
-                                        href="#"
+
                                         onClick={() => setCurrentPage(pageNumber)}
                                         isActive={currentPage === pageNumber}
                                         className={pageNumber === currentPage ? 'active' : ''}
@@ -262,7 +262,7 @@ export default function StaffManagement() {
                             </PaginationItem>
                             <PaginationItem>
                                 <PaginationLink
-                                    href="#"
+
                                     onClick={() => setCurrentPage(totalPages)}
 
                                 >
@@ -274,7 +274,7 @@ export default function StaffManagement() {
 
                     <PaginationItem>
                         <PaginationNext
-                            href="#"
+
                             onClick={currentPage !== totalPages ? () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) : () => { }}
                         />
                     </PaginationItem>

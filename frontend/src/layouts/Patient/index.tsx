@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -35,6 +35,8 @@ import BlobList from '@/components/BlobList';
 import AddCustomObjectForm from '@/components/AddCustomObjectForm';
 import { UpdatePatientInfoForm } from '@/components/UpdatePatientInfo';
 import { AddTreatmentForm } from '@/components/AddTreatmentForm';
+import { UserContext } from '@/hooks/Auth/UserContext';
+import { Navigate } from 'react-router-dom';
 
 export default function Patient() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,6 +46,7 @@ export default function Patient() {
   const [searchID, setSearchID] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+
 
   const searchQuery = () => {
     if (searchType === 'id') {
@@ -100,6 +103,12 @@ export default function Patient() {
 
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   };
+
+  const { user } = useContext(UserContext);
+
+  if (user.job_type === 'Admin') {
+    return <Navigate to="/staff" replace />;
+  }
 
   return (
     <div className="flex-1 p-6">
@@ -245,7 +254,7 @@ export default function Patient() {
             <PaginationItem>
               <PaginationPrevious
                 className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
-                href="#"
+
                 onClick={currentPage > 1 ? () => setCurrentPage(currentPage - 1) : undefined}
               />
             </PaginationItem>
@@ -253,7 +262,7 @@ export default function Patient() {
             {generatePageNumbers().map((page) => (
               <PaginationItem key={page}>
                 <PaginationLink
-                  href="#"
+
                   onClick={() => setCurrentPage(page)}
                   isActive={currentPage === page}
                 >
@@ -265,7 +274,7 @@ export default function Patient() {
             <PaginationItem>
               <PaginationNext
                 className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
-                href="#"
+
                 onClick={currentPage < totalPages ? () => setCurrentPage(currentPage + 1) : undefined}
               />
             </PaginationItem>
