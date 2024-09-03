@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 import { dbConfigBuilder, getMySqlConnnection } from "../db/mysql";
-import { QueryError } from "mysql2";
+import { QueryError, RowDataPacket } from "mysql2";
 
 const authRouter = Router();
 
@@ -48,23 +48,22 @@ authRouter.post("/login", async (req: Request, res: Response) => {
       loginObj["username"],
       loginObj["password"]
     );
-    await getMySqlConnnection(dbConfig);
+    const conn = await getMySqlConnnection(dbConfig);
 
-    // const [rows, _fields] = await conn.query<RowDataPacket[]>(
-    //   `SELECT * FROM staffs
-    //   WHERE username=? LIMIT 1`,
-    //   [loginObj.username]
-    // );
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `CALL S_GetStaffByUsername(?)`,
+      [loginObj.username]
+    );
 
-    // console.log(rows);
-
-    return res.status(200).json({ status: "success" });
+    return res.status(200).json({ status: "success", user: rows[0] });
   } catch (error) {
     if ((error as QueryError).code == "ER_ACCESS_DENIED_ERROR") {
       return res.status(401).json({ message: "UNAUTHORIZED" });
     }
 
-    return res.status(500).json({ message: "internal server error" });
+    return res
+      .status(500)
+      .json({ message: "internal server error", detail: error });
   }
 });
 
