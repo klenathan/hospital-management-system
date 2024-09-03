@@ -100,7 +100,9 @@ CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
 
-CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);\n\n
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
+
+
 DELIMITER $$
 
 CREATE TRIGGER insert_staff_into_history
@@ -395,7 +397,17 @@ ROLLBACK;
 
 END IF;
 
-END $$\n\n
+END $$
+
+CREATE PROCEDURE S_GetStaffByUsername (
+    IN Input_Username VARCHAR(100)
+) BEGIN 
+
+SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
+
+END $$
+
+
 DELIMITER $$
 
 CREATE PROCEDURE P_RegisterNewPatient (
@@ -518,7 +530,9 @@ BEGIN
 
     
     COMMIT;
-END $$\n\n
+END $$
+
+
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
@@ -627,7 +641,9 @@ ROLLBACK;
 
 END IF;
 
-END $$\n\n
+END $$
+
+
 DELIMITER $$
 
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
@@ -690,8 +706,10 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END $$\n\n
-DELIMITER ;
+END $$
+
+
+DELIMITER;
 
 CREATE ROLE doctor, nurse, adminStaff;
 
@@ -721,6 +739,9 @@ EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDurati
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyDoctorWorkByDuration TO doctor;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO doctor;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.P_RegisterNewPatient TO nurse;
@@ -753,6 +774,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyDoctorWorkByDuration TO nurse;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO nurse;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.S_AddNewStaff TO adminStaff;
 
 GRANT
@@ -768,4 +792,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO adminStaff;
 
 GRANT
-EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO adminStaff;\n\n
+EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO adminStaff;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
+
+
