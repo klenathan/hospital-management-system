@@ -30,6 +30,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyDoctorWorkByDuration TO doctor;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO doctor;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO doctor;
 
 GRANT
@@ -66,6 +69,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO nurse;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO nurse;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.S_AddNewStaff TO adminStaff;
 
 GRANT
@@ -85,3 +91,6 @@ EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;

@@ -1,5 +1,12 @@
 DELIMITER $$
 
+CREATE PROCEDURE S_GetAllDepartment (
+) BEGIN 
+
+SELECT * FROM departments;
+
+END $$
+
 CREATE TRIGGER insert_staff_into_history
 AFTER
 INSERT ON staffs FOR EACH ROW BEGIN
