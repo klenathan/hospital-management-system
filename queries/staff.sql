@@ -293,3 +293,11 @@ ROLLBACK;
 END IF;
 
 END $$
+
+CREATE PROCEDURE S_GetStaffByUsername (
+    IN Input_Username VARCHAR(100)
+) BEGIN 
+
+SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
+
+END $$
