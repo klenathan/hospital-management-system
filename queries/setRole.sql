@@ -1,4 +1,4 @@
-DELIMITER &&
+DELIMITER $$
 
 CREATE ROLE doctor, nurse, adminStaff;
 
