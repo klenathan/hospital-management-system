@@ -70,20 +70,27 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
               <SheetHeader className='w-full'>
                 <SheetTitle></SheetTitle>
                 <SheetDescription>
-                  {user.job_type != 'Admin' &&
+
+
+                  {user.job_type === 'Admin' &&
+                    <>
+                      <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
+                    </>
+                  }
+                  {user.job_type === 'Doctor' &&
+                    <>
+                      <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
+                    </>
+                  }
+                  {user.job_type === 'Nurse' &&
                     <>
                       <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
                       <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
                     </>
                   }
-                  <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
-                  <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
-
-                  {/* {user.is_admin && (
-                     <>
-                       <SidebarItem to='/admin' icon={<Users />} text='Accounts' onClick={() => setIsSheetOpen(false)} />
-                     </>
-                   )} */}
                 </SheetDescription>
               </SheetHeader>
               <SheetFooter className='flex flex-col w-full'>

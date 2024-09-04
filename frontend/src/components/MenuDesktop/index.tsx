@@ -88,19 +88,25 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
 
         <SidebarContext.Provider value={{ expanded }}>
           <div className='flex-1 px-3'>
-            {user.job_type != 'Admin' &&
+            {user.job_type === 'Admin' &&
               <>
-                <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
-                <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment ' />
+                <SidebarItem to='/staff' icon={<Users />} text='Staff' />
+                <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
               </>
             }
-            <SidebarItem to='/staff' icon={<Users />} text='Staff' />
-            <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
-            {/* {user.is_admin && (
+            {user.job_type === 'Doctor' &&
               <>
-                <SidebarItem to='/admin' icon={<Users />} text='Accounts' />
+                <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
+                <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
               </>
-            )} */}
+            }
+            {user.job_type === 'Nurse' &&
+              <>
+                <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
+                <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' />
+                <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
+              </>
+            }
           </div>
         </SidebarContext.Provider>
 

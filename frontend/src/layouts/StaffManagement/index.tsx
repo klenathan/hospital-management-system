@@ -18,6 +18,7 @@ import StaffTable from '@/components/StaffTable';
 import BlobList from '@/components/BlobList';
 import { UpdateStaffInfoForm } from '@/components/UpdateStaffInfoForm';
 import { UserContext } from '@/hooks/Auth/UserContext';
+import { Navigate } from 'react-router-dom';
 
 
 export default function StaffManagement() {
@@ -72,8 +73,12 @@ export default function StaffManagement() {
         refetch(); // Refetch data when department is changed
     }, [selectedDepartment, sortField, sortOrder, refetch]);
 
+
     const { user } = useContext(UserContext);
 
+    if (user.job_type != 'Admin') {
+        return <Navigate to="/patient" replace />;
+    }
 
     return (
         <div className='flex-1 p-6'>
@@ -137,9 +142,7 @@ export default function StaffManagement() {
                         </SelectContent>
                     </Select>
                 </div>
-                {user.job_type === 'Admin' &&
-                    <AddStaffForm departments={departmentListData?.data || []} />
-                }
+                <AddStaffForm departments={departmentListData?.data || []} refetch={refetch} />
 
             </div>
 

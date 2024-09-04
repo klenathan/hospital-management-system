@@ -58,6 +58,8 @@ export default function AppointmentManagement() {
 
     if (user.job_type === 'Admin') {
         return <Navigate to="/staff" replace />;
+    } else if (user.job_type === 'Doctor') {
+        return <Navigate to="/patient" replace />;
     }
     return (
         <div className="flex-1 p-6">

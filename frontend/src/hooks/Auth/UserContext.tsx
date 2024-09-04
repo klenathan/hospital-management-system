@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface User {
@@ -12,11 +12,9 @@ interface UserContextType {
   user: User;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  isUserLoggedIn: boolean;
 }
 
 const DefaultUserContext: UserContextType = {
-  isUserLoggedIn: false,
   loggedIn: false,
   user: {
     username: '',
@@ -40,12 +38,11 @@ export function UserProvider({ children }: { children?: ReactNode }) {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      const decodedUser = JSON.parse(atob(savedUser));
+      const decodedUser = JSON.parse(atob(((savedUser))));
       setUser(decodedUser);
       setLoggedIn(true);
     }
   }, []);
-
 
   const login = async (username: string, password: string) => {
     try {
@@ -57,7 +54,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
       if (response.data.status === 'success' && response.data.user.length > 0) {
         const userData: User = {
           username,
-          password, // You are saving the password here (not recommended for security reasons)
+          password,
           job_type: response.data.user[0].job_type,
         };
         const encodedUser = btoa(JSON.stringify(userData));
@@ -83,12 +80,8 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     setLoggedIn(false);
   };
 
-  const isUserLoggedIn = useMemo(() => {
-    return !!user.username && !!user.password && !!user.job_type;
-  }, [user]);
-
   return (
-    <UserContext.Provider value={{ loggedIn, user, login, logout, isUserLoggedIn }}>
+    <UserContext.Provider value={{ loggedIn, user, login, logout }}>
       {children}
     </UserContext.Provider>
   );

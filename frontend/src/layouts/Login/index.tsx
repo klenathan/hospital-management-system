@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserContext } from '@/hooks/Auth/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
 
 // Define the login form schema using zod
@@ -51,6 +51,15 @@ export default function Component() {
       form.setError('password', { type: 'manual', message: 'Invalid username or password' });
     }
   };
+
+  const { user } = useContext(UserContext);
+
+  if (user.job_type === 'Doctor' || user.job_type === 'Nurse') {
+    return <Navigate to="/patient" replace />;
+  }
+  if (user.job_type === 'Admin') {
+    return <Navigate to="/staff" replace />;
+  }
 
   return (
     <div className="flex md:flex-row flex-col min-h-screen max-h-screen">

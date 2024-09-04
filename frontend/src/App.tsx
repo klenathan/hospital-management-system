@@ -5,9 +5,9 @@ import { useContext } from "react";
 import { UserContext } from "./hooks/Auth/UserContext";
 
 export default function App() {
-  const { isUserLoggedIn } = useContext(UserContext);
+  const { loggedIn } = useContext(UserContext);
 
-  if (!isUserLoggedIn) {
+  if (!loggedIn) {
     return <Navigate to="/login" replace />;
   }
 

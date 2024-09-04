@@ -1,9 +1,7 @@
-import React, { useContext } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StaffMember } from '@/types/staffs';
 import { DepartmentResponse } from '@/types/department';
 import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
-import { UserContext } from '@/hooks/Auth/UserContext';
 
 
 interface StaffTableProps {
@@ -22,8 +20,6 @@ const StaffTable: React.FC<StaffTableProps> = ({ staffData, isLoading, children 
         return acc;
     }, {} as Record<number, string>);
 
-    const { user } = useContext(UserContext);
-
     return (
         <Table>
             <TableHeader>
@@ -34,12 +30,8 @@ const StaffTable: React.FC<StaffTableProps> = ({ staffData, isLoading, children 
                     <TableHead>Job Type</TableHead>
                     <TableHead>Qualifications</TableHead>
                     <TableHead>Department</TableHead>
-                    {user.job_type === 'Admin' &&
-                        <>
-                            <TableHead>Salary</TableHead>
-                            <TableHead className='text-center'>Actions</TableHead>
-                        </>
-                    }
+                    <TableHead>Salary</TableHead>
+                    <TableHead className='text-center'>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -56,14 +48,10 @@ const StaffTable: React.FC<StaffTableProps> = ({ staffData, isLoading, children 
                             <TableCell>{staff.job_type}</TableCell>
                             <TableCell>{staff.qualifications}</TableCell>
                             <TableCell>{departmentMap ? departmentMap[staff.department_id] : 'Unknown'}</TableCell>
-                            {user.job_type === 'Admin' &&
-                                <>
-                                    <TableCell>{new Intl.NumberFormat().format(Number(staff.salary))}</TableCell>
-                                    <TableCell key={index} className='text-center'>
-                                        {children(staff)}
-                                    </TableCell>
-                                </>
-                            }
+                            <TableCell>{new Intl.NumberFormat().format(Number(staff.salary))}</TableCell>
+                            <TableCell key={index} className='text-center'>
+                                {children(staff)}
+                            </TableCell>
                         </TableRow>
                     ))}</>
                 }

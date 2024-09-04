@@ -13,6 +13,7 @@ import { useMutationWithTokenAPI } from '@/hooks/API/useMutationAPI';
 import { useToast } from "@/components/ui/use-toast"
 // Define the zod schema for validation
 const staffSchema = z.object({
+    username: z.string().min(1, "Username is required."),
     firstName: z.string().min(1, "First name is required."),
     lastName: z.string().min(1, "Last name is required."),
     jobType: z.string().nonempty("Please select a job type."),
@@ -30,11 +31,12 @@ type StaffFormData = z.infer<typeof staffSchema>;
 
 interface AddStaffFormProps {
     departments: Department[];
+    refetch: () => void;
 }
 
 const jobTypes = ['Doctor', 'Nurse', 'Admin'];
 
-export default function AddStaffForm({ departments }: AddStaffFormProps) {
+export default function AddStaffForm({ departments, refetch }: AddStaffFormProps) {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -62,6 +64,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                     description: `Username: ${response.data.data[0].username}`,
                 })
                 setIsOpen(false)
+                refetch()
             },
             onError: (error) => {
                 console.error('Error submitting form:', error);
@@ -71,6 +74,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                     description: "There was a problem with your request",
                 })
                 setIsOpen(false)
+                refetch()
 
             },
         });
@@ -93,6 +97,21 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                 </DialogDescription>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="gap-5 grid grid-cols-2">
+
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem className='col-span-2'>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.username?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="firstName"
