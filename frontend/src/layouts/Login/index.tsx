@@ -1,24 +1,16 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { HospitalIcon } from 'lucide-react';
+import { HospitalIcon, LoaderCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
 import { UserContext } from '@/hooks/Auth/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { LoaderCircle } from 'lucide-react';
+import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
 
-// Define the structure of the API response
-interface PublicTokenResponse {
-  data: {
-    access_token: string;
-  };
-}
-
-// Login form schema using zod
+// Define the login form schema using zod
 const loginSchema = z.object({
   username: z.string().min(1, { message: 'Please enter your username' }),
   password: z.string().min(1, { message: 'Please enter your password' })
@@ -38,37 +30,26 @@ export default function Component() {
     }
   });
 
-  const { refetch, isFetching } = useQueryWithoutTokenAPI<PublicTokenResponse>(
-    ['auth', form.watch('username')],
-    '/api/auth/publicToken',
-    {
-      'x-auth-string': `${form.watch('username')}:${form.watch('password')}`,
-    },
-    // {
-    //   enabled: false, // disable automatic query execution
-    // }
-  );
+  const submitUser = useMutationWithoutTokenAPI('/api/auth/login');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await refetch();
-      if (result.isSuccess) {
-        console.log(result.data);
-        // login(result.data.publicToken);
-        // navigate('/dashboard');
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const response = await submitUser.mutateAsync({
+        username: data.username,
+        password: data.password,
+      });
+
+      if (response.data.status === 'success') {
+        // Call the login method from UserContext to set the token and user info
+        await login(data.username, data.password);
+
+        // Navigate to the dashboard or any other page after successful login
+        navigate('/patient');
       }
-      // else if (result.isError && result.error?.response) {
-      //   form.setError('password', { type: 'custom', message: (result.error.response.data as { detail: string }).detail });
-      // }
-    };
-
-    if (form.getValues('username') && form.getValues('password')) {
-      fetchData();
+    } catch (error) {
+      console.error('Login failed:', error);
+      form.setError('password', { type: 'manual', message: 'Invalid username or password' });
     }
-  }, [refetch, form, login, navigate]);
-
-  const onSubmit = () => {
-    refetch();
   };
 
   return (
@@ -117,8 +98,8 @@ export default function Component() {
             </div>
 
             <div>
-              <Button type="submit" className="w-full" disabled={isFetching}>
-                {isFetching ? <LoaderCircle className='animate-spin' /> : <span>Sign in</span>}
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? <LoaderCircle className='animate-spin' /> : <span>Sign in</span>}
               </Button>
             </div>
           </form>

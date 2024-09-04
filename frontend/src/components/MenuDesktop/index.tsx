@@ -1,4 +1,5 @@
 // import { ModeToggle } from '@/components/Theme/mode-toggle'
+import { UserContext } from '@/hooks/Auth/UserContext'
 import { ChevronRight, LogOutIcon, Users, Hospital, CalendarDays, ClipboardList, HeartPulse } from 'lucide-react'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -48,6 +49,9 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
     }
   }, [])
 
+
+  const { user } = useContext(UserContext)
+
   return (
     <aside className='lg:block top-0 left-0 z-10 sticky hidden py-6 pl-2 h-screen select-none'>
       <nav className='relative flex flex-col bg-card shadow-sm pb-3 border rounded-2xl h-full'>
@@ -67,7 +71,7 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
         </button>
         <div className='z-10 flex justify-between items-center p-4 !pb-2'>
           <NavLink
-            to='/'
+            to='/patient'
             className={` relative flex  items-center h-16 w-full ${expanded ? 'justify-start gap-5' : 'justify-between'
               }`}
           >
@@ -84,9 +88,13 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
 
         <SidebarContext.Provider value={{ expanded }}>
           <div className='flex-1 px-3'>
-            <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
+            {user.job_type != 'Admin' &&
+              <>
+                <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
+                <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment ' />
+              </>
+            }
             <SidebarItem to='/staff' icon={<Users />} text='Staff' />
-            <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment ' />
             <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
             {/* {user.is_admin && (
               <>

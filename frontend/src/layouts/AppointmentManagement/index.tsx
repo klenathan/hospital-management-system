@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,8 @@ import { WorkingSchedule, WorkingScheduleResponse } from '@/types/appointment';
 import AppointmentForm from '@/components/AppointmentForm';
 import { ScheduleResponse } from '@/types/schedule';
 import ScheduleForm from '@/components/ScheduleForm';
+import { UserContext } from '@/hooks/Auth/UserContext';
+import { Navigate } from 'react-router-dom';
 
 
 export default function AppointmentManagement() {
@@ -52,6 +54,11 @@ export default function AppointmentManagement() {
         }
     }, [queryStartTime, queryEndTime, refetch, refetchSchedule, selectedStaffId, openDialogId]);
 
+    const { user } = useContext(UserContext);
+
+    if (user.job_type === 'Admin') {
+        return <Navigate to="/staff" replace />;
+    }
     return (
         <div className="flex-1 p-6">
             <h1 className="mb-6 font-bold text-2xl">Appointment Management</h1>

@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS `hospital_management`;
 
 CREATE DATABASE IF NOT EXISTS `hospital_management`;
@@ -102,6 +101,7 @@ CREATE INDEX treatments_del_idx ON treatments (deleted);
 
 CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
 
+\n\n 
 
 DELIMITER $$
 
@@ -412,8 +412,13 @@ CREATE PROCEDURE S_GetStaffByUsername (
 
 SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
 
-END $$
+END $$\n\n
 
+$$\n\n 
+
+$$
+
+\n\n 
 
 DELIMITER $$
 
@@ -537,8 +542,13 @@ BEGIN
 
     
     COMMIT;
-END $$
+END $$\n\n
 
+$$\n\n 
+
+$$
+
+\n\n 
 
 DELIMITER $$
 
@@ -648,8 +658,13 @@ ROLLBACK;
 
 END IF;
 
-END $$
+END $$\n\n
 
+$$\n\n 
+
+$$
+
+\n\n 
 
 DELIMITER $$
 
@@ -713,10 +728,26 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END $$
+END $$\n\n
 
+$$\n\n 
 
 CREATE ROLE doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.appointments TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.departments TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.patients TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.staff_job_history TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.staffs TO doctor, nurse, adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.P_RegisterNewPatient TO doctor;
@@ -811,4 +842,4 @@ EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
 GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;
 
-
+\n\n 

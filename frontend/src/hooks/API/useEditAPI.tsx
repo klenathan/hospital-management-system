@@ -1,7 +1,8 @@
 // usePutWithTokenAPI.ts
 import { useMutation, useQueryClient, MutationOptions } from '@tanstack/react-query';
 import { useAxiosWithToken } from './useAxios';
-
+import { useContext } from 'react';
+import { UserContext } from '@/hooks/Auth/UserContext';
 /**
  * Custom hook for making authenticated PUT requests with separate response and variables types.
  *
@@ -17,13 +18,12 @@ export const usePutWithTokenAPI = <TResponse, TVariables = unknown, E = unknown>
     const queryClient = useQueryClient();
 
     // Define the auth string
-    const authString = `root:root`;
-
+    const { user } = useContext(UserContext);
     // Function to perform the PUT request
     const putData = async (data: TVariables): Promise<TResponse> => {
         const response = await axiosInstance.put(url, data, {
             headers: {
-                'x-auth-string': authString,
+                'x-auth-string': `${user.username}:${user.password}`,
             },
         });
         return response.data;
