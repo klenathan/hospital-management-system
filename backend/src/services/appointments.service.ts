@@ -24,6 +24,7 @@ export default class AppointmentService {
         staffId ?? "null"
       }, "2024-08-10 14:00:00", "2024-08-12 14:30:00")`
     );
+    await conn.end();
 
     return {
       queryResult: {
@@ -42,7 +43,7 @@ export default class AppointmentService {
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`call A_ViewDoctorScheduleByDuration("${startTime}", "${endTime}")`);
-
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
@@ -80,7 +81,7 @@ export default class AppointmentService {
       "${newEndTimeStr}",
       "${props.purpose}" 
       )`);
-
+    await conn.end();
     return {
       status: "success",
     };
@@ -97,7 +98,7 @@ export default class AppointmentService {
     >(`CALL A_CancelAppoinment(
       "${appointmentId}"
       )`);
-
+    await conn.end();
     return {
       status: "success",
     };

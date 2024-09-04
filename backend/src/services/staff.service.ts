@@ -59,6 +59,8 @@ export default class StaffService {
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_ListStaffByDepartmentID("${props.depId}")`);
+
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
@@ -77,6 +79,8 @@ export default class StaffService {
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL S_ViewStaffScheduleByID("${props.staffId}")`);
+
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
@@ -109,6 +113,8 @@ export default class StaffService {
       "${props.deptId}",
       "${props.salary}",
       "${props.username}")`);
+
+    await conn.end();
 
     return {
       status: "success",
@@ -148,6 +154,7 @@ export default class StaffService {
       "${newEndTimeStr}"
       )`);
 
+    await conn.end();
     return {
       status: "success",
     };
@@ -178,7 +185,7 @@ export default class StaffService {
         "${props.salary}",
         "${props.deptId}"
     )`);
-
+    await conn.end();
     return { status: "success" };
   }
 }
