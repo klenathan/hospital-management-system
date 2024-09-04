@@ -1,3 +1,4 @@
+
 DROP DATABASE IF EXISTS `hospital_management`;
 
 CREATE DATABASE IF NOT EXISTS `hospital_management`;
@@ -99,10 +100,7 @@ CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
 
-CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
-
-\n\n 
-
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);\n\n
 DELIMITER $$
 
 CREATE PROCEDURE S_GetAllDepartment (
@@ -413,13 +411,6 @@ CREATE PROCEDURE S_GetStaffByUsername (
 SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
 
 END $$\n\n
-
-$$\n\n 
-
-$$
-
-\n\n 
-
 DELIMITER $$
 
 CREATE PROCEDURE P_RegisterNewPatient (
@@ -543,13 +534,6 @@ BEGIN
     
     COMMIT;
 END $$\n\n
-
-$$\n\n 
-
-$$
-
-\n\n 
-
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
@@ -659,13 +643,6 @@ ROLLBACK;
 END IF;
 
 END $$\n\n
-
-$$\n\n 
-
-$$
-
-\n\n 
-
 DELIMITER $$
 
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
@@ -729,9 +706,6 @@ WHERE s.job_type = 'Doctor'
 GROUP BY s.id;
 
 END $$\n\n
-
-$$\n\n 
-
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT
@@ -769,6 +743,9 @@ EXECUTE ON PROCEDURE hospital_management.A_CancelAppoinment TO doctor;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO doctor;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.R_ViewOneJobChangeHistoryByID TO adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO doctor;
@@ -840,6 +817,4 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
 
 GRANT
-EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;
-
-\n\n 
+EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;\n\n

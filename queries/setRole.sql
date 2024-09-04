@@ -37,6 +37,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO doctor;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.R_ViewOneJobChangeHistoryByID TO adminStaff;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO doctor;
 
 GRANT
