@@ -1,6 +1,21 @@
-DELIMITER;
+DELIMITER &&
 
 CREATE ROLE doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.appointments TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.departments TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.patients TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.staff_job_history TO doctor, nurse, adminStaff;
+
+GRANT
+SELECT ON hospital_management.staffs TO doctor, nurse, adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.P_RegisterNewPatient TO doctor;
