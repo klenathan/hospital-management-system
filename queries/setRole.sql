@@ -1,5 +1,3 @@
-DELIMITER;
-
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT

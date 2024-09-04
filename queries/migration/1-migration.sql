@@ -716,8 +716,6 @@ GROUP BY s.id;
 END $$
 
 
-DELIMITER;
-
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT
