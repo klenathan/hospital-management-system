@@ -9,7 +9,7 @@ import { DepartmentResponse } from '@/types/department';
 import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import AddCustomObjectForm from '@/components/AddCustomObjectForm';
 import {
-    Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext,
+    Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationFirst, PaginationLast,
 } from '@/components/ui/pagination';
 
 import AddStaffForm from '@/components/AddStaffForm';
@@ -19,6 +19,7 @@ import BlobList from '@/components/BlobList';
 import { UpdateStaffInfoForm } from '@/components/UpdateStaffInfoForm';
 import { UserContext } from '@/hooks/Auth/UserContext';
 import { Navigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
 
 
 export default function StaffManagement() {
@@ -211,74 +212,54 @@ export default function StaffManagement() {
             {/* Pagination Controls */}
             <Pagination className="mt-4">
                 <PaginationContent>
+
+                    <PaginationItem>
+                        <PaginationFirst
+                            className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
+                            onClick={() => setCurrentPage(1)}
+                        />
+                    </PaginationItem>
+
                     <PaginationItem>
                         <PaginationPrevious
+                            className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
                             onClick={currentPage !== 1 ? () => setCurrentPage((prev) => Math.max(prev - 1, 1)) : () => { }}
                         />
                     </PaginationItem>
 
-                    {/* Render first page if it's not within the visible range */}
-                    {currentPage > 2 && (
-                        <>
-                            <PaginationItem>
-                                <PaginationLink
-                                    onClick={() => setCurrentPage(1)}
-                                >
-                                    1
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                        </>
-                    )}
-
-                    {/* Render visible pages */}
-                    {[...Array(totalPages)].map((_, index) => {
-                        const pageNumber = index + 1;
-                        if (
-                            pageNumber === currentPage ||
-                            pageNumber === currentPage - 1 ||
-                            pageNumber === currentPage + 1
-                        ) {
-                            return (
-                                <PaginationItem key={pageNumber}>
-                                    <PaginationLink
-
-                                        onClick={() => setCurrentPage(pageNumber)}
-                                        isActive={currentPage === pageNumber}
-                                        className={pageNumber === currentPage ? 'active' : ''}
-                                    >
-                                        {pageNumber}
-                                    </PaginationLink>
-                                </PaginationItem>
-                            );
-                        }
-                        return null;
-                    })}
-
-                    {/* Render last page if it's not within the visible range */}
-                    {currentPage < totalPages - 1 && (
-                        <>
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink
-
-                                    onClick={() => setCurrentPage(totalPages)}
-
-                                >
-                                    {totalPages}
-                                </PaginationLink>
-                            </PaginationItem>
-                        </>
-                    )}
+                    <PaginationItem>
+                        <div className='flex items-center'>
+                            <span>Page </span>
+                            <Input
+                                type="number"
+                                value={currentPage}
+                                onChange={(e) => {
+                                    const value = Number(e.target.value);
+                                    // Ensure the value is within valid page range
+                                    if (value >= 1 && value <= totalPages) {
+                                        setCurrentPage(value);
+                                    }
+                                }}
+                                className='mx-2 w-16'
+                                min={1}
+                                max={totalPages}
+                            />
+                            <span> of {totalPages}</span>
+                        </div>
+                    </PaginationItem>
 
                     <PaginationItem>
                         <PaginationNext
+                            className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
 
                             onClick={currentPage !== totalPages ? () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) : () => { }}
+                        />
+                    </PaginationItem>
+
+                    <PaginationItem>
+                        <PaginationLast
+                            className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
+                            onClick={() => setCurrentPage(totalPages)}
                         />
                     </PaginationItem>
                 </PaginationContent>

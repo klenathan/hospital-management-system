@@ -26,8 +26,7 @@ import {
 } from "@/components/ui/card";
 
 import {
-  Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext,
-  PaginationLink,
+  Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLast, PaginationFirst,
 } from '@/components/ui/pagination';
 
 import RegisterPatientForm from '@/components/RegisterPatientForm';
@@ -46,6 +45,8 @@ export default function Patient() {
   const [searchID, setSearchID] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+
+  const [lastPage, setLastPage] = useState<number>(0);
 
 
   const searchQuery = () => {
@@ -75,34 +76,22 @@ export default function Patient() {
       getApiEndpoint(queryOrder, 10, currentPage)
     );
 
+  useEffect(() => {
+    if (patientsData?.queryResult?.totalCount) {
+      setLastPage(patientsData.queryResult.totalCount);
+    }
+
+  }, [patientsData])
+
   // Determine total pages based on search results or fallback to 200 pages
   const totalPages = searchID || searchName
     ? Math.ceil((patientsData?.queryResult?.count || 0) / 10)
-    : 200;
+    : lastPage / 10;
 
   useEffect(() => {
     setCurrentPage(1);
     refetch(); // Refetch data when the criteria changes
   }, [searchType, refetch]);
-
-  const generatePageNumbers = () => {
-    let startPage = Math.max(1, currentPage - 4);
-    let endPage = Math.min(totalPages, currentPage + 5);
-
-    // Adjust start and end if near the start of the page range
-    if (currentPage <= 5) {
-      startPage = 1;
-      endPage = Math.min(10, totalPages); // Ensure endPage doesn't exceed totalPages
-    }
-
-    // Adjust start and end if near the end of the page range
-    if (currentPage + 4 >= totalPages) {
-      endPage = totalPages;
-      startPage = Math.max(1, totalPages - 9); // Ensure startPage is at least 1
-    }
-
-    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-  };
 
   const { user } = useContext(UserContext);
 
@@ -252,30 +241,55 @@ export default function Patient() {
         <Pagination className="mt-4">
           <PaginationContent>
             <PaginationItem>
+              <PaginationFirst
+                className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
+                onClick={() => setCurrentPage(1)}
+              />
+            </PaginationItem>
+
+
+            <PaginationItem>
               <PaginationPrevious
                 className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
-
                 onClick={currentPage > 1 ? () => setCurrentPage(currentPage - 1) : undefined}
               />
             </PaginationItem>
 
-            {generatePageNumbers().map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
+            <PaginationItem>
+              <div className='flex items-center'>
+                <span>Page </span>
+                <Input
+                  type="number"
+                  value={currentPage}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    // Ensure the value is within valid page range
+                    if (value >= 1 && value <= totalPages) {
+                      setCurrentPage(value);
+                    }
+                  }}
+                  className='w-16 mx-2'
+                  min={1}
+                  max={totalPages}
+                />
+                <span> of {totalPages}</span>
+              </div>
+            </PaginationItem>
 
-                  onClick={() => setCurrentPage(page)}
-                  isActive={currentPage === page}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
 
             <PaginationItem>
               <PaginationNext
                 className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
 
                 onClick={currentPage < totalPages ? () => setCurrentPage(currentPage + 1) : undefined}
+              />
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationLast
+                className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
+
+                onClick={() => setCurrentPage(totalPages)}
               />
             </PaginationItem>
           </PaginationContent>

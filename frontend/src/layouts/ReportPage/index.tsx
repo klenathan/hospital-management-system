@@ -23,7 +23,6 @@ export default function ReportsPage() {
                     <TabsList>
                         <TabsTrigger value="patientTreatment">Patient Treatment</TabsTrigger>
                         <TabsTrigger value="doctorWorkload">Doctor Workload</TabsTrigger>
-
                     </TabsList>
                     <TabsContent value="patientTreatment">
                         <PatientTreatmentTab />
