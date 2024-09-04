@@ -54,7 +54,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
       `CALL S_GetStaffByUsername(?)`,
       [loginObj.username]
     );
-
+    await conn.end();
     return res.status(200).json({ status: "success", user: rows[0] });
   } catch (error) {
     if ((error as QueryError).code == "ER_ACCESS_DENIED_ERROR") {
