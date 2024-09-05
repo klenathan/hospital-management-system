@@ -43,6 +43,7 @@ export default function AddStaffForm({ departments, refetch }: AddStaffFormProps
     const form = useForm<StaffFormData>({
         resolver: zodResolver(staffSchema),
         defaultValues: {
+            username: "",
             firstName: "",
             lastName: "",
             jobType: "",
@@ -97,7 +98,6 @@ export default function AddStaffForm({ departments, refetch }: AddStaffFormProps
                 </DialogDescription>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="gap-5 grid grid-cols-2">
-
                         <FormField
                             control={form.control}
                             name="username"
@@ -111,7 +111,6 @@ export default function AddStaffForm({ departments, refetch }: AddStaffFormProps
                                 </FormItem>
                             )}
                         />
-
                         <FormField
                             control={form.control}
                             name="firstName"

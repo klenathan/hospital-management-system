@@ -2,6 +2,8 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface User {
+  first_name: string,
+  last_name: string,
   username: string;
   password: string;
   job_type: string;
@@ -19,6 +21,8 @@ interface UserContextType {
 const DefaultUserContext: UserContextType = {
   loggedIn: false,
   user: {
+    first_name: '',
+    last_name: '',
     username: '',
     password: '',
     job_type: '',
@@ -33,6 +37,8 @@ export const UserContext = createContext<UserContextType>(DefaultUserContext);
 
 export function UserProvider({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<User>({
+    first_name: '',
+    last_name: '',
     username: '',
     password: '',
     job_type: '',
@@ -58,6 +64,8 @@ export function UserProvider({ children }: { children?: ReactNode }) {
 
       if (response.data.status === 'success' && response.data.user.length > 0) {
         const userData: User = {
+          first_name: response.data.user[0].first_name,
+          last_name: response.data.user[0].last_name,
           username,
           password,
           job_type: response.data.user[0].job_type,
@@ -79,6 +87,8 @@ export function UserProvider({ children }: { children?: ReactNode }) {
   const logout = () => {
     localStorage.removeItem('user');
     setUser({
+      first_name: '',
+      last_name: '',
       username: '',
       password: '',
       job_type: '',

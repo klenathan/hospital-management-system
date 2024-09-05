@@ -21,3 +21,22 @@ export type ScheduleResponse = {
   }
   data: Schedule[]
 }
+
+export interface DoctorSchedule {
+  id: number
+  patient_id: number
+  staff_id: number
+  start_time: string
+  end_time: string
+  purpose: string
+  deleted: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type DoctorScheduleResponse = {
+  queryResult: {
+    count: number
+  }
+  data: DoctorSchedule[]
+}

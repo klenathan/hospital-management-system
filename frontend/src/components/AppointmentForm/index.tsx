@@ -1,5 +1,5 @@
 import AsyncSelect from 'react-select/async';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,12 +26,21 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { UserContext } from '@/hooks/Auth/UserContext';
 
-export default function AppointmentForm() {
+
+interface AppointmentFormProps {
+    refetch: () => void;
+}
+
+export default function AppointmentForm({ refetch }: AppointmentFormProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const [selectedDoctor, setSelectedDoctor] = useState<{ value: string; label: string } | null>(null);
+    const { user } = useContext(UserContext);
+    const [selectedDoctor, setSelectedDoctor] = useState<{ value: string; label: string } | null>();
     const [selectedPatient, setSelectedPatient] = useState<{ value: string; label: string } | null>(null);
+
+
 
     const appointmentSchema = z.object({
         doctor: z.number().int().positive("Please select a valid doctor."),
@@ -52,10 +61,12 @@ export default function AppointmentForm() {
 
     type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
+
+
     const form = useForm<AppointmentFormValues>({
         resolver: zodResolver(appointmentSchema),
         defaultValues: {
-            doctor: 0,
+            doctor: user.job_type === 'Doctor' ? user.userID : 0,
             patient: 0,
             date: '',
             startTime: '',
@@ -63,6 +74,13 @@ export default function AppointmentForm() {
             purpose: '',
         }
     });
+
+    useEffect(() => {
+        if (user.job_type === 'Doctor') {
+            setSelectedDoctor({ value: user.userID.toString(), label: user.first_name + ' ' + user.last_name });
+            form.setValue('doctor', user.userID);
+        }
+    }, [form, user]);
 
     const { data: doctorsListData, isLoading: doctorsLoading } =
         useQueryWithTokenAPI<StaffListResponse>(
@@ -109,6 +127,7 @@ export default function AppointmentForm() {
                 setSelectedDoctor(null);
                 setSelectedPatient(null);
                 setIsOpen(false);
+                refetch()
             },
             onError: (error: unknown) => {
                 toast({
@@ -116,7 +135,7 @@ export default function AppointmentForm() {
                     title: "Uh oh! Something went wrong.",
                     description: (error as { response?: { data?: { message?: string } } })?.response?.data?.message,
                 });
-                setIsOpen(false);
+                // setIsOpen(false);
             },
         });
     };
@@ -151,6 +170,8 @@ export default function AppointmentForm() {
         setOpen(false);
     };
 
+
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
@@ -165,34 +186,37 @@ export default function AppointmentForm() {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="doctor"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Doctor</FormLabel>
-                                    <FormControl>
-                                        <AsyncSelect
-                                            cacheOptions
-                                            loadOptions={loadDoctorOptions}
-                                            defaultOptions
-                                            onChange={(selectedOption) => {
-                                                setSelectedDoctor(selectedOption);
-                                                field.onChange(Number(selectedOption?.value) || 0); // Ensure value is a number
-                                            }}
-                                            value={selectedDoctor}
-                                            placeholder="Select a doctor"
-                                            isClearable
-                                        />
-                                    </FormControl>
-                                    <FormMessage>{form.formState.errors.doctor?.message}</FormMessage>
-                                </FormItem>
-                            )}
-                        />
+                        {user.job_type != 'Doctor' && (
+
+                            <FormField
+                                control={form.control}
+                                name="doctor"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Doctor</FormLabel>
+                                        <FormControl>
+                                            <AsyncSelect
+                                                cacheOptions
+                                                loadOptions={loadDoctorOptions}
+                                                defaultOptions
+                                                onChange={(selectedOption) => {
+                                                    setSelectedDoctor(selectedOption);
+                                                    field.onChange(Number(selectedOption?.value) || 0); // Ensure value is a number
+                                                }}
+                                                value={selectedDoctor}
+                                                placeholder="Select a doctor"
+                                                isClearable
+                                            />
+                                        </FormControl>
+                                        <FormMessage>{form.formState.errors.doctor?.message}</FormMessage>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <FormField
                             control={form.control}
                             name="patient"
-                            render={({ field }) => (
+                            render={() => (
                                 <FormItem>
                                     <FormLabel>Patient</FormLabel>
                                     <FormControl>

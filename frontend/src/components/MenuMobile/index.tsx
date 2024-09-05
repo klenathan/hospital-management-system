@@ -82,7 +82,7 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
                   {user.job_type === 'Doctor' &&
                     <>
                       <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
-                      <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/schedule' icon={<CalendarDays />} text='Schedule' onClick={() => setIsSheetOpen(false)} />
                       <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
                     </>
                   }

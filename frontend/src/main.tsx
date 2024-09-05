@@ -11,6 +11,7 @@ import ReportPage from './layouts/ReportPage';
 import App from './App';
 import Login from './layouts/Login';
 import Patient from './layouts/Patient';
+import DoctorSchedule from './layouts/DoctorSchedule';
 
 
 // import { RedirectIfUnAuthenticated, RedirectIfAuthenticated } from './components/Redirect';
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: '/patient',
             element: <Patient />,
+          },
+          {
+            path: '/schedule',
+            element: <DoctorSchedule />,
           },
           {
             path: '/appointment',

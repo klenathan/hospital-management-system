@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';import { Button } from "@/components/ui/button";
+import { useState, useEffect, useContext } from 'react'; import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -77,7 +77,7 @@ export default function Patient() {
 
   useEffect(() => {
     if (patientsData?.queryResult?.totalCount) {
-      setLastPage(patientsData.queryResult.totalCount);
+      setLastPage(Math.ceil(patientsData.queryResult.totalCount / 10));
     }
 
   }, [patientsData])
@@ -85,7 +85,7 @@ export default function Patient() {
   // Determine total pages based on search results or fallback to 200 pages
   const totalPages = searchID || searchName
     ? Math.ceil((patientsData?.queryResult?.count || 0) / 10)
-    : lastPage / 10;
+    : lastPage;
 
   useEffect(() => {
     setCurrentPage(1);

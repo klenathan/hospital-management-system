@@ -3,10 +3,10 @@ import {
   ProcedureCallPacket,
   ResultSetHeader,
   RowDataPacket,
-} from "mysql2/promise";
+} from 'mysql2/promise';
 
-import { GetRequestResult } from "./queryResult";
-import { getMySqlConnnection } from "../db/mysql";
+import { GetRequestResult } from './queryResult';
+import { getMySqlConnnection } from '../db/mysql';
 
 export default class AppointmentService {
   tzoffset = new Date().getTimezoneOffset() * 60000;
@@ -21,7 +21,7 @@ export default class AppointmentService {
       ProcedureCallPacket<RowDataPacket[]>
     >(
       `call R_ViewOneOrManyTreatmentHistoryByDuration(${
-        staffId ?? "null"
+        staffId ?? 'null'
       }, "2024-08-10 14:00:00", "2024-08-12 14:30:00")`
     );
     await conn.end();
@@ -59,7 +59,7 @@ export default class AppointmentService {
     const conn = await getMySqlConnnection(config);
 
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
-      `SELECT * FROM appointments where staff_id=?`,
+      `SELECT * FROM appointments where deleted=0 and staff_id=?`,
       doctorId
     );
 
@@ -103,7 +103,7 @@ export default class AppointmentService {
       )`);
     await conn.end();
     return {
-      status: "success",
+      status: 'success',
     };
   }
 
@@ -120,7 +120,7 @@ export default class AppointmentService {
       )`);
     await conn.end();
     return {
-      status: "success",
+      status: 'success',
     };
   }
 }

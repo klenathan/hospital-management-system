@@ -26,6 +26,7 @@ export default function ScheduleForm({
     scheduleLoading = false,
     refetch
 }: ScheduleFormProps) {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
     const { toast } = useToast();
@@ -56,6 +57,17 @@ export default function ScheduleForm({
         deleteUserMutation.mutate();
     };
 
+    function getFormattedDate(date: Date) {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
     return (
         <>
             {scheduleLoading ? (
@@ -75,16 +87,17 @@ export default function ScheduleForm({
                                                 <h3 className="font-semibold text-black">{`${schedule.first_name} ${schedule.last_name}`}</h3>
                                                 <div className='flex items-center'>
                                                     <CalendarIcon className="mr-1 w-3 h-3" />
-                                                    {startDate.toISOString().split('T')[0]}
+                                                    {getFormattedDate(new Date(schedule.start_time)).split(' ')[0]} {/* Extract only the date */}
                                                     <ClockIcon className="mr-1 ml-2 w-3 h-3" />
-                                                    {startDate.toISOString().split('T')[1].slice(0, 5)} - {endDate.toISOString().split('T')[1].slice(0, 5)}
+                                                    {getFormattedDate(new Date(schedule.start_time)).split(' ')[1].slice(0, 5)} - {/* Extract and format the start time */}
+                                                    {getFormattedDate(new Date(schedule.end_time)).split(' ')[1].slice(0, 5)} {/* Extract and format the end time */}
                                                 </div>
                                             </div>
                                             <div className="flex gap-1">
 
-                                                <Dialog>
+                                                <Dialog open={isOpen} onOpenChange={setIsOpen}>
                                                     <DialogTrigger asChild>
-                                                        <Button size="icon" className="w-10 h-10" onClick={() => setSelectedAppointmentId(schedule.appointmentId)}>
+                                                        <Button size="icon" className="w-10 h-10" onClick={() => { setSelectedAppointmentId(schedule.appointmentId); setIsOpen(false) }}>
                                                             <SquarePenIcon className="w-4 h-4" />
                                                         </Button>
                                                     </DialogTrigger>
@@ -99,7 +112,9 @@ export default function ScheduleForm({
                                                             appointmentId={schedule.appointmentId}
                                                             startDate={startDate}
                                                             endDate={endDate}
+                                                            refetch={refetch}
                                                             onSuccess={() => {
+                                                                setIsOpen(false);
                                                                 setSelectedAppointmentId(null);
                                                                 setOpenDialogId(null);
                                                                 refetch();
@@ -123,21 +138,6 @@ export default function ScheduleForm({
                                                         <DialogHeader>
                                                             <DialogTitle>Add Note</DialogTitle>
                                                         </DialogHeader>
-                                                        {/* <Input
-                                                            placeholder="Enter your note here"
-                                                            value={note}
-                                                            onChange={(e) => setNote(e.target.value)}
-                                                        />
-                                                        <DialogFooter>
-                                                            <DialogClose asChild>
-                                                                <Button type="button" variant="secondary">
-                                                                    Cancel
-                                                                </Button>
-                                                            </DialogClose>
-                                                            <Button type="button" onClick={handleAddNote}>
-                                                                Add Note
-                                                            </Button>
-                                                        </DialogFooter> */}
                                                         <BlobList domain='appointment' parent={schedule.id.toString()} />
                                                         <AddCustomObjectForm domain='appointment' parentID={schedule.id.toString()} />
                                                     </DialogContent>

@@ -45,6 +45,7 @@ interface UpdateAppointmentFormProps {
     onSuccess: () => void;
     onCancel: () => void;
     staffId: number;
+    refetch: () => void;
 }
 
 export function UpdateAppointmentForm({
@@ -54,6 +55,7 @@ export function UpdateAppointmentForm({
     onSuccess,
     onCancel,
     staffId,
+    refetch,
 }: UpdateAppointmentFormProps) {
 
     const { toast } = useToast();
@@ -91,6 +93,7 @@ export function UpdateAppointmentForm({
             updateAppointment.mutate(transformedData, {
                 onSuccess: () => {
                     form.reset();
+                    refetch();
                     toast({
                         variant: "success",
                         title: "Appointment Updated Successfully!",

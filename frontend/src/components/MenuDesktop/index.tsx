@@ -98,7 +98,7 @@ const MenuDesktop: React.FC<MenuDesktopProps> = ({ logout }) => {
             {user.job_type === 'Doctor' &&
               <>
                 <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' />
-                <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' />
+                <SidebarItem to='/schedule' icon={<CalendarDays />} text='Schedule' />
                 <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' />
               </>
             }
