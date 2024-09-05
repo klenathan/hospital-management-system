@@ -11,6 +11,8 @@ import { useMutationWithTokenAPI } from '@/hooks/API/useMutationAPI';
 import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 import AsyncSelect from 'react-select/async';
 import { StaffListResponse } from '@/types/staffs';
+import { useContext } from 'react';
+import { UserContext } from '@/hooks/Auth/UserContext';
 
 // Define the validation schema using Zod
 const addTreatmentSchema = z.object({
@@ -36,6 +38,8 @@ export function AddTreatmentForm({
 
     const { toast } = useToast();
 
+    const { user } = useContext(UserContext);
+
     // Fetch doctors list for the staff selection
     const { data: doctorsListData, isLoading: doctorsLoading } =
         useQueryWithTokenAPI<StaffListResponse>(
@@ -47,7 +51,7 @@ export function AddTreatmentForm({
     const form = useForm<AddTreatmentFormValues>({
         resolver: zodResolver(addTreatmentSchema),
         defaultValues: {
-            staffId: 0,
+            staffId: user.job_type === 'Doctor' ? user.userID : 0,
             treatmentDate: '',
             treatmentDetail: '',
         },
@@ -108,28 +112,32 @@ export function AddTreatmentForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                <FormField
-                    control={form.control}
-                    name="staffId"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Doctor</FormLabel>
-                            <FormControl>
-                                <AsyncSelect
-                                    cacheOptions
-                                    loadOptions={loadDoctorOptions}
-                                    defaultOptions
-                                    onChange={(selectedOption) => {
-                                        field.onChange(Number(selectedOption?.value) || 0); // Ensure value is a number
-                                    }}
-                                    placeholder="Select a doctor"
-                                    isClearable
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+
+                {user.job_type != 'Doctor' && (
+
+                    <FormField
+                        control={form.control}
+                        name="staffId"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Doctor</FormLabel>
+                                <FormControl>
+                                    <AsyncSelect
+                                        cacheOptions
+                                        loadOptions={loadDoctorOptions}
+                                        defaultOptions
+                                        onChange={(selectedOption) => {
+                                            field.onChange(Number(selectedOption?.value) || 0); // Ensure value is a number
+                                        }}
+                                        placeholder="Select a doctor"
+                                        isClearable
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
                 <FormField
                     control={form.control}
                     name="treatmentDate"
@@ -155,6 +163,7 @@ export function AddTreatmentForm({
                             <FormLabel>Treatment Detail</FormLabel>
                             <FormControl>
                                 <Textarea
+                                    className='min-h-52'
                                     placeholder="Enter treatment detail"
                                     {...field}
                                 />

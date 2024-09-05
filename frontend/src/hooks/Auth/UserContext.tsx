@@ -5,6 +5,8 @@ interface User {
   username: string;
   password: string;
   job_type: string;
+  userID: number,
+
 }
 
 interface UserContextType {
@@ -20,6 +22,8 @@ const DefaultUserContext: UserContextType = {
     username: '',
     password: '',
     job_type: '',
+    userID: 0,
+
   },
   login: async () => { },
   logout: () => { },
@@ -32,6 +36,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     username: '',
     password: '',
     job_type: '',
+    userID: 0,
   });
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
@@ -40,6 +45,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     if (savedUser) {
       const decodedUser = JSON.parse(atob(((savedUser))));
       setUser(decodedUser);
+      console.log(decodedUser);
       setLoggedIn(true);
     }
   }, []);
@@ -56,6 +62,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
           username,
           password,
           job_type: response.data.user[0].job_type,
+          userID: response.data.user[0].id,
         };
         const encodedUser = btoa(JSON.stringify(userData));
         localStorage.setItem('user', encodedUser);
@@ -76,6 +83,7 @@ export function UserProvider({ children }: { children?: ReactNode }) {
       username: '',
       password: '',
       job_type: '',
+      userID: 0,
     });
     setLoggedIn(false);
   };

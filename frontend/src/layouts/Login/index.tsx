@@ -12,9 +12,18 @@ import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
 
 // Define the login form schema using zod
 const loginSchema = z.object({
-  username: z.string().min(1, { message: 'Please enter your username' }),
-  password: z.string().min(1, { message: 'Please enter your password' })
+  username: z.string()
+    .min(1, { message: 'Please enter your username' })
+    .refine((val) => val !== 'root', {
+      message: "Username invalid",
+    }),
+  password: z.string()
+    .min(1, { message: 'Please enter your password' })
+    .refine((val) => val !== 'root', {
+      message: "Password invalid",
+    })
 });
+
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 

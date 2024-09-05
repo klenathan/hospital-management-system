@@ -7,6 +7,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
+import { ChevronFirstIcon, ChevronLastIcon } from "lucide-react"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -70,11 +71,11 @@ const PaginationPrevious = ({
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    className={cn("gap-1", className)}
     {...props}
   >
-    <ChevronLeftIcon className="h-4 w-4" />
-    <span>Previous</span>
+    <ChevronLeftIcon className="w-4 h-4" />
+    {/* <span>Previous</span> */}
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -86,14 +87,49 @@ const PaginationNext = ({
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-1", className)}
     {...props}
   >
-    <span>Next</span>
-    <ChevronRightIcon className="h-4 w-4" />
+    {/* <span>Next</span> */}
+    <ChevronRightIcon className="w-4 h-4" />
   </PaginationLink>
 )
 PaginationNext.displayName = "PaginationNext"
+
+
+const PaginationLast = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to last page"
+    size="default"
+    className={cn("gap-1", className)}
+    {...props}
+  >
+    {/* <span>Next</span> */}
+    <ChevronLastIcon className="w-4 h-4" />
+  </PaginationLink>
+)
+PaginationLast.displayName = "PaginationLast"
+
+
+const PaginationFirst = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to first page"
+    size="default"
+    className={cn("gap-1", className)}
+    {...props}
+  >
+    <ChevronFirstIcon className="w-4 h-4" />
+    {/* <span>Previous</span> */}
+  </PaginationLink>
+)
+PaginationFirst.displayName = "PaginationFirst"
+
 
 const PaginationEllipsis = ({
   className,
@@ -104,7 +140,7 @@ const PaginationEllipsis = ({
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
-    <DotsHorizontalIcon className="h-4 w-4" />
+    <DotsHorizontalIcon className="w-4 h-4" />
     <span className="sr-only">More pages</span>
   </span>
 )
@@ -117,5 +153,7 @@ export {
   PaginationItem,
   PaginationPrevious,
   PaginationNext,
+  PaginationFirst,
+  PaginationLast,
   PaginationEllipsis,
 }

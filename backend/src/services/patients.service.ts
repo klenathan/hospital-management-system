@@ -37,7 +37,7 @@ export default class PatientService {
       `SELECT COUNT(*) as total FROM patients`,
       [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
-
+    await conn.end();
     return {
       queryResult: {
         count: rows.length,

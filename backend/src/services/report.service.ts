@@ -24,7 +24,7 @@ export default class ReportService {
         patientId ?? "null"
       }, "${startTime}", "${endTime}")`
     );
-
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
@@ -43,6 +43,8 @@ export default class ReportService {
     const [rows, _fields] = await conn.query<
       ProcedureCallPacket<RowDataPacket[]>
     >(`CALL R_ViewOneJobChangeHistoryByID("${props.staffId}")`);
+
+    await conn.end();
     return {
       queryResult: {
         count: rows[0].length,
@@ -65,6 +67,8 @@ export default class ReportService {
         staffId ?? "null"
       }, "${startTime}", "${endTime}")`
     );
+
+    await conn.end();
 
     return {
       queryResult: {
