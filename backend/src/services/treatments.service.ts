@@ -8,6 +8,8 @@ export default class TreatmentService {
     const patients = conn.execute(
       "SELECT * FROM `treatments` order by `id` ASC"
     );
+
+    await conn.end();
     return patients.then((result) => result[0]);
   }
 }

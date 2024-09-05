@@ -13,6 +13,7 @@ export default class DepartmentService {
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
       `SELECT * FROM departments;`
     );
+    await conn.end();
     return {
       queryResult: {
         count: rows.length,
