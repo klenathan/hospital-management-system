@@ -76,6 +76,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO nurse;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO nurse;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO nurse;
 
 GRANT
