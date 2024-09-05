@@ -69,6 +69,32 @@ appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
   }
 });
 
+appointmentRouter.get(
+  "/schedule/byDoctor/:id",
+  async (req: Request, res: Response) => {
+    /*  
+  #swagger.summary = "View working schedule of all doctors for a given duration (with busy or available status)"
+  
+  #swagger.parameters['id'] = { description: 'Patient ID' }
+    } 
+     */
+    try {
+      const id = parseInt(req.params["id"] as string);
+      if (isNaN(id)) {
+        throw new Error(`Invalid patient ID: ${id}`);
+      }
+
+      const appointments = await appointmentService.getAllAppointmentByDoctotId(
+        id,
+        dbConfigBuilder(res.locals["username"], res.locals["password"])
+      );
+      res.status(200).send(appointments);
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  }
+);
+
 appointmentRouter.post("/", async (req: Request, res: Response) => {
   /*  
   #swagger.summary = 'Create new appointment with doctor'

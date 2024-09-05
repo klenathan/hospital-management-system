@@ -52,6 +52,26 @@ export default class AppointmentService {
     };
   }
 
+  public async getAllAppointmentByDoctotId(
+    doctorId: number,
+    config: PoolOptions
+  ): Promise<GetRequestResult> {
+    const conn = await getMySqlConnnection(config);
+
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM appointments where staff_id=?`,
+      doctorId
+    );
+
+    await conn.end();
+    return {
+      queryResult: {
+        count: rows.length,
+      },
+      data: rows,
+    };
+  }
+
   public async createNewAppointment(
     props: {
       patientId: number;
