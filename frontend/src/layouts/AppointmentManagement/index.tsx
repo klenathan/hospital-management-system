@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -13,8 +13,6 @@ import { WorkingSchedule, WorkingScheduleResponse } from '@/types/appointment';
 import AppointmentForm from '@/components/AppointmentForm';
 import { ScheduleResponse } from '@/types/schedule';
 import ScheduleForm from '@/components/ScheduleForm';
-import { UserContext } from '@/hooks/Auth/UserContext';
-import { Navigate } from 'react-router-dom';
 
 
 export default function AppointmentManagement() {

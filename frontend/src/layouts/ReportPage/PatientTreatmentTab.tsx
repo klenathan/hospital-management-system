@@ -114,7 +114,7 @@ export default function PatientTreatmentTab() {
                                             className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground p-1 text-foreground overflow-hidden">
                                             {patientsOptions.map((patient) => (
                                                 <div
-                                                    className="relative flex items-center data-[selected=true]:bg-accent hover:bg-gray-100 data-[disabled=true]:opacity-50 px-2 py-1.5 rounded-sm text-sm data-[selected=true]:text-accent-foreground cursor-default cursor-pointer data-[disabled=true]:pointer-events-none select-none outline-none"
+                                                    className="relative flex items-center data-[selected=true]:bg-accent hover:bg-gray-100 data-[disabled=true]:opacity-50 px-2 py-1.5 rounded-sm text-sm data-[selected=true]:text-accent-foreground cursor-pointer data-[disabled=true]:pointer-events-none select-none outline-none"
                                                     key={patient.value}
                                                     // value={patient.value}
                                                     onClick={() => handlePatientSelect(patient.value, patient.label)}
@@ -133,29 +133,6 @@ export default function PatientTreatmentTab() {
                                         <CommandEmpty>No patient found.</CommandEmpty>
 
                                     }
-
-
-                                    {/* <CommandGroup>
-                                        {patientsOptions.length > 0 ? (
-                                            patientsOptions.map((patient) => (
-                                                <CommandItem
-                                                    key={patient.value}
-                                                    value={patient.value}
-                                                    onSelect={() => handlePatientSelect(patient.value)}
-                                                >
-                                                    <Check
-                                                        className={cn(
-                                                            "mr-2 h-4 w-4",
-                                                            selectedPatient?.value === patient.value ? "opacity-100" : "opacity-0"
-                                                        )}
-                                                    />
-                                                    {patient.label}
-                                                </CommandItem>
-                                            ))
-                                        ) : (
-                                            <CommandEmpty>No patients found.</CommandEmpty>
-                                        )}
-                                    </CommandGroup> */}
                                 </CommandList>
                             </Command>
 

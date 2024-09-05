@@ -1,5 +1,5 @@
 import AsyncSelect from 'react-select/async';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,19 @@ import { StaffListResponse } from '@/types/staffs';
 import { PatientResponse } from '@/types/patients';
 import { useMutationWithTokenAPI } from '@/hooks/API/useMutationAPI';
 import { useToast } from '@/components/ui/use-toast';
-
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+    Command,
+    CommandEmpty,
+    CommandInput,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function AppointmentForm() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,9 +70,6 @@ export default function AppointmentForm() {
             '/api/staff/doctors/'
         );
 
-    const { data: patientsData, isLoading: patientsLoading } =
-        useQueryWithTokenAPI<PatientResponse>(['patients'], '/api/patient/');
-
     const loadDoctorOptions = (inputValue: string, callback: (options: { value: string, label: string }[]) => void) => {
         if (doctorsLoading || !doctorsListData) return;
 
@@ -77,31 +86,11 @@ export default function AppointmentForm() {
         callback(filteredDoctors);
     };
 
-    const loadPatientOptions = (inputValue: string, callback: (options: { value: string, label: string }[]) => void) => {
-        if (patientsLoading || !patientsData) return;
-
-        const filteredPatients = patientsData.data
-            .filter(patient =>
-                `${patient.first_name} ${patient.last_name}`.toLowerCase().includes(inputValue.toLowerCase())
-            )
-            .slice(0, 20)
-            .map(patient => ({
-                value: patient.id.toString(),
-                label: `${patient.first_name} ${patient.last_name}`,
-            }));
-
-        callback(filteredPatients);
-    };
-
-
-    const { toast } = useToast()
-
+    const { toast } = useToast();
 
     const submitForm = useMutationWithTokenAPI('/api/appointment/');
 
     const onSubmit = (data: AppointmentFormValues) => {
-
-        // Transform the form data to match the expected API request format
         const transformedData = {
             patientId: Number(data.patient), // Already a number
             staffId: Number(data.doctor),    // Already a number
@@ -116,14 +105,12 @@ export default function AppointmentForm() {
                 toast({
                     variant: "success",
                     title: "Appointment Created Successfully!",
-                    // description: `${response}`,
                 });
                 setSelectedDoctor(null);
                 setSelectedPatient(null);
                 setIsOpen(false);
             },
             onError: (error: unknown) => {
-                // console.error('Error submitting form:', error);
                 toast({
                     variant: "destructive",
                     title: "Uh oh! Something went wrong.",
@@ -134,8 +121,35 @@ export default function AppointmentForm() {
         });
     };
 
+    const [open, setOpen] = useState(false);
+    const [patientsOptions, setPatientsOptions] = useState<{ value: string; label: string }[]>([]);
+    const [inputValue, setInputValue] = useState('');
 
+    const getApiEndpoint = (inputValue: string) => {
+        return inputValue !== '' ? `/api/patient/name/${inputValue}` : `/api/patient/?order=asc&pageSize=20&pageNumber=1`;
+    };
 
+    const { data: patientsData, isLoading: patientsLoading } = useQueryWithTokenAPI<PatientResponse>(
+        ['patient', inputValue],
+        getApiEndpoint(inputValue)
+    );
+
+    useEffect(() => {
+        if (!patientsLoading && patientsData) {
+            const filteredPatientList = patientsData.data.map((patient) => ({
+                value: patient.id.toString(),
+                label: `${patient.first_name} ${patient.last_name}`,
+            }));
+            setPatientsOptions(filteredPatientList);
+        }
+    }, [patientsData, patientsLoading]);
+
+    const handlePatientSelect = (patientId: string) => {
+        const selected = patientsOptions.find((patient) => patient.value === patientId);
+        setSelectedPatient(selected || null);
+        form.setValue('patient', Number(patientId)); // Correctly update react-hook-form value
+        setOpen(false);
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -182,24 +196,56 @@ export default function AppointmentForm() {
                                 <FormItem>
                                     <FormLabel>Patient</FormLabel>
                                     <FormControl>
-                                        <AsyncSelect
-                                            cacheOptions
-                                            loadOptions={loadPatientOptions}
-                                            defaultOptions
-                                            onChange={(selectedOption) => {
-                                                setSelectedPatient(selectedOption);
-                                                field.onChange(Number(selectedOption?.value) || 0); // Ensure value is a number
-                                            }}
-                                            value={selectedPatient}
-                                            placeholder="Select a patient"
-                                            isClearable
-                                        />
+                                        <Popover open={open} onOpenChange={setOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    aria-expanded={open}
+                                                    className="justify-between w-full"
+                                                >
+                                                    {selectedPatient?.label || "Select a patient..."}
+                                                    <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="p-0 w-[200px]">
+                                                <Command>
+                                                    <CommandInput
+                                                        placeholder="Search patient..."
+                                                        value={inputValue}
+                                                        onValueChange={(value) => setInputValue(value)}
+                                                    />
+                                                    <CommandList>
+                                                        {patientsOptions.length > 0 ? (
+                                                            <>
+                                                                {patientsOptions.map((patient) => (
+                                                                    <div
+                                                                        className="relative flex items-center data-[selected=true]:bg-accent hover:bg-gray-100 data-[disabled=true]:opacity-50 px-2 py-1.5 rounded-sm text-sm data-[selected=true]:text-accent-foreground cursor-pointer data-[disabled=true]:pointer-events-none select-none outline-none"
+                                                                        key={patient.value}
+                                                                        onClick={() => handlePatientSelect(patient.value)}
+                                                                    >
+                                                                        <Check
+                                                                            className={cn(
+                                                                                "mr-2 h-4 w-4",
+                                                                                selectedPatient?.value === patient.value ? "opacity-100" : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        {patient.label}
+                                                                    </div>
+                                                                ))}
+                                                            </>
+                                                        ) : (
+                                                            <CommandEmpty>No patient found.</CommandEmpty>
+                                                        )}
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
                                     </FormControl>
                                     <FormMessage>{form.formState.errors.patient?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
-
                         <FormField
                             control={form.control}
                             name="date"
