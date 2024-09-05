@@ -100,7 +100,7 @@ CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
 
-CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);\n\n
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
 DELIMITER $$
 
 CREATE PROCEDURE S_GetAllDepartment (
@@ -410,7 +410,7 @@ CREATE PROCEDURE S_GetStaffByUsername (
 
 SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
 
-END $$\n\n
+END $$
 DELIMITER $$
 
 CREATE PROCEDURE P_RegisterNewPatient (
@@ -533,7 +533,7 @@ BEGIN
 
     
     COMMIT;
-END $$\n\n
+END $$
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
@@ -642,7 +642,7 @@ ROLLBACK;
 
 END IF;
 
-END $$\n\n
+END $$
 DELIMITER $$
 
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
@@ -705,7 +705,7 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END $$\n\n
+END $$
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT
@@ -817,4 +817,7 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO adminStaff;
 
 GRANT
-EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;\n\n
+EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.A_ViewDoctorScheduleByDuration TO adminStaff;

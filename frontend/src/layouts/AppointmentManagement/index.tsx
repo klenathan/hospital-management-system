@@ -54,13 +54,6 @@ export default function AppointmentManagement() {
         }
     }, [queryStartTime, queryEndTime, refetch, refetchSchedule, selectedStaffId, openDialogId]);
 
-    const { user } = useContext(UserContext);
-
-    if (user.job_type === 'Admin') {
-        return <Navigate to="/staff" replace />;
-    } else if (user.job_type === 'Doctor') {
-        return <Navigate to="/patient" replace />;
-    }
     return (
         <div className="flex-1 p-6">
             <h1 className="mb-6 font-bold text-2xl">Appointment Management</h1>

@@ -103,14 +103,14 @@ export default function AppointmentForm() {
 
         // Transform the form data to match the expected API request format
         const transformedData = {
-            patientId: data.patient, // Already a number
-            staffId: data.doctor,    // Already a number
-            startTime: `${data.date}T${data.startTime}:00.000Z`, // ISO 8601 format
-            endTime: `${data.date}T${data.endTime}:00.000Z`,   // ISO 8601 format
-            purpose: data.purpose,
+            patientId: Number(data.patient), // Already a number
+            staffId: Number(data.doctor),    // Already a number
+            startTime: String(`${data.date}T${data.startTime}:00.000Z`), // ISO 8601 format
+            endTime: String(`${data.date}T${data.endTime}:00.000Z`),   // ISO 8601 format
+            purpose: String(data.purpose),
         };
 
-        submitForm.mutate({ data: transformedData }, {
+        submitForm.mutate(transformedData, {
             onSuccess: () => {
                 form.reset();
                 toast({
@@ -122,12 +122,12 @@ export default function AppointmentForm() {
                 setSelectedPatient(null);
                 setIsOpen(false);
             },
-            onError: (error) => {
-                console.error('Error submitting form:', error);
+            onError: (error: unknown) => {
+                // console.error('Error submitting form:', error);
                 toast({
                     variant: "destructive",
                     title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
+                    description: (error as { response?: { data?: { message?: string } } })?.response?.data?.message,
                 });
                 setIsOpen(false);
             },

@@ -45,7 +45,6 @@ export function UserProvider({ children }: { children?: ReactNode }) {
     if (savedUser) {
       const decodedUser = JSON.parse(atob(((savedUser))));
       setUser(decodedUser);
-      console.log(decodedUser);
       setLoggedIn(true);
     }
   }, []);
