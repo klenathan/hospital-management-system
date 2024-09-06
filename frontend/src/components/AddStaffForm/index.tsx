@@ -1,21 +1,26 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Department } from '@/types/department';
 import { LoaderCircle } from 'lucide-react';
-import { useMutationWithoutTokenAPI } from '@/hooks/API/useMutationAPI';
+import { useMutationWithTokenAPI } from '@/hooks/API/useMutationAPI';
+import { useToast } from "@/components/ui/use-toast"
 // Define the zod schema for validation
 const staffSchema = z.object({
-    first_name: z.string().min(1, "First name is required."),
-    last_name: z.string().min(1, "Last name is required."),
-    department_id: z.string().nonempty("Please select a department."),
-    job_type: z.string().nonempty("Please select a job type."),
-    qualifications: z.string().optional(),
+    username: z.string().min(1, "Username is required."),
+    firstName: z.string().min(1, "First name is required."),
+    lastName: z.string().min(1, "Last name is required."),
+    jobType: z.string().nonempty("Please select a job type."),
+    qualification: z.string().nonempty("Please add a qualification."),
+    deptId: z.number({
+        required_error: "Please select a department."
+    }).positive("Please select a department."),
     salary: z.preprocess(
         (value) => parseFloat(value as string),
         z.number().positive("Salary must be a positive number.")
@@ -26,40 +31,63 @@ type StaffFormData = z.infer<typeof staffSchema>;
 
 interface AddStaffFormProps {
     departments: Department[];
+    refetch: () => void;
 }
 
 const jobTypes = ['Doctor', 'Nurse', 'Admin'];
 
-export default function AddStaffForm({ departments }: AddStaffFormProps) {
+export default function AddStaffForm({ departments, refetch }: AddStaffFormProps) {
+
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
     const form = useForm<StaffFormData>({
         resolver: zodResolver(staffSchema),
         defaultValues: {
-            first_name: "",
-            last_name: "",
-            job_type: "",
-            qualifications: "",
-            department_id: "",
-            salary: 0,
+            username: "",
+            firstName: "",
+            lastName: "",
+            jobType: "",
+            qualification: "",
+            deptId: 0,
+            salary: 0
         },
     });
 
-
-
-    const submitForm = useMutationWithoutTokenAPI('/api/staff/');
+    const submitForm = useMutationWithTokenAPI('/api/staff/');
 
     const onSubmit = (data: StaffFormData) => {
         submitForm.mutate(data, {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 form.reset();
+                toast({
+                    variant: "success",
+                    title: "Staff Created Successfully!",
+                    description: `Username: ${response.data.data[0].username}`,
+                })
+                setIsOpen(false)
+                refetch()
+            },
+            onError: (error) => {
+                console.error('Error submitting form:', error);
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: "There was a problem with your request",
+                })
+                setIsOpen(false)
+                refetch()
+
             },
         });
     };
 
+    const { toast } = useToast()
+
 
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button>Add New Staff</Button>
+                <Button onClick={() => setIsOpen(true)}>Add New Staff</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -69,41 +97,54 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                     Fill out the form below to add a new staff member.
                 </DialogDescription>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="gap-5 grid grid-cols-2">
                         <FormField
                             control={form.control}
-                            name="first_name"
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem className='col-span-2'>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage>{form.formState.errors.username?.message}</FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="firstName"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>First Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.first_name?.message}</FormMessage>
+                                    <FormMessage>{form.formState.errors.firstName?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="last_name"
+                            name="lastName"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem >
                                     <FormLabel>Last Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.last_name?.message}</FormMessage>
+                                    <FormMessage>{form.formState.errors.lastName?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="department_id"
+                            name="deptId"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Department</FormLabel>
                                     <FormControl>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select onValueChange={(value) => field.onChange(Number(value))}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Select Department" />
                                             </SelectTrigger>
@@ -116,15 +157,15 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.department_id?.message}</FormMessage>
+                                    <FormMessage>{form.formState.errors.deptId?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="job_type"
+                            name="jobType"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Job Type</FormLabel>
                                     <FormControl>
                                         <Select onValueChange={field.onChange}>
@@ -140,21 +181,20 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.job_type?.message}</FormMessage>
+                                    <FormMessage>{form.formState.errors.jobType?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="qualifications"
+                            name="qualification"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Qualifications</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.qualifications?.message}</FormMessage>
-                                    <FormDescription>Optional</FormDescription>
+                                    <FormMessage>{form.formState.errors.qualification?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -162,7 +202,7 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                             control={form.control}
                             name="salary"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className='col-span-2'>
                                     <FormLabel>Salary</FormLabel>
                                     <FormControl>
                                         <Input type="number" {...field} />
@@ -171,12 +211,19 @@ export default function AddStaffForm({ departments }: AddStaffFormProps) {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full text-background" disabled={submitForm.isPending}>
-                            {submitForm.isPending ? <LoaderCircle className="animate-spin" /> : <span>Add Staff</span>}
-                        </Button>
+                        <DialogFooter className="col-span-2">
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+                            <Button type="submit" className="text-background" disabled={submitForm.isPending}>
+                                {submitForm.isPending ? <LoaderCircle className="animate-spin" /> : <span>Add Staff</span>}
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }

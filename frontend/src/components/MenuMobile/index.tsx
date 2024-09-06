@@ -2,7 +2,7 @@
 // import { Badge } from '@/components/ui/badge'
 // import { User } from '@/types/user'
 import { AlignRight, CircleUserRound, LogOutIcon, Users, Hospital, CalendarDays, ClipboardList, HeartPulse } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useContext, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   Sheet,
@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/components/ui/sheet'
+import { UserContext } from '@/hooks/Auth/UserContext'
 
 interface MenuMobileProps {
   // user: User
@@ -46,6 +47,8 @@ interface MenuMobileProps {
 const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
+  const { user } = useContext(UserContext)
+
   return (
     <div className='block top-0 right-0 left-0 z-30 fixed lg:hidden bg-background shadow px-5 border w-full select-none botder-mute'>
       <div className='flex justify-between items-center gap-4'>
@@ -67,16 +70,29 @@ const MenuMobile: React.FC<MenuMobileProps> = ({ logout }) => {
               <SheetHeader className='w-full'>
                 <SheetTitle></SheetTitle>
                 <SheetDescription>
-                  <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
-                  <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
-                  <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
-                  <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
 
-                  {/* {user.is_admin && (
-                     <>
-                       <SidebarItem to='/admin' icon={<Users />} text='Accounts' onClick={() => setIsSheetOpen(false)} />
-                     </>
-                   )} */}
+
+                  {user.job_type === 'Admin' &&
+                    <>
+                      <SidebarItem to='/staff' icon={<Users />} text='Staff' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
+                    </>
+                  }
+                  {user.job_type === 'Doctor' &&
+                    <>
+                      <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/schedule' icon={<CalendarDays />} text='Schedule' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
+                    </>
+                  }
+                  {user.job_type === 'Nurse' &&
+                    <>
+                      <SidebarItem to='/patient' icon={<HeartPulse />} text='Patient' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/appointment' icon={<CalendarDays />} text='Appointment' onClick={() => setIsSheetOpen(false)} />
+                      <SidebarItem to='/reports' icon={<ClipboardList />} text='Reports ' onClick={() => setIsSheetOpen(false)} />
+                    </>
+                  }
                 </SheetDescription>
               </SheetHeader>
               <SheetFooter className='flex flex-col w-full'>

@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
 import ReportService from "../services/report.service";
 
+import { dbConfigBuilder } from "../db/mysql";
+
 const reportRouter = Router();
 
 const reportService = new ReportService();
@@ -43,7 +45,8 @@ reportRouter.get(
       const appointments = await reportService.getPatientTreatments(
         patientId,
         startTime,
-        endTime
+        endTime,
+        dbConfigBuilder(res.locals["username"], res.locals["password"])
       );
       return res.status(200).send(appointments);
     } catch (e) {
@@ -64,9 +67,12 @@ reportRouter.get(
       if (isNaN(staffId)) {
         throw new Error("Invalid staff ID: staffId");
       }
-      const staffs = await reportService.getStaffHistory({
-        staffId,
-      });
+      const staffs = await reportService.getStaffHistory(
+        {
+          staffId,
+        },
+        dbConfigBuilder(res.locals["username"], res.locals["password"])
+      );
       return res.status(200).send(staffs);
     } catch (e) {
       return res.status(400).json({ error: (e as Error).message });
@@ -110,7 +116,8 @@ reportRouter.get("/doctorWorkHistory", async (req: Request, res: Response) => {
     const appointments = await reportService.getDoctorWork(
       staffId,
       startTime,
-      endTime
+      endTime,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
     );
     return res.status(200).send(appointments);
   } catch (e) {

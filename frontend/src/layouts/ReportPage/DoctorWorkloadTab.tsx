@@ -1,83 +1,131 @@
-// import { useState } from 'react';
-// import { Button } from "@/components/ui/button";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { Label } from "@/components/ui/label";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-// import { DatePickerWithRange } from "@/components/DatePickerWithRange";
-// import { DateRange } from "react-day-picker";
+import AsyncSelect from 'react-select/async';
+import { useState } from 'react';
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DatePickerWithRange } from "@/components/DatePickerWithRange";
+import { DateRange } from "react-day-picker";
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
+import { StaffListResponse } from '@/types/staffs';
+import { DoctorWorkHistoryResponse } from '@/types/report';
+import { format } from 'date-fns';
+import TableEmpty from '@/components/TableEmpty';
 
 export default function DoctorWorkloadTab() {
-    // const [doctorWorkload, setDoctorWorkload] = useState([]);
-    // const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>();
-    // const [selectedDoctor, setSelectedDoctor] = useState<string>("All Doctors");
+    const [selectedDoctor, setSelectedDoctor] = useState<{ value: string; label: string } | null>(null);
 
-    // const doctors = ["All Doctors", "Dr. Brown", "Dr. Davis", "Dr. Wilson"];
+    const { data: doctorsListData, isLoading: doctorsLoading } =
+        useQueryWithTokenAPI<StaffListResponse>(
+            ['doctor'],
+            '/api/staff/doctors/'
+        );
 
-    // const generateReport = () => {
-    //     // Mock data for demonstration
-    //     if (selectedDoctor === "All Doctors") {
-    //         setDoctorWorkload([
-    //             { doctor: "Dr. Brown", patients: 45, hours: 50 },
-    //             { doctor: "Dr. Davis", patients: 40, hours: 48 },
-    //             { doctor: "Dr. Wilson", patients: 42, hours: 52 },
-    //         ]);
-    //     } else {
-    //         setDoctorWorkload([
-    //             { date: "2023-06-01", patients: 8, hours: 10 },
-    //             { date: "2023-06-02", patients: 6, hours: 9 },
-    //             { date: "2023-06-03", patients: 7, hours: 11 },
-    //         ]);
-    //     }
-    // };
+    const [dateRange, setDateRange] = useState<DateRange | undefined>({
+        from: new Date(),
+        to: new Date(),
+    });
+
+    const getFormattedDate = (date?: Date) => {
+        return date ? format(date, "yyyy-MM-dd HH:mm:ss") : '';
+    };
+
+    const queryStartTime = getFormattedDate(dateRange?.from);
+    const queryEndTime = getFormattedDate(dateRange?.to);
+
+
+
+    const { data: doctorWorkHistoryData, isLoading: doctorWorkHistoryDataLoading } =
+        useQueryWithTokenAPI<DoctorWorkHistoryResponse>(
+            ['doctorWorkHistory', selectedDoctor?.value || "", queryStartTime, queryEndTime],
+            selectedDoctor?.value !== "All Doctors"
+                ? `/api/report/doctorWorkHistory?staffId=${encodeURIComponent(selectedDoctor?.value || "")}&startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
+                : `/api/report/doctorWorkHistory?startTime=${encodeURIComponent(queryStartTime)}&endTime=${encodeURIComponent(queryEndTime)}`
+        );
+
+
+
+    const loadDoctorOptions = (inputValue: string, callback: (options: { value: string, label: string }[]) => void) => {
+        if (doctorsLoading || !doctorsListData) return;
+
+        const filteredDoctors = doctorsListData.data
+            .filter(doctor =>
+                `${doctor.first_name} ${doctor.last_name}`.toLowerCase().includes(inputValue.toLowerCase())
+            )
+            .slice(0, 20) // Lazy loading the first 20 results
+            .map(doctor => ({
+                value: doctor.id.toString(),
+                label: `${doctor.first_name} ${doctor.last_name}`,
+            }));
+
+        callback(filteredDoctors);
+    };
+
+    const handleDoctorChange = (selectedOption: { value: string; label: string } | null) => {
+        setSelectedDoctor(selectedOption);
+    };
 
     return (
-        <>
-            Doctor Workload Tab
-        </>
-        // <div className="space-y-4">
-        //     <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
-        //         <div>
-        //             <Label htmlFor="doctor">Doctor</Label>
-        //             <Select onValueChange={setSelectedDoctor} defaultValue="All Doctors">
-        //                 <SelectTrigger id="doctor">
-        //                     <SelectValue placeholder="Select doctor" />
-        //                 </SelectTrigger>
-        //                 <SelectContent>
-        //                     {doctors.map(doctor => (
-        //                         <SelectItem key={doctor} value={doctor}>{doctor}</SelectItem>
-        //                     ))}
-        //                 </SelectContent>
-        //             </Select>
-        //         </div>
-        //         <div className="col-span-2">
-        //             <Label>Date Range</Label>
-        //             <DatePickerWithRange
-        //                 className="w-full"
-        //                 onDateChange={setSelectedDateRange}
-        //             />
-        //         </div>
-        //     </div>
-        //     <Button onClick={generateReport}>Generate Report</Button>
-        //     {doctorWorkload.length > 0 && (
-        //         <Table>
-        //             <TableHeader>
-        //                 <TableRow>
-        //                     {selectedDoctor === "All Doctors" ? <TableHead>Doctor</TableHead> : <TableHead>Date</TableHead>}
-        //                     <TableHead>Patients Seen</TableHead>
-        //                     <TableHead>Hours Worked</TableHead>
-        //                 </TableRow>
-        //             </TableHeader>
-        //             <TableBody>
-        //                 {doctorWorkload.map((workload, index) => (
-        //                     <TableRow key={index}>
-        //                         <TableCell>{workload.doctor || workload.date}</TableCell>
-        //                         <TableCell>{workload.patients}</TableCell>
-        //                         <TableCell>{workload.hours}</TableCell>
-        //                     </TableRow>
-        //                 ))}
-        //             </TableBody>
-        //         </Table>
-        //     )}
-        // </div>
+        <div className="space-y-4">
+            <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
+                <div>
+                    <Label htmlFor="doctor">Doctor</Label>
+                    <AsyncSelect
+                        id="doctor"
+                        cacheOptions
+                        loadOptions={loadDoctorOptions}
+                        defaultOptions
+                        onChange={handleDoctorChange}
+                        value={selectedDoctor}
+                        placeholder="Select doctor"
+                        isClearable
+                    />
+                </div>
+                <div className="col-span-2">
+                    <Label>Date Range</Label>
+                    <DatePickerWithRange
+                        className="w-full"
+                        selected={dateRange}
+                        onSubmit={(range) => {
+                            setDateRange(range);
+                        }}
+                    />
+                </div>
+            </div>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>First Name</TableHead>
+                        <TableHead>Last Name</TableHead>
+                        <TableHead>Job Type</TableHead>
+                        <TableHead>Appointment</TableHead>
+                        <TableHead>Treatment</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {doctorWorkHistoryDataLoading ? (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center">Loading...</TableCell>
+                        </TableRow>
+                    ) :
+                        <>
+                            {doctorWorkHistoryData?.queryResult.count === 0 ?
+                                <>
+                                    <TableEmpty colSpan={5} />
+                                </> :
+
+                                doctorWorkHistoryData && doctorWorkHistoryData.data.map((work, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{work.first_name}</TableCell>
+                                        <TableCell>{work.last_name}</TableCell>
+                                        <TableCell>{work.job_type}</TableCell>
+                                        <TableCell>{work.appointment_nums}</TableCell>
+                                        <TableCell>{work.treatment_nums}</TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </>
+                    }
+                </TableBody>
+            </Table>
+        </div>
     );
 }

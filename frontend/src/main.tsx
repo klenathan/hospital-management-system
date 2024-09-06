@@ -1,68 +1,69 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import ReactDOM from 'react-dom/client'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { UserProvider } from './hooks/Auth/UserContext'
-import ErrorPage from './layouts/ErrorPage'
-import LandingPage from './layouts/LandingPage'
-import './styles/index.css'
-import AppointmentManagement from './layouts/AppointmentManagement'
-import StaffManagement from './layouts/StaffManagement'
-import ReportPage from './layouts/ReportPage'
-import App from './App'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { UserProvider } from './hooks/Auth/UserContext';
+import ErrorPage from './layouts/ErrorPage';
+import LandingPage from './layouts/LandingPage';
+import './styles/index.css';
+import AppointmentManagement from './layouts/AppointmentManagement';
+import StaffManagement from './layouts/StaffManagement';
+import ReportPage from './layouts/ReportPage';
+import App from './App';
+import Login from './layouts/Login';
+import Patient from './layouts/Patient';
+import DoctorSchedule from './layouts/DoctorSchedule';
 
-//Phuong
-import Login from './layouts/Login/index.tsx'
-import Patient from './layouts/Patient/index.tsx'
 
-const queryClient = new QueryClient()
+// import { RedirectIfUnAuthenticated, RedirectIfAuthenticated } from './components/Redirect';
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
-    path: '/dashboard',
-    element: <LandingPage />
+    path: '/',
+    element: (
+      <LandingPage />
+    ),
+    errorElement: <ErrorPage />,
   },
   {
-    path: '/', element: <App />,
-
+    path: '/login',
+    element: (
+      <Login />
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    element: <App />,
+    errorElement: <ErrorPage />,
     children: [
-
       {
-        path: '/djtmecuocdoi',
-        element: <div className='bg-red-300 w-screen h-screen'>Hello</div>
+        children: [
+          {
+            path: '/patient',
+            element: <Patient />,
+          },
+          {
+            path: '/schedule',
+            element: <DoctorSchedule />,
+          },
+          {
+            path: '/appointment',
+            element: <AppointmentManagement />,
+          },
+          {
+            path: '/staff',
+            element: <StaffManagement />,
+          },
+          {
+            path: '/reports',
+            element: <ReportPage />,
+          },
+        ],
       },
-      {
-        path: '/patient',
-        element: <>
-
-          <div className="flex-1 bg-gray-100 min-h-screen">
-            <Patient />
-          </div>
-
-        </>
-      },
-      {
-        path: '/patient',
-        element: <AppointmentManagement />
-      },
-      {
-        path: '/appointment',
-        element: <AppointmentManagement />
-      },
-      {
-        path: '/staff',
-        element: <StaffManagement />
-      },
-      {
-        path: '/reports',
-        element: <ReportPage />
-      }
     ],
-    errorElement: <ErrorPage />
   },
-  {
-    path: '/login', element: <Login />
-  }
-])
+]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <UserProvider>
@@ -70,4 +71,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <RouterProvider router={router} />
     </QueryClientProvider>
   </UserProvider>
-)
+);
+

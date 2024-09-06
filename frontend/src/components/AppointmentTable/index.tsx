@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { WorkingSchedule } from '@/types/appointment';
 import { DepartmentResponse } from '@/types/department';
-import { useQueryWithoutTokenAPI } from '@/hooks/API/useQueryAPI';
+import { useQueryWithTokenAPI } from '@/hooks/API/useQueryAPI';
 
 interface AppointmentTableProps {
     appointmentData: Array<WorkingSchedule>;
@@ -12,7 +12,7 @@ interface AppointmentTableProps {
 
 const AppointmentTable: React.FC<AppointmentTableProps> = ({ appointmentData, isLoading, children }) => {
     const { data: departmentListData, isLoading: departmentLoading } =
-        useQueryWithoutTokenAPI<DepartmentResponse>(['department'], '/api/department/');
+        useQueryWithTokenAPI<DepartmentResponse>(['department'], '/api/department/');
 
     // Create a map of department ID to department name
     const departmentMap = departmentListData?.data.reduce((acc, department) => {
@@ -25,12 +25,9 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({ appointmentData, is
             <TableHeader>
                 <TableRow>
                     <TableHead>ID</TableHead>
-                    <TableHead>First Name</TableHead>
-                    <TableHead>Last Name</TableHead>
+                    <TableHead>Doctor </TableHead>
                     <TableHead>Job Type</TableHead>
-                    <TableHead>Qualifications</TableHead>
                     <TableHead>Department</TableHead>
-                    <TableHead>Salary</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className='text-center'>Actions</TableHead>
                 </TableRow>
@@ -44,12 +41,9 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({ appointmentData, is
                     <>{appointmentData.map((appointment, index) => (
                         <TableRow key={appointment.id}>
                             <TableCell>{appointment.id}</TableCell>
-                            <TableCell>{appointment.first_name}</TableCell>
-                            <TableCell>{appointment.last_name}</TableCell>
+                            <TableCell>{appointment.first_name + ' ' + appointment.last_name}</TableCell>
                             <TableCell>{appointment.job_type}</TableCell>
-                            <TableCell>{appointment.qualifications}</TableCell>
                             <TableCell>{departmentMap ? departmentMap[appointment.department_id] : 'Unknown'}</TableCell>
-                            <TableCell>{appointment.salary}</TableCell>
                             <TableCell>{appointment.busy ?
                                 <span className='bg-red-200 px-2 py-1 rounded-md text-red-800'>
                                     Busy

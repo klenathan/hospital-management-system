@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import AppointmentService from "../services/appointments.service";
 
 import { z } from "zod";
+import { dbConfigBuilder } from "../db/mysql";
 
 const CreateNewAppointment = z.object({
   patientId: z.number(),
@@ -59,13 +60,40 @@ appointmentRouter.get("/schedule", async (req: Request, res: Response) => {
     const endTime = req.query["endTime"] as string;
     const appointments = await appointmentService.getAllDoctorSchedule(
       startTime,
-      endTime
+      endTime,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
     );
     res.status(200).send(appointments);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }
 });
+
+appointmentRouter.get(
+  "/schedule/byDoctor/:id",
+  async (req: Request, res: Response) => {
+    /*  
+  #swagger.summary = "View working schedule of all doctors for a given duration (with busy or available status)"
+  
+  #swagger.parameters['id'] = { description: 'Patient ID' }
+    } 
+     */
+    try {
+      const id = parseInt(req.params["id"] as string);
+      if (isNaN(id)) {
+        throw new Error(`Invalid patient ID: ${id}`);
+      }
+
+      const appointments = await appointmentService.getAllAppointmentByDoctotId(
+        id,
+        dbConfigBuilder(res.locals["username"], res.locals["password"])
+      );
+      res.status(200).send(appointments);
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  }
+);
 
 appointmentRouter.post("/", async (req: Request, res: Response) => {
   /*  
@@ -91,7 +119,8 @@ appointmentRouter.post("/", async (req: Request, res: Response) => {
     const newAppointmentProps = CreateNewAppointment.parse(req.body);
 
     const staffs = await appointmentService.createNewAppointment(
-      newAppointmentProps
+      newAppointmentProps,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
     );
     return res.status(200).send(staffs);
   } catch (error) {
@@ -125,7 +154,10 @@ appointmentRouter.delete("/:id", async (req: Request, res: Response) => {
       throw new Error("Invalid patient ID: id");
     }
 
-    const staffs = await appointmentService.cancelAppointment(id);
+    const staffs = await appointmentService.cancelAppointment(
+      id,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (error) {
     console.error("Error: ", error);

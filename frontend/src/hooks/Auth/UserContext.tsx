@@ -1,65 +1,105 @@
-// import { User } from '@/types/user'
-import { jwtDecode } from 'jwt-decode'
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactNode, useEffect, useState } from 'react';
+import axios from 'axios';
 
-export const DefaultUserContext = {
-  loggedIn: false,
-  accessToken: '',
-  user: {
-    id: '',
-    username: '',
-    is_admin: false
-  },
-  login: (token: string) => {
-    token
-  },
-  logout: () => {}
+interface User {
+  first_name: string,
+  last_name: string,
+  username: string;
+  password: string;
+  job_type: string;
+  userID: number,
+
 }
 
-export const UserContext = createContext(DefaultUserContext)
+interface UserContextType {
+  loggedIn: boolean;
+  user: User;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+const DefaultUserContext: UserContextType = {
+  loggedIn: false,
+  user: {
+    first_name: '',
+    last_name: '',
+    username: '',
+    password: '',
+    job_type: '',
+    userID: 0,
+
+  },
+  login: async () => { },
+  logout: () => { },
+};
+
+export const UserContext = createContext<UserContextType>(DefaultUserContext);
 
 export function UserProvider({ children }: { children?: ReactNode }) {
-  const [user, setUser] = useState({
-    id: '',
+  const [user, setUser] = useState<User>({
+    first_name: '',
+    last_name: '',
     username: '',
-    is_admin: false
-  })
-  const [loggedIn, _setLoggedIn] = useState(localStorage.getItem('access_token') != '')
-  const [accessToken, setAccessToken] = useState(localStorage.getItem('access_token') as string)
+    password: '',
+    job_type: '',
+    userID: 0,
+  });
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const aToken = localStorage.getItem('access_token')
-
-    if (aToken) {
-      const decoded = jwtDecode(aToken)
-      const currentTime = Date.now() / 1000
-
-      if ((decoded.exp as number) < currentTime) {
-        // setTimeout(logout, 5000)
-      } else {
-        setAccessToken(aToken)
-        if (decoded.sub) {
-          setUser(decoded.sub as any)
-        }
-        _setLoggedIn(true)
-      }
-    } else {
-      setAccessToken('')
-      _setLoggedIn(false)
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      const decodedUser = JSON.parse(atob(((savedUser))));
+      setUser(decodedUser);
+      setLoggedIn(true);
     }
-  }, [loggedIn, accessToken])
+  }, []);
 
-  const setLoggedIn = (accessToken: string, stateLoggin: boolean) => {
-    localStorage.setItem('access_token', accessToken.toString())
-    setAccessToken(accessToken.toString())
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BE_ENDPOINT}api/auth/login`, {
+        username,
+        password,
+      });
 
-    _setLoggedIn(stateLoggin)
-  }
+      if (response.data.status === 'success' && response.data.user.length > 0) {
+        const userData: User = {
+          first_name: response.data.user[0].first_name,
+          last_name: response.data.user[0].last_name,
+          username,
+          password,
+          job_type: response.data.user[0].job_type,
+          userID: response.data.user[0].id,
+        };
+        const encodedUser = btoa(JSON.stringify(userData));
+        localStorage.setItem('user', encodedUser);
+        setUser(userData);
+        setLoggedIn(true);
+      } else {
+        throw new Error('Login failed');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      logout();
+    }
+  };
 
-  // In a real app, these methods would communicate with a backend,
-  // obtain/verify a token, etc.
-  const login = (token: string) => setLoggedIn(token, true)
-  const logout = () => setLoggedIn('', false)
+  const logout = () => {
+    localStorage.removeItem('user');
+    setUser({
+      first_name: '',
+      last_name: '',
+      username: '',
+      password: '',
+      job_type: '',
+      userID: 0,
+    });
+    setLoggedIn(false);
+  };
 
-  return <UserContext.Provider value={{ loggedIn, accessToken, user, login, logout }}>{children}</UserContext.Provider>
+  return (
+    <UserContext.Provider value={{ loggedIn, user, login, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
 }

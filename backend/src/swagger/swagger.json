@@ -39,6 +39,211 @@
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Login param",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "SuperSaiyan200"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/blob/": {
+      "get": {
+        "tags": [
+          "Blobs"
+        ],
+        "summary": "Get all blobs",
+        "description": "",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "description": "Blob domain query",
+            "type": "string"
+          },
+          {
+            "name": "fileName",
+            "in": "query",
+            "description": "Blob filename query",
+            "type": "string"
+          },
+          {
+            "name": "parent",
+            "in": "query",
+            "description": "Blob parent ID query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Blobs"
+        ],
+        "summary": "Add new blob",
+        "description": "",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "blob",
+            "in": "formData",
+            "description": "Add new blob",
+            "type": "file"
+          },
+          {
+            "name": "domain",
+            "in": "formData",
+            "description": "blob domain, e.g: staff, patient, appointment",
+            "type": "string"
+          },
+          {
+            "name": "parentId",
+            "in": "formData",
+            "description": "Parent Object ID",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/blob/image/{id}": {
+      "get": {
+        "tags": [
+          "Blobs"
+        ],
+        "summary": "Serve image",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Blob ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/blob/download/{id}": {
+      "get": {
+        "tags": [
+          "Blobs"
+        ],
+        "summary": "Download blob by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Retrieve blob by id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/serverErrSchema"
+            },
+            "description": "Internal Server Error"
+          }
         }
       }
     },
@@ -54,6 +259,18 @@
             "name": "order",
             "in": "query",
             "description": "Query order",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Query pageSize",
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Query page Number",
             "type": "string"
           }
         ],
@@ -271,6 +488,47 @@
             "required": true,
             "type": "string",
             "description": "Patient ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new patients.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "Van A"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Nguyen"
+                },
+                "date_of_birth": {
+                  "type": "string",
+                  "example": "01-01-2000"
+                },
+                "contact_info": {
+                  "type": "string",
+                  "example": "0912789JQK"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "Nguyen Van Linh"
+                },
+                "allergies": {
+                  "type": "string",
+                  "example": "peanut"
+                }
+              },
+              "required": [
+                "first_name",
+                "last_name",
+                "date_of_birth",
+                "contact_info",
+                "address"
+              ]
+            }
           }
         ],
         "responses": {
@@ -278,9 +536,6 @@
             "description": "OK"
           },
           "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
             "description": "Bad Request"
           },
           "500": {
@@ -320,6 +575,38 @@
             "schema": {
               "$ref": "#/definitions/serverErrSchema"
             },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/treatment/{patientId}": {
+      "get": {
+        "tags": [
+          "Treatments"
+        ],
+        "summary": "Get treatment by patientID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/errSchema"
+            },
+            "description": "Bad Request"
+          },
+          "500": {
             "description": "Internal Server Error"
           }
         }
@@ -386,6 +673,10 @@
                 "salary": {
                   "type": "number",
                   "example": 100000000
+                },
+                "username": {
+                  "type": "string",
+                  "example": "SuperSaiyan123"
                 }
               },
               "required": [
@@ -394,7 +685,8 @@
                 "jobType",
                 "qualification",
                 "deptId",
-                "salary"
+                "salary",
+                "username"
               ]
             }
           }
@@ -529,6 +821,74 @@
         }
       }
     },
+    "/api/staff/{id}": {
+      "put": {
+        "tags": [
+          "Staff"
+        ],
+        "summary": "Update a new staff info",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Add new staff body.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "example": "Super"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Saiyan"
+                },
+                "jobType": {
+                  "type": "string",
+                  "example": "Doctor"
+                },
+                "qualification": {
+                  "type": "string",
+                  "example": "MD"
+                },
+                "deptId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "salary": {
+                  "type": "number",
+                  "example": 100000000
+                }
+              },
+              "required": [
+                "firstName",
+                "lastName",
+                "jobType",
+                "qualification",
+                "deptId",
+                "salary"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/department/": {
       "get": {
         "tags": [
@@ -567,6 +927,32 @@
             "description": "Query end time",
             "default": "2024-08-12 12:30:00",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/appointment/schedule/byDoctor/{id}": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "View working schedule of all doctors for a given duration (with busy or available status)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Patient ID"
           }
         ],
         "responses": {
@@ -651,23 +1037,6 @@
             "description": "Appointment ID"
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/api/treatment/": {
-      "get": {
-        "tags": [
-          "Treatments"
-        ],
-        "summary": "Get all treatments",
-        "description": "",
         "responses": {
           "200": {
             "description": "OK"

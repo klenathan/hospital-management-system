@@ -14,6 +14,9 @@ export interface Patient {
 export type PatientResponse = {
   queryResult: {
     count: number
+    pageNumber: number
+    pageSize: number
+    totalCount: number
   }
   data: Patient[]
 }

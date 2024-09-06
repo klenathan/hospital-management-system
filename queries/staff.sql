@@ -1,11 +1,15 @@
 DELIMITER $$
 
-CREATE FUNCTION S_InsertStaffJobHistory (
-    userID int,
-    j_type ENUM('Doctor', 'Nurse', 'Admin'),
-    salary BIGINT,
-    department_id INT
-) RETURNS BOOL DETERMINISTIC BEGIN
+CREATE PROCEDURE S_GetAllDepartment (
+) BEGIN 
+
+SELECT * FROM departments;
+
+END $$
+
+CREATE TRIGGER insert_staff_into_history
+AFTER
+INSERT ON staffs FOR EACH ROW BEGIN
 INSERT INTO staff_job_history (
         staff_id,
         job_type,
@@ -13,13 +17,29 @@ INSERT INTO staff_job_history (
         department_id
     )
 VALUES (
-        userID,
-        j_type,
-        salary,
-        department_id
+        new.id,
+        new.job_type,
+        new.salary,
+        new.department_id
     );
 
-RETURN TRUE;
+END $$
+
+CREATE TRIGGER update_staff_insert_into_history
+AFTER
+UPDATE ON staffs FOR EACH ROW BEGIN
+INSERT INTO staff_job_history (
+        staff_id,
+        job_type,
+        salary,
+        department_id
+    )
+VALUES (
+        new.id,
+        new.job_type,
+        new.salary,
+        new.department_id
+    );
 
 END $$
 
@@ -29,18 +49,25 @@ CREATE PROCEDURE S_AddNewStaff(
     IN j_type ENUM('Doctor', 'Nurse', 'Admin'),
     IN qualifications VARCHAR(50),
     IN department_id int,
-    IN salary BIGINT
+    IN salary BIGINT,
+    IN username VARCHAR(100)
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
 
-DECLARE CONTINUE HANDLER FOR SQLWARNING
-SET `_rollback` = 1;
+DECLARE EXIT HANDLER FOR SQLWARNING BEGIN -- Rollback the transaction if something goes wrong
+    ROLLBACK;
+
+-- Log the error or set a custom message
+SET @error_message = 'Error occurred while creating the user';
+
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = @error_message;
+
+END;
 
 SET AUTOCOMMIT = 0;
 
 START TRANSACTION;
-
-SAVEPOINT start_sp;
 
 INSERT INTO staffs (
         first_name,
@@ -48,7 +75,8 @@ INSERT INTO staffs (
         job_type,
         qualifications,
         department_id,
-        salary
+        salary,
+        username
     )
 VALUES (
         f_name,
@@ -56,16 +84,12 @@ VALUES (
         j_type,
         qualifications,
         department_id,
-        salary
+        salary,
+        username
     );
 
-SET @userID = LAST_INSERT_ID();
-
--- Insert into staff job history
-SET @addStaffJobHis = S_InsertStaffJobHistory(@userID, j_type, salary, department_id);
-
 -- Create a username by concatenating first name, last name, and user ID
-SET @username = CONCAT(f_name, l_name, @userID);
+SET @username = username;
 
 -- Create the user
 SET @query1 = CONCAT(
@@ -153,16 +177,12 @@ DEALLOCATE PREPARE stmt;
 
 END IF;
 
-IF `_rollback` THEN ROLLBACK TO SAVEPOINT start_sp;
-
-ELSE COMMIT;
-
-END IF;
+SELECT @username AS username;
 
 END $$
 
 CREATE PROCEDURE S_ListStaffByDepartmentID (IN departmentID int) BEGIN
-SELECT *
+SELECT s.*
 FROM staffs s
     JOIN departments d ON d.id = s.department_id
     AND d.deleted = 0
@@ -194,7 +214,8 @@ CREATE PROCEDURE S_UpdateStaffInfo (
     IN f_name varchar(50),
     IN l_name VARCHAR(50),
     IN Job_Type enum ('Doctor', 'Nurse', 'Admin'),
-    IN Salary DECIMAL(10, 2),
+    IN Qualification VARCHAR(50),
+    IN Salary BIGINT,
     IN Department_Id INT
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
@@ -212,17 +233,10 @@ UPDATE staffs s
 SET s.first_name = f_name,
     s.last_name = l_name,
     s.job_type = Job_Type,
+    s.qualifications = Qualification,
     s.salary = Salary,
     s.department_id = Department_Id
 WHERE s.id = Staff_Id;
-
--- Insert into staff job history
-SET @addStaffJobHis = S_InsertStaffJobHistory (
-        @userID,
-        Job_Type,
-        salary,
-        department_id
-    );
 
 IF `_rollback` THEN ROLLBACK TO SAVEPOINT start_sp;
 
@@ -234,6 +248,7 @@ END $$
 
 CREATE PROCEDURE S_ViewStaffScheduleByID (IN staff_id int) BEGIN
 SELECT s.*,
+    a.id AS appointmentId,
     a.purpose,
     a.start_time,
     a.end_time
@@ -253,7 +268,7 @@ CREATE PROCEDURE S_UpdateStaffSchedule (
 ) BEGIN START transaction;
 
 SELECT COUNT(*) INTO @Appointment_Count
-FROM ppointments
+FROM appointments
 WHERE appointments.staff_id = Staff_Id
     AND appointments.start_time < newEndTime
     AND appointments.end_time > newStartTime
@@ -267,7 +282,7 @@ ELSEIF newStartTime >= newEndTime THEN SIGNAL SQLSTATE '2201R'
 SET MESSAGE_TEXT = 'INVALID TIME FRAME',
     MYSQL_ERRNO = 1001;
 
-ELSEIF @Appointment_Count = 1 THEN START transaction;
+ELSEIF @Appointment_Count = 0 THEN START transaction;
 
 UPDATE appointments a
 SET a.start_time = newStartTime,
@@ -283,5 +298,13 @@ SET MESSAGE_TEXT = 'INVALID APPOINTMENT',
 ROLLBACK;
 
 END IF;
+
+END $$
+
+CREATE PROCEDURE S_GetStaffByUsername (
+    IN Input_Username VARCHAR(100)
+) BEGIN 
+
+SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
 
 END $$

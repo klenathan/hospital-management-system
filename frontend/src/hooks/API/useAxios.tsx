@@ -1,106 +1,81 @@
-// import { getRefreshToken } from '@/services/refresh-token/api'
-// import { useUserStore } from '@/store/user-store'
-// import { toast } from '@/components/ui/use-toast'
-import axios, { AxiosResponse, CreateAxiosDefaults } from 'axios'
-import { useContext, useEffect } from 'react'
-import { UserContext } from '../Auth/UserContext'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import axios, { AxiosResponse, CreateAxiosDefaults } from 'axios';
+import { useContext, useEffect } from 'react';
+import { UserContext } from '../Auth/UserContext';
 
 const baseConfig: CreateAxiosDefaults = {
   baseURL: `${import.meta.env.VITE_BE_ENDPOINT}`,
-  timeout: 10000
-}
+  timeout: 10000,
+};
 
 /**
- * The useAxios hook use for calling api without accesstoken
- * Best practices use in login in and sign up
+ * Axios instance for general API calls
  */
-export const useAxios = axios.create(baseConfig)
+export const useAxios = axios.create(baseConfig);
 
 useAxios.interceptors.request.use(
   function (config) {
-    return config
+    return config;
   },
   function (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 useAxios.interceptors.response.use(
   function (response) {
-    return response
+    return response;
   },
   function (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 /**
- * The useAxios hook use for calling api with accesstoken
- * Best practices use when user logged in
+ * Axios instance for API calls where user context or authentication is needed
  */
-
 export const useAxiosWithToken = () => {
-  const { accessToken, logout } = useContext(UserContext)
+  const { logout } = useContext(UserContext);
 
-  // Define request/response and error interceptors
   const reqResInterceptor = (config: any) => {
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
-      return config
-    }
-  }
+    // You can add any headers or modify the config here if needed
+    return config;
+  };
 
-  const reqErrInterceptor = async (error: any) => Promise.reject(error)
+  const reqErrInterceptor = async (error: any) => Promise.reject(error);
 
   const resResInterceptor = async (response: AxiosResponse) => {
-    // Handle successful responses as needed
-    return response
-  }
+    return response;
+  };
 
   const resErrInterceptor = async (error: any) => {
-    const originalRequest = error.config
-    console.log(originalRequest)
+    const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = false
-      console.error('Token refresh failed', error)
+    // Handle 401 errors and trigger logout or refresh actions
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = false;
+      console.error('Unauthorized request, triggering logout.', error);
 
-      setTimeout(logout, 3000)
+      setTimeout(logout, 3000);
 
-      // try {
-      //   // const newAccessToken = await authContext.refreshToken(authContext.user?.loginToken ?? ' ')
-
-      //   // instance.defaults.headers.common['x-access-token'] = newAccessToken
-      //   // originalRequest.headers['x-access-token'] = newAccessToken
-      //   if (accessToken) {
-      //     originalRequest.headers.Authorization = `Bearer ${accessToken}`
-      //   }
-
-      //   return useAxios(originalRequest)
-      // } catch (error) {
-      //   console.error('Token refresh failed', error)
-
-      //   navigate('/', { replace: true })
-      //   // logout()
-      // }
+      // Optionally, you could also navigate to a login or home page:
+      // navigate('/', { replace: true });
     }
-    return Promise.reject(error)
-  }
 
-  // Set up the interceptors with useEffect
+    return Promise.reject(error);
+  };
+
   useEffect(() => {
-    if (accessToken) {
-      const reqInterceptor = useAxios.interceptors.request.use(reqResInterceptor, reqErrInterceptor)
+    // Set up interceptors
+    const reqInterceptor = useAxios.interceptors.request.use(reqResInterceptor, reqErrInterceptor);
+    const resInterceptor = useAxios.interceptors.response.use(resResInterceptor, resErrInterceptor);
 
-      const resInterceptor = useAxios.interceptors.response.use(resResInterceptor, resErrInterceptor)
+    // Cleanup interceptors on component unmount
+    return () => {
+      useAxios.interceptors.request.eject(reqInterceptor);
+      useAxios.interceptors.response.eject(resInterceptor);
+    };
+  }, [logout]);
 
-      // Cleanup function
-      return () => {
-        useAxios.interceptors.request.eject(reqInterceptor)
-        useAxios.interceptors.response.eject(resInterceptor)
-      }
-    }
-  }, [accessToken])
-
-  return useAxios
-}
+  return useAxios;
+};

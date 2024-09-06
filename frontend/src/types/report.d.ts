@@ -32,3 +32,17 @@ export type StaffJobChangeHistoryResponse = {
   }
   data: StaffJobChangeHistory[]
 }
+export interface DoctorWorkHistory {
+  first_name: string
+  last_name: string
+  job_type: string
+  appointment_nums: number
+  treatment_nums: number
+}
+
+export type DoctorWorkHistoryResponse = {
+  queryResult: {
+    count: number
+  }
+  data: DoctorWorkHistory[]
+}

@@ -2,7 +2,18 @@ import { Request, Response, Router } from "express";
 import StaffService from "../services/staff.service";
 import { z } from "zod";
 
+import { dbConfigBuilder } from "../db/mysql";
+
 const NewStaffDTO = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  jobType: z.string(),
+  qualification: z.string(),
+  deptId: z.number(),
+  salary: z.number(),
+  username: z.string(),
+});
+const UpdateStaffDTO = z.object({
   firstName: z.string(),
   lastName: z.string(),
   jobType: z.string(),
@@ -38,9 +49,12 @@ staffRouter.get("/", async (req: Request, res: Response) => {
         throw new Error("INVALID ORDER");
       }
     }
-    const staffs = await staffService.getAllStaffs({
-      order: order as "asc" | "desc",
-    });
+    const staffs = await staffService.getAllStaffs(
+      {
+        order: order as "asc" | "desc",
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     console.log(e);
@@ -53,7 +67,9 @@ staffRouter.get("/doctors", async (_req: Request, res: Response) => {
   
   */
   try {
-    const staffs = await staffService.getAllDoctor();
+    const staffs = await staffService.getAllDoctor(
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     console.log(e);
@@ -74,7 +90,8 @@ staffRouter.post("/", async (req: Request, res: Response) => {
                 $jobType: "Doctor",
                 $qualification: "MD",
                 $deptId: 1,
-                $salary: 100000000
+                $salary: 100000000,
+                $username: 'SuperSaiyan123'
             }
     } */
   try {
@@ -85,7 +102,10 @@ staffRouter.post("/", async (req: Request, res: Response) => {
 
     const newStaffProps = NewStaffDTO.parse(req.body);
 
-    const staffs = await staffService.createSingleNewStaff(newStaffProps);
+    const staffs = await staffService.createSingleNewStaff(
+      newStaffProps,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -116,9 +136,12 @@ staffRouter.get("/department/:depId", async (req: Request, res: Response) => {
     if (isNaN(depId)) {
       throw new Error("Invalid department ID: depId");
     }
-    const staffs = await staffService.listStaffByDep({
-      depId,
-    });
+    const staffs = await staffService.listStaffByDep(
+      {
+        depId,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
@@ -135,9 +158,12 @@ staffRouter.get("/schedule/:staffId", async (req: Request, res: Response) => {
     if (isNaN(staffId)) {
       throw new Error("Invalid staff ID: staffId");
     }
-    const staffs = await staffService.getStaffSchedule({
-      staffId,
-    });
+    const staffs = await staffService.getStaffSchedule(
+      {
+        staffId,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (e) {
     return res.status(400).json({ error: (e as Error).message });
@@ -168,7 +194,62 @@ staffRouter.put("/schedule/:staffId", async (req: Request, res: Response) => {
 
     const params = UpdateStaffScheduleDTO.parse(req.body);
 
-    const staffs = await staffService.updateStaffSchedule(staffId, params);
+    const staffs = await staffService.updateStaffSchedule(
+      staffId,
+      params,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
+    return res.status(200).send(staffs);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        console.error("Validation failed: ", issue);
+      }
+      return res.status(400).json({
+        message: `Validation error: ${error.issues
+          .map((e) => e.path)
+          .join("; ")}`,
+      });
+    } else {
+      console.error("Error: ", error);
+      return res.status(400).json({
+        message: `Server error: ${error}`,
+      });
+    }
+  }
+});
+
+staffRouter.put("/:id", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'Update a new staff info'
+
+  #swagger.parameters['id'] = { description: 'ID' }
+  
+  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add new staff body.',
+            schema: {
+                $firstName: "Super",
+                $lastName: "Saiyan",
+                $jobType: "Doctor",
+                $qualification: "MD",
+                $deptId: 1,
+                $salary: 100000000,
+            }
+    } */
+  try {
+    const staffId = parseInt(req.params["id"] as string);
+    if (isNaN(staffId)) {
+      throw new Error("Invalid staff ID: id");
+    }
+
+    const newStaffProps = UpdateStaffDTO.parse(req.body);
+
+    const staffs = await staffService.updateStaffInfo(
+      staffId,
+      newStaffProps,
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
     return res.status(200).send(staffs);
   } catch (error) {
     if (error instanceof z.ZodError) {

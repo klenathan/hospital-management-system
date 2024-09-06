@@ -15,9 +15,15 @@ const protectedRouteMiddleware = async (
   if (!authString) {
     return res.status(401).json({ message: "UNAUTHORIZED" });
   }
-  const authStrSplit = authString.split(":");
-  res.locals.user = authStrSplit[0];
-  res.locals.pwd = authStrSplit[1];
+
+  const authStringSplited = authString.split(":");
+
+  if (authStringSplited.length != 2) {
+    return res.status(401).json({ message: "INVALID HEADER: `x-auth-string`" });
+  }
+
+  res.locals["username"] = authStringSplited[0];
+  res.locals["password"] = authStringSplited[1];
   next();
 };
 
