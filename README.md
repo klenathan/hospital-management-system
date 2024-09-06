@@ -53,14 +53,10 @@ Contains all necessary sql queries.
 
 # III. Contributions
 
-The project is done by:
-
-- Pham Vo Dong - S3891968 - S3891968@rmit.edu.vn
-
-- Tran Ngoc Khang - S3927201 - S3927201@rmit.edu.vn
-
-- Tran Nam Thai - S3891890 - S3891890@rmit.edu.vn
-
-- Nguyen Cong Phuong - S3804846 - S3804846@rmit.edu.vn
-
-- Nguyen Tuan Duong - S3965530 - s3965530@rmit.edu.vn
+| Name               | sID      | Contribution score |
+| ------------------ | -------- | ------------------ |
+| Pham Vo Dong       | S3891968 | 7                  |
+| Tran Ngoc Khang    | S3927201 | 7                  |
+| Tran Nam Thai      | S3891890 | 7                  |
+| Nguyen Cong Phuong | S3804846 | 7                  |
+| Nguyen Tuan Duong  | S3965530 | 7                  |
