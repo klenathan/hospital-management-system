@@ -79,7 +79,6 @@ export default function PatientTreatmentTab() {
     useEffect(() => {
         if (inputValue === '') {
             setSelectedPatient(null)
-            console.log(patientTreatmentData);
             refetch();
         }
     }, [inputValue, patientTreatmentData, refetch]);

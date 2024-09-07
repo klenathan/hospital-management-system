@@ -13,12 +13,6 @@ export function RedirectIfUnAuthenticated({ requiredRoles }: RedirectIfUnAuthent
         // Redirect to login if the user is not authenticated
         return <Navigate to="/login" replace />;
     }
-
-    console.log(requiredRoles);
-    console.log(user.job_type);
-    console.log(requiredRoles?.includes(user.job_type));
-
-
     if (requiredRoles && !requiredRoles.includes(user.job_type)) {
         // Redirect to a "Not Authorized" page or similar if the user's job_type doesn't match
         return <Navigate to="/not-authorized" replace />;
