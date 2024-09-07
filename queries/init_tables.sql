@@ -44,7 +44,7 @@ CREATE TABLE staffs (
 CREATE TABLE staff_job_history (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     staff_id INT,
-    job_type VARCHAR(100),
+    job_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
     department_id INT,
     deleted BOOLEAN DEFAULT 0,

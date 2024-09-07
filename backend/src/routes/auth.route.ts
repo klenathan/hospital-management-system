@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { RowDataPacket } from "mysql2";
+import { QueryError, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { dbConfigBuilder, getMySqlConnnection } from "../db/mysql";
 
@@ -38,7 +38,9 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     await conn.end();
     return res.status(200).json({ status: "success", user: rows[0] });
   } catch (error) {
-    console.log(error);
+    if ((error as QueryError).code == "ER_ACCESS_DENIED_ERROR") {
+      return res.status(401).json({ message: "UNAUTHORIZED" });
+    }
 
     return res
       .status(500)
