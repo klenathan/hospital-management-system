@@ -16,6 +16,7 @@ import {
 
 
 import DoctorScheduleForm from '@/components/DoctorScheduleForm';
+import TableEmpty from '@/components/TableEmpty';
 
 export default function DoctorSchedule() {
 
@@ -66,9 +67,7 @@ export default function DoctorSchedule() {
                     </TableHeader>
                     <TableBody>
                         {scheduleData?.data.length === 0 || scheduleLoading ?
-                            <TableRow>
-                                <TableCell colSpan={7} className="text-center">Loading...</TableCell>
-                            </TableRow>
+                            <TableEmpty colSpan={7} />
                             :
                             <>
                                 {scheduleData?.data.map((schedule, index) => (
