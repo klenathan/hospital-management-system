@@ -34,6 +34,14 @@ To run the application, simply uses `docker-compose`.
 $ docker-compose up -d
 ```
 
+## 3. Account
+
+| Role   | Username   | Password |
+| ------ | ---------- | -------- |
+| Doctor | userdoctor | password |
+| Nurse  | usernurse  | password |
+| Admin  | useradmin  | password |
+
 # II. Modules
 
 ## 1. `database` folder

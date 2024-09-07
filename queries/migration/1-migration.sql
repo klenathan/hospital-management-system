@@ -45,7 +45,7 @@ CREATE TABLE staffs (
 CREATE TABLE staff_job_history (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     staff_id INT,
-    job_type VARCHAR(100),
+    job_type ENUM('Doctor', 'Nurse', 'Admin'),
     salary BIGINT,
     department_id INT,
     deleted BOOLEAN DEFAULT 0,
@@ -100,7 +100,7 @@ CREATE INDEX idx_deleted_staff_id ON appointments (deleted, staff_id);
 
 CREATE INDEX treatments_del_idx ON treatments (deleted);
 
-CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);
+CREATE INDEX staff_job_his_del_idx ON staff_job_history (deleted);\n\n
 DELIMITER $$
 
 CREATE PROCEDURE S_GetAllDepartment (
@@ -410,7 +410,7 @@ CREATE PROCEDURE S_GetStaffByUsername (
 
 SELECT * FROM staffs WHERE username=Input_Username LIMIT 1;
 
-END $$
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE P_RegisterNewPatient (
@@ -533,7 +533,7 @@ BEGIN
 
     
     COMMIT;
-END $$
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE A_ViewDoctorScheduleByDuration (IN fromDate DATETIME, IN toDate DATETIME) BEGIN
@@ -642,7 +642,7 @@ ROLLBACK;
 
 END IF;
 
-END $$
+END $$\n\n
 DELIMITER $$
 
 CREATE PROCEDURE R_ViewOneOrManyTreatmentHistoryByDuration (
@@ -705,7 +705,7 @@ WHERE s.job_type = 'Doctor'
     AND s.deleted = 0
 GROUP BY s.id;
 
-END $$
+END $$\n\n
 CREATE ROLE doctor, nurse, adminStaff;
 
 GRANT
@@ -784,6 +784,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.S_UpdateStaffSchedule TO nurse;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO nurse;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.R_ViewOneOrManyTreatmentHistoryByDuration TO nurse;
 
 GRANT
@@ -821,3 +824,21 @@ EXECUTE ON PROCEDURE hospital_management.S_GetAllDepartment TO adminStaff;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.A_ViewDoctorScheduleByDuration TO adminStaff;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO doctor;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.S_ViewStaffScheduleByID TO nurse;
+
+CREATE USER 'useradmin' @'%' IDENTIFIED BY 'password';
+
+CREATE USER 'usernurse' @'%' IDENTIFIED BY 'password';
+
+CREATE USER 'userdoctor' @'%' IDENTIFIED BY 'password';
+
+GRANT doctor TO 'userdoctor' @'%';
+
+GRANT admin TO 'useradmin' @'%';
+
+GRANT nurse TO 'usernurse' @'%';\n\n
