@@ -28,6 +28,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.P_AddTreatment TO doctor;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.P_UpdatePatientInfo TO doctor;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.A_BookAppointmentWithDoctor TO doctor;
 
 GRANT
@@ -53,6 +56,9 @@ EXECUTE ON PROCEDURE hospital_management.S_GetStaffByUsername TO doctor;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.P_RegisterNewPatient TO nurse;
+
+GRANT
+EXECUTE ON PROCEDURE hospital_management.P_UpdatePatientInfo TO nurse;
 
 GRANT
 EXECUTE ON PROCEDURE hospital_management.P_SearchPatientById TO nurse;
