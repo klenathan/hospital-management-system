@@ -5,7 +5,7 @@ import {
 } from "mysql2/promise";
 
 import { getMySqlConnnection } from "../db/mysql";
-import { GetRequestResult } from "./queryResult";
+import { GetPaginatedRequestResult, GetRequestResult } from "./queryResult";
 
 export default class ReportService {
   public constructor() {}
@@ -50,6 +50,42 @@ export default class ReportService {
         count: rows[0].length,
       },
       data: rows[0],
+    };
+  }
+
+  public async getAllStaffHistory(
+    props: {
+      order: "asc" | "desc";
+      pageSize: number;
+      pageNumber: number;
+    } = {
+      order: "asc",
+      pageSize: 0,
+      pageNumber: 0,
+    },
+    config: PoolOptions
+  ): Promise<GetPaginatedRequestResult> {
+    const conn = await getMySqlConnnection(config);
+
+    const [rows, _fields] = await conn.query<RowDataPacket[]>(
+      `SELECT * FROM staff_job_history ORDER BY created_at ${props.order} LIMIT ? OFFSET ?`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
+    );
+
+    const [countRow, _countFields] = await conn.query<RowDataPacket[]>(
+      `SELECT COUNT(*) as total FROM patients`,
+      [props.pageSize, (props.pageNumber - 1) * props.pageSize]
+    );
+
+    await conn.end();
+    return {
+      queryResult: {
+        count: rows.length,
+        pageNumber: props.pageNumber,
+        pageSize: props.pageSize,
+        totalCount: countRow[0]["total"] as number,
+      },
+      data: rows,
     };
   }
 
