@@ -2,10 +2,10 @@ import {
   PoolOptions,
   ProcedureCallPacket,
   RowDataPacket,
-} from "mysql2/promise";
+} from 'mysql2/promise';
 
-import { getMySqlConnnection } from "../db/mysql";
-import { GetPaginatedRequestResult, GetRequestResult } from "./queryResult";
+import { getMySqlConnnection } from '../db/mysql';
+import { GetPaginatedRequestResult, GetRequestResult } from './queryResult';
 
 export default class ReportService {
   public constructor() {}
@@ -21,7 +21,7 @@ export default class ReportService {
       ProcedureCallPacket<RowDataPacket[]>
     >(
       `call R_ViewOneOrManyTreatmentHistoryByDuration(${
-        patientId ?? "null"
+        patientId ?? 'null'
       }, "${startTime}", "${endTime}")`
     );
     await conn.end();
@@ -55,11 +55,11 @@ export default class ReportService {
 
   public async getAllStaffHistory(
     props: {
-      order: "asc" | "desc";
+      order: 'asc' | 'desc';
       pageSize: number;
       pageNumber: number;
     } = {
-      order: "asc",
+      order: 'asc',
       pageSize: 0,
       pageNumber: 0,
     },
@@ -68,7 +68,7 @@ export default class ReportService {
     const conn = await getMySqlConnnection(config);
 
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
-      `SELECT *, s.first_name, s.last_name FROM staff_job_history sj JOIN staffs s ON s.id = sj.staff_id ORDER BY created_at ${props.order} LIMIT ? OFFSET ?`,
+      `SELECT sj.*, s.first_name, s.last_name FROM staff_job_history sj JOIN staffs s ON s.id = sj.staff_id ORDER BY sj.created_at ${props.order} LIMIT ? OFFSET ?`,
       [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
 
@@ -83,7 +83,7 @@ export default class ReportService {
         count: rows.length,
         pageNumber: props.pageNumber,
         pageSize: props.pageSize,
-        totalCount: countRow[0]["total"] as number,
+        totalCount: countRow[0]['total'] as number,
       },
       data: rows,
     };
@@ -100,7 +100,7 @@ export default class ReportService {
       ProcedureCallPacket<RowDataPacket[]>
     >(
       `call R_ViewOneOrManyDoctorWorkByDuration(${
-        staffId ?? "null"
+        staffId ?? 'null'
       }, "${startTime}", "${endTime}")`
     );
 

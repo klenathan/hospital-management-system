@@ -159,7 +159,7 @@ export default function StaffManagement() {
               <Button
                 variant='ghost'
                 className='p-0 w-8 h-8'
-                // onClick={() => setSelectedStaffId(staff.id)}
+              // onClick={() => setSelectedStaffId(staff.id)}
               >
                 <span className='sr-only'>Open menu</span>
                 <MoreHorizontal className='w-4 h-4' />
@@ -223,14 +223,15 @@ export default function StaffManagement() {
           <PaginationItem>
             <PaginationPrevious
               className={`${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}
-              onClick={currentPage !== 1 ? () => setCurrentPage((prev) => Math.max(prev - 1, 1)) : () => {}}
+              onClick={currentPage !== 1 ? () => setCurrentPage((prev) => Math.max(prev - 1, 1)) : () => { }}
             />
           </PaginationItem>
 
           <PaginationItem>
-            <div className='flex items-center'>
+            <div className='flex items-center w-max'>
               <span>Page </span>
               <Input
+                name='page'
                 type='number'
                 value={currentPage}
                 onChange={(e) => {
@@ -244,7 +245,7 @@ export default function StaffManagement() {
                 min={1}
                 max={totalPages}
               />
-              <span> of {totalPages}</span>
+              <span className='w-max min-w-max'> of {totalPages}</span>
             </div>
           </PaginationItem>
 
@@ -252,7 +253,7 @@ export default function StaffManagement() {
             <PaginationNext
               className={`${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`}
               onClick={
-                currentPage !== totalPages ? () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) : () => {}
+                currentPage !== totalPages ? () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) : () => { }
               }
             />
           </PaginationItem>

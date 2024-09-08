@@ -41,11 +41,11 @@ export default function Patient() {
   const [searchType, setSearchType] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const [queryOrder, setQueryOrder] = useState(true);
+  const [lastPage, setLastPage] = useState<number>(0);
   const [searchID, setSearchID] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
 
-  const [lastPage, setLastPage] = useState<number>(0);
 
 
   const searchQuery = () => {
@@ -79,7 +79,6 @@ export default function Patient() {
     if (patientsData?.queryResult?.totalCount) {
       setLastPage(Math.ceil(patientsData.queryResult.totalCount / 10));
     }
-
   }, [patientsData])
 
   // Determine total pages based on search results or fallback to 200 pages
@@ -255,9 +254,10 @@ export default function Patient() {
             </PaginationItem>
 
             <PaginationItem>
-              <div className='flex items-center'>
+              <div className='flex items-center  w-max'>
                 <span>Page </span>
                 <Input
+                  name='page'
                   type="number"
                   value={currentPage}
                   onChange={(e) => {
@@ -271,7 +271,7 @@ export default function Patient() {
                   min={1}
                   max={totalPages}
                 />
-                <span> of {totalPages}</span>
+                <span className=' min-w-max w-max'> of {totalPages}</span>
               </div>
             </PaginationItem>
 
