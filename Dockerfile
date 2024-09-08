@@ -6,7 +6,7 @@ COPY ./frontend/package.json yarn.lock ./
 
 RUN yarn install
 
-COPY ./frontend .
+COPY ./frontend ./.env .
 
 RUN yarn build
 
@@ -18,7 +18,7 @@ COPY ./backend/package.json yarn.lock ./
 
 RUN yarn install
 
-COPY ./backend ./
+COPY ./backend ./.env ./
 
 RUN yarn tsc && \
     rm -r ./src/**/*.ts

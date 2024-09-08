@@ -4,7 +4,6 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
-    # network_mode: host
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
@@ -23,11 +22,13 @@ services:
       MYSQL_DATABASE: db
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
-    # ports:
-    #   - '3306:3306'
     volumes:
       - ./database/sql-data:/var/lib/mysql
       - ./queries/migration/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 3s
+      retries: 50
 
   app:
     build:
@@ -36,6 +37,9 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
-      - mongodb
+      mongodb:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+
     restart: always
