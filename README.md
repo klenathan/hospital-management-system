@@ -2,6 +2,8 @@
 
 A RMIT Database application assignment.
 
+[Repo URL](https://github.com/klenathan/hospital-management-system)
+
 ## Tech stack used
 
 **Database**:
@@ -76,5 +78,5 @@ Contains all necessary sql queries.
 | Pham Vo Dong       | S3891968 | 7                  |
 | Tran Ngoc Khang    | S3927201 | 7                  |
 | Tran Nam Thai      | S3891890 | 7                  |
-| Nguyen Cong Phuong | S3804846 | 7                  |
 | Nguyen Tuan Duong  | S3965530 | 7                  |
+| Nguyen Cong Phuong | S3804846 | 7                  |
