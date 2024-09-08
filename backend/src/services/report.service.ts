@@ -68,12 +68,12 @@ export default class ReportService {
     const conn = await getMySqlConnnection(config);
 
     const [rows, _fields] = await conn.query<RowDataPacket[]>(
-      `SELECT * FROM staff_job_history ORDER BY created_at ${props.order} LIMIT ? OFFSET ?`,
+      `SELECT *, s.first_name, s.last_name FROM staff_job_history sj JOIN staffs s ON s.id = sj.staff_id ORDER BY created_at ${props.order} LIMIT ? OFFSET ?`,
       [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
 
     const [countRow, _countFields] = await conn.query<RowDataPacket[]>(
-      `SELECT COUNT(*) as total FROM patients`,
+      `SELECT COUNT(*) as total FROM staff_job_history`,
       [props.pageSize, (props.pageNumber - 1) * props.pageSize]
     );
 
