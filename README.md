@@ -16,9 +16,15 @@ A RMIT Database application assignment.
 > [!IMPORTANT]
 > Since this is a fullstack project, we use Docker to synchronize between environments.
 
+**Presentation video**
+
+[Youtube](https://youtu.be/v1JLEheEDV0)
+
+[RMIT Sharepoint](https://rmiteduau-my.sharepoint.com/:v:/g/personal/s3891968_rmit_edu_vn/Ecl3RyRGHGVKkrDeUZ771mwBPg6Yfk3Jokn_lfLrzmngRA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=xUrJ6w)
+
 ---
 
-# I. Installation
+# I. Installation 
 
 ## 1. Prepare `.env` file
 
@@ -31,14 +37,14 @@ If you are running the project locally, **simply rename the file from `.env.exam
 To run the application, simply uses `docker-compose`.
 
 ```bash
-$ docker-compose up -d
+$ docker-compose up -d --build
 ```
 
 ## 3. Access the application
 
 After run the docker successfull, you can access the application in path `http://localhost:3000/`
 
-## 3. Account
+## 4. Accounts
 
 | Role   | Username   | Password |
 | ------ | ---------- | -------- |
