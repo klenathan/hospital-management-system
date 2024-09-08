@@ -34,6 +34,10 @@ To run the application, simply uses `docker-compose`.
 $ docker-compose up -d
 ```
 
+## 3. Access the application
+
+After run the docker successfull, you can access the application in path `http://localhost:3000/`
+
 ## 3. Account
 
 | Role   | Username   | Password |

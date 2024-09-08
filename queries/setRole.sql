@@ -131,6 +131,12 @@ CREATE USER 'userdoctor' @'%' IDENTIFIED BY 'password';
 
 GRANT doctor TO 'userdoctor' @'%';
 
-GRANT admin TO 'useradmin' @'%';
+SET DEFAULT ROLE doctor TO 'userdoctor' @'%';
+
+GRANT adminStaff TO 'useradmin' @'%';
+
+SET DEFAULT ROLE adminStaff TO 'useradmin' @'%';
 
 GRANT nurse TO 'usernurse' @'%';
+
+SET DEFAULT ROLE nurse TO 'usernurse' @'%';
