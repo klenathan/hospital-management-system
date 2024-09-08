@@ -19,30 +19,6 @@
     }
   },
   "paths": {
-    "/api/auth/publicToken": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Get auth public key",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/errSchema"
-            },
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "deprecated": true
-      }
-    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -677,6 +653,10 @@
                 "username": {
                   "type": "string",
                   "example": "SuperSaiyan123"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
                 }
               },
               "required": [
@@ -686,7 +666,8 @@
                 "qualification",
                 "deptId",
                 "salary",
-                "username"
+                "username",
+                "password"
               ]
             }
           }
@@ -1100,6 +1081,43 @@
             "required": true,
             "type": "string",
             "description": "Staff ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/report/jobHistory": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "summary": "View job change history",
+        "description": "",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Query order",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Query pageSize",
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Query page Number",
+            "type": "string"
           }
         ],
         "responses": {

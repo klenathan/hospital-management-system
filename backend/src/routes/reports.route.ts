@@ -80,6 +80,60 @@ reportRouter.get(
   }
 );
 
+reportRouter.get("/jobHistory", async (req: Request, res: Response) => {
+  /*  
+  #swagger.summary = 'View job change history'
+  #swagger.parameters['order'] = {
+          in: 'query',
+          description: 'Query order',
+  } 
+
+  #swagger.parameters['pageSize'] = {
+      in: 'query',
+      description: 'Query pageSize',
+  } 
+      
+  #swagger.parameters['pageNumber'] = {
+          in: 'query',
+          description: 'Query page Number',
+    } 
+  */
+
+  try {
+    let order = req.query["order"];
+    let pageSize = parseInt(req.query["pageSize"] as string);
+    let pageNumber = parseInt(req.query["pageNumber"] as string);
+
+    if (order) {
+      if (order != "asc" && order != "desc") {
+        throw new Error("INVALID ORDER");
+      }
+    } else {
+      order = "asc";
+    }
+
+    if (!pageSize) {
+      pageSize = 200;
+    }
+
+    if (!pageNumber) {
+      pageNumber = 1;
+    }
+
+    const staffs = await reportService.getAllStaffHistory(
+      {
+        order: order as "asc" | "desc",
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      },
+      dbConfigBuilder(res.locals["username"], res.locals["password"])
+    );
+    return res.status(200).send(staffs);
+  } catch (e) {
+    return res.status(400).json({ error: (e as Error).message });
+  }
+});
+
 reportRouter.get("/doctorWorkHistory", async (req: Request, res: Response) => {
   /*  
   #swagger.summary = "View the work of a doctor in a given duration & View the work of all doctors in a given duratio"

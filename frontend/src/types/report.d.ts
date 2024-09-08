@@ -16,19 +16,26 @@ export type PatientTreatmentResponse = {
 }
 
 export interface StaffJobChangeHistory {
-  id: number
-  staff_id: number
-  job_type: string
-  salary: string
-  department_id: number
-  deleted: boolean
   created_at: string
+  deleted: boolean
+  department_id: number
+  first_name: string
+  id: number
+  job_type: string
+  last_name: string
+  qualifications: string
+  salary: number
+  staff_id: number
   updated_at: string
+  username: string
 }
 
 export type StaffJobChangeHistoryResponse = {
   queryResult: {
     count: number
+    pageNumber: number
+    pageSize: number
+    totalCount: number
   }
   data: StaffJobChangeHistory[]
 }
