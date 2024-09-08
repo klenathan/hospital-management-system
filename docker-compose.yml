@@ -26,9 +26,9 @@ services:
       - ./database/sql-data:/var/lib/mysql
       - ./queries/migration/:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 15s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 3s
+      retries: 50
 
   app:
     build:
@@ -41,5 +41,5 @@ services:
         condition: service_started
       mysql:
         condition: service_healthy
-      
+
     restart: always
