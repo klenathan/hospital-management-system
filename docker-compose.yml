@@ -4,6 +4,7 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    network_mode: host
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
@@ -27,6 +28,7 @@ services:
     volumes:
       - ./database/sql-data:/var/lib/mysql
       - ./queries/migration/:/docker-entrypoint-initdb.d/
+
   app:
     build:
       context: .

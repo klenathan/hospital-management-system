@@ -12,8 +12,6 @@ export default function BlobList({ domain, parent }: { domain: string; parent: s
 
     const downloadBlob = useDownloadBlob();
 
-
-
     const isImage = (fileName: string) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         return imageExtensions.some(ext => fileName.toLowerCase().endsWith(ext));
