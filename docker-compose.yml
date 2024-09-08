@@ -25,6 +25,10 @@ services:
     volumes:
       - ./database/sql-data:/var/lib/mysql
       - ./queries/migration/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 15s
+      retries: 10
 
   app:
     build:
@@ -33,6 +37,9 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
-      - mongodb
+      mongodb:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      
     restart: always
