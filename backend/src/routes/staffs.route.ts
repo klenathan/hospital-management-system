@@ -12,6 +12,7 @@ const NewStaffDTO = z.object({
   deptId: z.number(),
   salary: z.number(),
   username: z.string(),
+  password: z.string(),
 });
 const UpdateStaffDTO = z.object({
   firstName: z.string(),
@@ -91,7 +92,8 @@ staffRouter.post("/", async (req: Request, res: Response) => {
                 $qualification: "MD",
                 $deptId: 1,
                 $salary: 100000000,
-                $username: 'SuperSaiyan123'
+                $username: 'SuperSaiyan123',
+                $password: 'password'
             }
     } */
   try {

@@ -50,7 +50,8 @@ CREATE PROCEDURE S_AddNewStaff(
     IN qualifications VARCHAR(50),
     IN department_id int,
     IN salary BIGINT,
-    IN username VARCHAR(100)
+    IN username VARCHAR(100),
+    IN userPassword VARCHAR(100)
 ) BEGIN
 DECLARE `_rollback` BOOL DEFAULT 0;
 
@@ -95,7 +96,7 @@ SET @username = username;
 SET @query1 = CONCAT(
         'CREATE USER "',
         @username,
-        '"@"%" IDENTIFIED BY "password"'
+        '"@"%" IDENTIFIED BY "',userPassword,'"'
     );
 
 PREPARE stmt
