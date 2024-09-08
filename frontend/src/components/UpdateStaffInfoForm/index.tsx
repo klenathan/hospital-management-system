@@ -20,6 +20,8 @@ const updateStaffSchema = z.object({
     salary: z.number().positive("Salary must be a positive number."),
 });
 
+const jobTypes = ['Doctor', 'Nurse', 'Admin'];
+
 type UpdateStaffFormValues = z.infer<typeof updateStaffSchema>;
 
 // Define types for API response and request payload
@@ -145,12 +147,20 @@ export function UpdateStaffInfoForm({
                         <FormItem className='col-span-2'>
                             <FormLabel>Job Type</FormLabel>
                             <FormControl>
-                                <Input
-                                    placeholder="Enter job type"
-                                    {...field}
-                                />
+                                <Select onValueChange={field.onChange}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select Job Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {jobTypes.map((job, index) => (
+                                            <SelectItem key={index} value={job}>
+                                                {job}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage>{form.formState.errors.jobType?.message}</FormMessage>
                         </FormItem>
                     )}
                 />
