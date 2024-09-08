@@ -87,7 +87,7 @@ export default class BlobService {
     } catch (error) {
       console.log(error);
       await client.close();
-      return { status: false };
+      throw error;
     }
   }
 

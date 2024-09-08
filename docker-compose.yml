@@ -27,6 +27,7 @@ services:
     volumes:
       - ./database/sql-data:/var/lib/mysql
       - ./queries/migration/:/docker-entrypoint-initdb.d/
+
   app:
     build:
       context: .
