@@ -129,7 +129,7 @@ export default function Patient() {
             Search
           </Button>
         </form>
-        <RegisterPatientForm />
+        <RegisterPatientForm refetch={refetch} />
       </div>
 
       <Table>

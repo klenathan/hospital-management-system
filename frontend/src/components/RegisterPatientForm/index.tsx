@@ -31,7 +31,14 @@ const patientSchema = z.object({
     allergies: z.string().optional(),
 });
 
-export default function RegisterPatientForm() {
+
+interface RegisterPatientFormProps {
+    refetch: () => void;
+}
+
+export default function RegisterPatientForm({ refetch }: RegisterPatientFormProps) {
+
+
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const form = useForm({
@@ -68,6 +75,7 @@ export default function RegisterPatientForm() {
                     variant: "success",
                     title: "Patient Registered Successfully!",
                 });
+                refetch(); // Refetch the data to update the list
             },
             onError: (error) => {
                 console.error('Error submitting form:', error);
