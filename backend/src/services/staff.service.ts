@@ -98,6 +98,7 @@ export default class StaffService {
       deptId: number;
       salary: number;
       username: string;
+      password: string;
     },
     config: PoolOptions
   ): Promise<any> {
@@ -112,7 +113,8 @@ export default class StaffService {
       "${props.qualification}",
       "${props.deptId}",
       "${props.salary}",
-      "${props.username}")`);
+      "${props.username}",
+      "${props.password}")`);
 
     await conn.end();
 
