@@ -766,6 +766,9 @@ GRANT
 EXECUTE ON PROCEDURE hospital_management.P_RegisterNewPatient TO nurse;
 
 GRANT
+EXECUTE ON PROCEDURE hospital_management.P_UpdatePatientInfo TO nurse;
+
+GRANT
 EXECUTE ON PROCEDURE hospital_management.P_SearchPatientById TO nurse;
 
 GRANT
