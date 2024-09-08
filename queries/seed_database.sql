@@ -18016,40 +18016,45 @@ VALUES (
         'allergies hehe'
     );
 
-INSERT IGNORE INTO staffs (
+INSERT IGNORE INTO
+    staffs (
         id,
         first_name,
         last_name,
         job_type,
         qualifications,
         department_id,
+        username,
         salary
     )
 VALUES (
         1,
-        'Eleazar',
-        'Carroll',
+        'admin_fname',
+        'admin_lname',
         'Admin',
         'Qualification Type 3',
         3,
+        'useradmin',
         84000000
     ),
     (
         2,
-        'Vincent',
-        'Mohr',
-        'Admin',
+        'doctor_fname',
+        'doctor_lname',
+        'Doctor',
         'Qualification Type 1',
         2,
+        'userdoctor',
         75000000
     ),
     (
         3,
-        'Nick',
-        'Kshlerin',
-        'Doctor',
+        'nurse_fname',
+        'nurse_lname',
+        'Nurse',
         'Qualification Type 2',
         4,
+        'usernurse',
         94000000
     ),
     (
@@ -18059,6 +18064,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'bradford.ferry',
         104000000
     ),
     (
@@ -18068,6 +18074,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         3,
+        'deanna.cummings',
         20000000
     ),
     (
@@ -18077,6 +18084,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'bonnie.heathcote',
         44000000
     ),
     (
@@ -18086,6 +18094,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'sister.fisher',
         14000000
     ),
     (
@@ -18095,6 +18104,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'sadie.baumbach',
         44000000
     ),
     (
@@ -18104,6 +18114,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'peyton.nolan',
         94000000
     ),
     (
@@ -18113,6 +18124,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         0,
+        'deondre.heidenreich',
         84000000
     ),
     (
@@ -18122,6 +18134,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         0,
+        'joshua.crooks',
         107000000
     ),
     (
@@ -18131,6 +18144,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'domenic.hand',
         24000000
     ),
     (
@@ -18140,6 +18154,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         4,
+        'hunter.weber',
         52000000
     ),
     (
@@ -18149,6 +18164,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         4,
+        'cade.bernier',
         44000000
     ),
     (
@@ -18158,6 +18174,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'michelle.kemmer',
         65000000
     ),
     (
@@ -18167,6 +18184,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'sherman.schmeler',
         61000000
     ),
     (
@@ -18176,6 +18194,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         0,
+        'cristopher.stanton',
         17000000
     ),
     (
@@ -18185,6 +18204,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'hollie.hermann',
         99000000
     ),
     (
@@ -18194,6 +18214,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'hope.ledner',
         85000000
     ),
     (
@@ -18203,6 +18224,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         2,
+        'adolf.carroll',
         23000000
     ),
     (
@@ -18212,6 +18234,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'noah.haley',
         68000000
     ),
     (
@@ -18221,6 +18244,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         2,
+        'joel.russel',
         43000000
     ),
     (
@@ -18230,6 +18254,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         0,
+        'zelda.kreiger',
         61000000
     ),
     (
@@ -18239,6 +18264,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         0,
+        'wellington.kuhlman',
         48000000
     ),
     (
@@ -18248,6 +18274,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         3,
+        'colt.cremin',
         30000000
     ),
     (
@@ -18257,6 +18284,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'ciara.raynor',
         39000000
     ),
     (
@@ -18266,6 +18294,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'ward.jakubowski',
         46000000
     ),
     (
@@ -18275,6 +18304,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'arnaldo.bahringer',
         10000000
     ),
     (
@@ -18284,6 +18314,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'eleanore.heller',
         40000000
     ),
     (
@@ -18293,6 +18324,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         3,
+        'brennan.nienow',
         79000000
     ),
     (
@@ -18302,6 +18334,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'clay.hauck',
         28000000
     ),
     (
@@ -18311,6 +18344,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         3,
+        'kyle.bosco',
         71000000
     ),
     (
@@ -18320,6 +18354,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'amira.robel',
         69000000
     ),
     (
@@ -18329,6 +18364,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'elenor.okuneva',
         12000000
     ),
     (
@@ -18338,6 +18374,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         1,
+        'delbert.kunde',
         52000000
     ),
     (
@@ -18347,6 +18384,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'breana.sauer',
         52000000
     ),
     (
@@ -18356,6 +18394,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         3,
+        'jarrod.rau',
         43000000
     ),
     (
@@ -18365,6 +18404,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'walter.boyer',
         12000000
     ),
     (
@@ -18374,6 +18414,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         2,
+        'margaretta.ullrich',
         38000000
     ),
     (
@@ -18383,6 +18424,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'savanah.king',
         104000000
     ),
     (
@@ -18392,6 +18434,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'pascale.zulauf',
         53000000
     ),
     (
@@ -18401,6 +18444,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'willis.fadel',
         57000000
     ),
     (
@@ -18410,6 +18454,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'kian.friesen',
         54000000
     ),
     (
@@ -18419,6 +18464,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         0,
+        'grayson.robel',
         48000000
     ),
     (
@@ -18428,6 +18474,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'ariane.grant-turcotte',
         64000000
     ),
     (
@@ -18437,6 +18484,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'wilbert.schroeder',
         58000000
     ),
     (
@@ -18446,6 +18494,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         4,
+        'mavis.kemmer',
         104000000
     ),
     (
@@ -18455,6 +18504,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'marlin.weimann',
         22000000
     ),
     (
@@ -18464,6 +18514,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'adela.mckenzie',
         28000000
     ),
     (
@@ -18473,6 +18524,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'martine.mcclure',
         53000000
     ),
     (
@@ -18482,6 +18534,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'cydney.jerde',
         44000000
     ),
     (
@@ -18491,6 +18544,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         4,
+        'green.will',
         64000000
     ),
     (
@@ -18500,6 +18554,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'marjorie.dare',
         36000000
     ),
     (
@@ -18509,6 +18564,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         1,
+        'tracy.krajcik',
         96000000
     ),
     (
@@ -18518,6 +18574,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         2,
+        'gregorio.bailey',
         46000000
     ),
     (
@@ -18527,6 +18584,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'oswaldo.keeling',
         93000000
     ),
     (
@@ -18536,6 +18594,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         3,
+        'dannie.osinski',
         41000000
     ),
     (
@@ -18545,6 +18604,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'cleora.koepp',
         75000000
     ),
     (
@@ -18554,6 +18614,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'gisselle.volkman',
         45000000
     ),
     (
@@ -18563,6 +18624,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'dewitt.lehner-hills',
         81000000
     ),
     (
@@ -18572,6 +18634,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         0,
+        'jeromy.walker',
         86000000
     ),
     (
@@ -18581,6 +18644,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'caleb.jacobson',
         40000000
     ),
     (
@@ -18590,6 +18654,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         2,
+        'jordy.keeling',
         67000000
     ),
     (
@@ -18599,6 +18664,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         3,
+        'omer.christiansen',
         30000000
     ),
     (
@@ -18608,6 +18674,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'candace.barrows',
         76000000
     ),
     (
@@ -18617,6 +18684,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         2,
+        'alexandre.hauck',
         21000000
     ),
     (
@@ -18626,6 +18694,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         3,
+        'cierra.blanda-hilpert',
         89000000
     ),
     (
@@ -18635,6 +18704,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'elfrieda.gleichner',
         29000000
     ),
     (
@@ -18644,6 +18714,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         1,
+        'lyla.reichert',
         98000000
     ),
     (
@@ -18653,6 +18724,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'mara.jast',
         67000000
     ),
     (
@@ -18662,6 +18734,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'buster.herzog',
         50000000
     ),
     (
@@ -18671,6 +18744,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'maybelle.strosin',
         10000000
     ),
     (
@@ -18680,6 +18754,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'ines.thiel',
         46000000
     ),
     (
@@ -18689,6 +18764,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         0,
+        'alyce.greenfelder',
         11000000
     ),
     (
@@ -18698,6 +18774,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         3,
+        'jayson.weber',
         108000000
     ),
     (
@@ -18707,6 +18784,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'holly.davis',
         53000000
     ),
     (
@@ -18716,6 +18794,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         3,
+        'rachael.schinner-braun',
         11000000
     ),
     (
@@ -18725,6 +18804,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         3,
+        'alysha.walker',
         57000000
     ),
     (
@@ -18734,6 +18814,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'shanelle.streich',
         49000000
     ),
     (
@@ -18743,6 +18824,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'gisselle.lynch',
         72000000
     ),
     (
@@ -18752,6 +18834,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         1,
+        'dudley.mertz',
         79000000
     ),
     (
@@ -18761,6 +18844,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         3,
+        'joshua.marquardt',
         12000000
     ),
     (
@@ -18770,6 +18854,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         1,
+        'wilburn.fay',
         66000000
     ),
     (
@@ -18779,6 +18864,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         1,
+        'melissa.ruecker',
         46000000
     ),
     (
@@ -18788,6 +18874,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         0,
+        'luna.bode',
         94000000
     ),
     (
@@ -18797,6 +18884,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'geraldine.stoltenberg',
         28000000
     ),
     (
@@ -18806,6 +18894,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'bette.barrows',
         59000000
     ),
     (
@@ -18815,6 +18904,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         1,
+        'carter.sawayn',
         63000000
     ),
     (
@@ -18824,6 +18914,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         1,
+        'pedro.russel',
         70000000
     ),
     (
@@ -18833,6 +18924,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         3,
+        'johnathon.kunze',
         65000000
     ),
     (
@@ -18842,6 +18934,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'yasmeen.wisozk',
         105000000
     ),
     (
@@ -18851,6 +18944,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'orin.klein',
         40000000
     ),
     (
@@ -18860,6 +18954,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'tatyana.murphy',
         104000000
     ),
     (
@@ -18869,6 +18964,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'meda.gerhold',
         36000000
     ),
     (
@@ -18878,6 +18974,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         3,
+        'lavonne.moore',
         88000000
     ),
     (
@@ -18887,6 +18984,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'marley.cremin',
         83000000
     ),
     (
@@ -18896,6 +18994,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         4,
+        'margarett.bogisich',
         13000000
     ),
     (
@@ -18905,6 +19004,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'destiny.metz',
         71000000
     ),
     (
@@ -18914,6 +19014,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         2,
+        'yasmeen.parisian',
         44000000
     ),
     (
@@ -18923,6 +19024,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'dorris.cummerata',
         24000000
     ),
     (
@@ -18932,6 +19034,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         0,
+        'jerald.runte',
         58000000
     ),
     (
@@ -18941,6 +19044,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'margarette.schaden',
         99000000
     ),
     (
@@ -18950,6 +19054,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'leatha.kutch',
         53000000
     ),
     (
@@ -18959,6 +19064,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'heaven.sawayn',
         89000000
     ),
     (
@@ -18968,6 +19074,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'vesta.pfannerstill',
         26000000
     ),
     (
@@ -18977,6 +19084,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'nedra.stracke',
         29000000
     ),
     (
@@ -18986,6 +19094,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         2,
+        'gene.moore',
         81000000
     ),
     (
@@ -18995,6 +19104,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'marlee.gottlieb-ebert',
         39000000
     ),
     (
@@ -19004,6 +19114,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         0,
+        'johann.goodwin',
         108000000
     ),
     (
@@ -19013,6 +19124,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         1,
+        'franz.goldner',
         54000000
     ),
     (
@@ -19022,6 +19134,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         2,
+        'theodora.effertz',
         83000000
     ),
     (
@@ -19031,6 +19144,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'valentine.kassulke-davis',
         12000000
     ),
     (
@@ -19040,6 +19154,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         1,
+        'durward.hilpert-kautzer',
         57000000
     ),
     (
@@ -19049,6 +19164,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'fidel.ortiz',
         90000000
     ),
     (
@@ -19058,6 +19174,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'lia.senger',
         104000000
     ),
     (
@@ -19067,6 +19184,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         2,
+        'enid.hansen',
         48000000
     ),
     (
@@ -19076,6 +19194,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         4,
+        'pauline.gislason',
         23000000
     ),
     (
@@ -19085,6 +19204,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'elinore.schoen',
         88000000
     ),
     (
@@ -19094,6 +19214,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         3,
+        'lurline.kris',
         99000000
     ),
     (
@@ -19103,6 +19224,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'baby.bednar',
         72000000
     ),
     (
@@ -19112,6 +19234,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         1,
+        'domenico.rempel',
         42000000
     ),
     (
@@ -19121,6 +19244,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'elbert.koelpin',
         107000000
     ),
     (
@@ -19130,6 +19254,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'tracy.kunde',
         26000000
     ),
     (
@@ -19139,6 +19264,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'cary.durgan',
         51000000
     ),
     (
@@ -19148,6 +19274,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'elliot.kertzmann',
         37000000
     ),
     (
@@ -19157,6 +19284,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'sarai.jacobson',
         38000000
     ),
     (
@@ -19166,6 +19294,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         0,
+        'margarette.towne',
         11000000
     ),
     (
@@ -19175,6 +19304,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         4,
+        'brenna.klein',
         54000000
     ),
     (
@@ -19184,6 +19314,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         0,
+        'sabina.schulist',
         59000000
     ),
     (
@@ -19193,6 +19324,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         1,
+        'geraldine.nolan',
         31000000
     ),
     (
@@ -19202,6 +19334,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'jacky.feeney',
         66000000
     ),
     (
@@ -19211,6 +19344,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         0,
+        'rupert.graham',
         53000000
     ),
     (
@@ -19220,6 +19354,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         3,
+        'anya.abshire',
         36000000
     ),
     (
@@ -19229,6 +19364,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'dahlia.mcglynn',
         63000000
     ),
     (
@@ -19238,6 +19374,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         2,
+        'shanelle.treutel',
         68000000
     ),
     (
@@ -19247,6 +19384,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'stefan.bogisich',
         45000000
     ),
     (
@@ -19256,6 +19394,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'beth.heidenreich',
         54000000
     ),
     (
@@ -19265,6 +19404,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         3,
+        'halie.daugherty',
         57000000
     ),
     (
@@ -19274,6 +19414,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         0,
+        'liza.ferry',
         45000000
     ),
     (
@@ -19283,6 +19424,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         1,
+        'devan.sauer',
         77000000
     ),
     (
@@ -19292,6 +19434,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'kiarra.kautzer',
         77000000
     ),
     (
@@ -19301,6 +19444,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         2,
+        'clara.beatty',
         11000000
     ),
     (
@@ -19310,6 +19454,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         1,
+        'ashlynn.franecki',
         77000000
     ),
     (
@@ -19319,6 +19464,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'cristal.lubowitz',
         66000000
     ),
     (
@@ -19328,6 +19474,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         1,
+        'brennan.stroman',
         97000000
     ),
     (
@@ -19337,6 +19484,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         2,
+        'ida.pagac',
         83000000
     ),
     (
@@ -19346,6 +19494,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'reva.williamson',
         102000000
     ),
     (
@@ -19355,6 +19504,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'yvonne.hilpert',
         93000000
     ),
     (
@@ -19364,6 +19514,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'kadin.runolfsson',
         69000000
     ),
     (
@@ -19373,6 +19524,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         1,
+        'shanel.walker',
         73000000
     ),
     (
@@ -19382,6 +19534,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         0,
+        'royce.hilll',
         18000000
     ),
     (
@@ -19391,6 +19544,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         0,
+        'lelia.smith',
         101000000
     ),
     (
@@ -19400,6 +19554,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         4,
+        'floy.pfeffer',
         85000000
     ),
     (
@@ -19409,6 +19564,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'roxanne.altenwerth',
         103000000
     ),
     (
@@ -19418,6 +19574,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         3,
+        'nadia.leannon',
         83000000
     ),
     (
@@ -19427,6 +19584,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'monique.carroll',
         92000000
     ),
     (
@@ -19436,6 +19594,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         2,
+        'berenice.hauck',
         10000000
     ),
     (
@@ -19445,6 +19604,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'rubie.bayer',
         23000000
     ),
     (
@@ -19454,6 +19614,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'neva.walsh',
         57000000
     ),
     (
@@ -19463,6 +19624,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         0,
+        'miracle.lowe',
         16000000
     ),
     (
@@ -19472,6 +19634,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         0,
+        'brittany.toy',
         84000000
     ),
     (
@@ -19481,6 +19644,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         4,
+        'flavie.wolf',
         85000000
     ),
     (
@@ -19490,6 +19654,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         3,
+        'vesta.willms',
         77000000
     ),
     (
@@ -19499,6 +19664,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         4,
+        'elmer.swaniawski',
         31000000
     ),
     (
@@ -19508,6 +19674,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'marlene.wisoky',
         54000000
     ),
     (
@@ -19517,6 +19684,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         1,
+        'dayna.greenholt',
         35000000
     ),
     (
@@ -19526,6 +19694,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         1,
+        'oral.rowe',
         57000000
     ),
     (
@@ -19535,6 +19704,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         0,
+        'jolie.mclaughlin',
         39000000
     ),
     (
@@ -19544,6 +19714,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         0,
+        'keshaun.pollich-leffler',
         55000000
     ),
     (
@@ -19553,6 +19724,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         3,
+        'heather.little',
         65000000
     ),
     (
@@ -19562,6 +19734,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'arturo.kreiger',
         32000000
     ),
     (
@@ -19571,6 +19744,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         0,
+        'bethel.jacobson',
         95000000
     ),
     (
@@ -19580,6 +19754,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         4,
+        'sherman.okuneva',
         21000000
     ),
     (
@@ -19589,6 +19764,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         0,
+        'araceli.kozey',
         82000000
     ),
     (
@@ -19598,6 +19774,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         3,
+        'rita.metz',
         28000000
     ),
     (
@@ -19607,6 +19784,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'minerva.dicki',
         107000000
     ),
     (
@@ -19616,6 +19794,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         2,
+        'freddy.goyette-rice',
         63000000
     ),
     (
@@ -19625,6 +19804,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'adelbert.jenkins',
         58000000
     ),
     (
@@ -19634,6 +19814,7 @@ VALUES (
         'Nurse',
         'Qualification Type 1',
         2,
+        'ophelia.kiehn',
         18000000
     ),
     (
@@ -19643,6 +19824,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         1,
+        'talon.lemke',
         35000000
     ),
     (
@@ -19652,6 +19834,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'ronaldo.hessel',
         75000000
     ),
     (
@@ -19661,6 +19844,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         2,
+        'bridie.brekke',
         84000000
     ),
     (
@@ -19670,6 +19854,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         1,
+        'janiya.lesch',
         94000000
     ),
     (
@@ -19679,6 +19864,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         3,
+        'chesley.ritchie',
         91000000
     ),
     (
@@ -19688,6 +19874,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         1,
+        'chet.labadie',
         50000000
     ),
     (
@@ -19697,6 +19884,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         4,
+        'wendy.stiedemann',
         77000000
     ),
     (
@@ -19706,6 +19894,7 @@ VALUES (
         'Nurse',
         'Qualification Type 2',
         2,
+        'luciano.rohan-bartell',
         26000000
     ),
     (
@@ -19715,6 +19904,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         1,
+        'luna.leuschke',
         93000000
     ),
     (
@@ -19724,6 +19914,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'jerome.bernier',
         61000000
     ),
     (
@@ -19733,6 +19924,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'cristobal.rice',
         91000000
     ),
     (
@@ -19742,6 +19934,7 @@ VALUES (
         'Nurse',
         'Qualification Type 3',
         3,
+        'elise.leuschke',
         35000000
     ),
     (
@@ -19751,6 +19944,7 @@ VALUES (
         'Admin',
         'Qualification Type 1',
         2,
+        'marty.morissette',
         84000000
     ),
     (
@@ -19760,6 +19954,7 @@ VALUES (
         'Doctor',
         'Qualification Type 2',
         2,
+        'krystina.green-grimes',
         51000000
     ),
     (
@@ -19769,6 +19964,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         1,
+        'germaine.schinner',
         94000000
     ),
     (
@@ -19778,6 +19974,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'cassandra.marks',
         40000000
     ),
     (
@@ -19787,6 +19984,7 @@ VALUES (
         'Doctor',
         'Qualification Type 3',
         4,
+        'clay.huels',
         54000000
     ),
     (
@@ -19796,6 +19994,7 @@ VALUES (
         'Admin',
         'Qualification Type 3',
         4,
+        'deion.stiedemann',
         27000000
     ),
     (
@@ -19805,6 +20004,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         1,
+        'quinton.monahan',
         43000000
     ),
     (
@@ -19814,6 +20014,7 @@ VALUES (
         'Admin',
         'Qualification Type 2',
         3,
+        'verla.rowe',
         72000000
     ),
     (
@@ -19823,6 +20024,7 @@ VALUES (
         'Doctor',
         'Qualification Type 1',
         3,
+        'abraham.crooks',
         46000000
     );
 
@@ -19902,29 +20104,31 @@ INSERT INTO Staff_Job_History (
     )
 VALUES (
         1,
-        'Cardiologist',
+        'Admin',
         40000000.00,
         1,
         '2019-01-06'
     ),
     (
         2,
-        'Neurologist',
+        'Doctor',
         35000000.00,
         2,
         '2020-05-07'
     ),
     (
         3,
-        'Head nurse',
+        'Nurse',
         20000000.00,
         3,
         '2021-05-05'
     ),
     (
         4,
-        'Associate Administration',
+        'Admin',
         30000000.00,
         4,
         '2021-05-05'
     );
+
+

@@ -1,5 +1,5 @@
 import AsyncSelect from 'react-select/async';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
@@ -9,6 +9,7 @@ import { StaffListResponse } from '@/types/staffs';
 import { DoctorWorkHistoryResponse } from '@/types/report';
 import { format } from 'date-fns';
 import TableEmpty from '@/components/TableEmpty';
+import { UserContext } from '@/hooks/Auth/UserContext';
 
 export default function DoctorWorkloadTab() {
     const [selectedDoctor, setSelectedDoctor] = useState<{ value: string; label: string } | null>(null);
@@ -63,10 +64,21 @@ export default function DoctorWorkloadTab() {
         setSelectedDoctor(selectedOption);
     };
 
+    const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        if (user.job_type === 'Doctor') {
+            setSelectedDoctor({
+                value: user.userID.toString(),
+                label: `${user.first_name} ${user.last_name}`,
+            });
+        }
+    }, [user])
+
     return (
         <div className="space-y-4">
             <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
-                <div>
+                <div className={user.job_type === 'Doctor' ? 'hidden' : ''}>
                     <Label htmlFor="doctor">Doctor</Label>
                     <AsyncSelect
                         id="doctor"
@@ -79,7 +91,7 @@ export default function DoctorWorkloadTab() {
                         isClearable
                     />
                 </div>
-                <div className="col-span-2">
+                <div className={user.job_type === 'Doctor' ? 'col-span-1' : 'col-span-2'}>
                     <Label>Date Range</Label>
                     <DatePickerWithRange
                         className="w-full"
@@ -126,6 +138,6 @@ export default function DoctorWorkloadTab() {
                     }
                 </TableBody>
             </Table>
-        </div>
+        </div >
     );
 }
